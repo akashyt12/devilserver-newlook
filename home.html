@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>DEVIL HOME</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+body{
+width:100%;
+height:100vh;
+overflow:hidden;
+background:#050505;
+font-family:'Inter',sans-serif;
+display:flex;
+justify-content:center;
+color:white;
+}
+
+/* APP */
+
+.app{
+position:relative;
+width:100%;
+max-width:430px;
+height:100vh;
+overflow:hidden;
+background:#050505;
+}
+
+/* MATRIX */
+
+canvas{
+position:fixed;
+inset:0;
+width:100%;
+height:100%;
+z-index:0;
+opacity:.05;
+}
+
+/* GLOW */
+
+.glow1,
+.glow2{
+position:absolute;
+border-radius:50%;
+filter:blur(90px);
+z-index:0;
+}
+
+.glow1{
+width:240px;
+height:240px;
+background:#00ff8840;
+top:-120px;
+left:-80px;
+}
+
+.glow2{
+width:220px;
+height:220px;
+background:#00ff6640;
+bottom:-100px;
+right:-60px;
+}
+
+/* FIXED TOP */
+
+.fixedTop{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+z-index:10;
+
+padding-bottom:18px;
+
+background:linear-gradient(
+to bottom,
+#050505 85%,
+transparent
+);
+
+backdrop-filter:blur(18px);
+}
+
+/* HEADER */
+
+.header{
+padding:28px 22px 12px;
+}
+
+.small{
+font-size:12px;
+color:#7d7d7d;
+letter-spacing:1px;
+}
+
+.title{
+margin-top:6px;
+font-size:30px;
+font-weight:800;
+color:white;
+}
+
+.title span{
+color:#00ff88;
+
+text-shadow:
+0 0 20px rgba(0,255,136,.4);
+}
+
+/* SEARCH */
+
+.searchBox{
+padding:0 22px;
+margin-top:10px;
+}
+
+.search{
+width:100%;
+height:56px;
+
+border:none;
+outline:none;
+
+padding:0 20px;
+
+background:rgba(12,12,12,.7);
+
+border:1px solid rgba(255,255,255,.06);
+
+border-radius:20px;
+
+font-size:14px;
+color:white;
+
+backdrop-filter:blur(16px);
+
+box-shadow:
+0 0 20px rgba(0,255,136,.06),
+inset 0 0 12px rgba(255,255,255,.02);
+}
+
+.search::placeholder{
+color:#666;
+}
+
+/* GAMES */
+
+.games{
+position:absolute;
+
+top:170px;
+left:0;
+
+width:100%;
+height:calc(100vh - 170px);
+
+overflow-y:auto;
+
+padding:22px;
+padding-top:10px;
+
+z-index:2;
+}
+
+.games::-webkit-scrollbar{
+width:0;
+}
+
+/* CARD */
+
+.card{
+background:rgba(12,12,12,.96);
+
+border:1px solid #1a1a1a;
+
+border-radius:28px;
+
+padding:20px;
+
+margin-bottom:18px;
+
+backdrop-filter:blur(14px);
+
+box-shadow:
+0 0 25px rgba(0,255,136,.05);
+
+transition:.2s;
+}
+
+.card:active{
+transform:scale(.98);
+}
+
+/* TOP */
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* LEFT */
+
+.left{
+display:flex;
+align-items:center;
+gap:14px;
+}
+
+/* LOGO */
+
+.logo{
+width:56px;
+height:56px;
+
+border-radius:18px;
+
+object-fit:cover;
+
+border:1px solid #1f1f1f;
+
+box-shadow:
+0 0 18px rgba(0,255,136,.08);
+}
+
+/* GAME */
+
+.game{
+font-size:19px;
+font-weight:700;
+color:white;
+}
+
+/* BADGE */
+
+.badge{
+padding:7px 13px;
+
+border-radius:12px;
+
+background:#00ff8815;
+
+border:1px solid #00ff8830;
+
+color:#00ff88;
+
+font-size:11px;
+font-weight:700;
+letter-spacing:1px;
+}
+
+/* SUB */
+
+.sub{
+margin-top:14px;
+
+font-size:12px;
+line-height:18px;
+
+color:#7d7d7d;
+}
+
+/* BUTTON ROW */
+
+.row{
+display:flex;
+gap:12px;
+margin-top:20px;
+}
+
+/* BUTTON */
+
+.btn{
+flex:1;
+height:50px;
+
+border:none;
+border-radius:16px;
+
+background:#00ff88;
+color:black;
+
+font-size:13px;
+font-weight:700;
+
+cursor:pointer;
+
+transition:.2s;
+
+box-shadow:
+0 0 20px rgba(0,255,136,.22);
+}
+
+.btn:active{
+transform:scale(.96);
+}
+
+/* SECOND BUTTON */
+
+.btn2{
+background:#101010;
+color:#00ff88;
+
+border:1px solid #1f1f1f;
+
+box-shadow:none;
+}
+
+/* SPACE */
+
+.space{
+height:40px;
+}
+
+/* MOBILE */
+
+@media(max-width:360px){
+
+.title{
+font-size:25px;
+}
+
+.card{
+padding:18px;
+}
+
+.logo{
+width:50px;
+height:50px;
+}
+
+.game{
+font-size:17px;
+}
+
+.games{
+top:165px;
+height:calc(100vh - 165px);
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="app">
+
+<div class="glow1"></div>
+<div class="glow2"></div>
+
+<!-- FIXED TOP -->
+
+<div class="fixedTop">
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div class="small">
+WELCOME BACK 👋
+</div>
+
+<div class="title">
+DEVIL <span>PREDICTOR</span>
+</div>
+
+</div>
+
+<!-- SEARCH -->
+
+<div class="searchBox">
+
+<input type="text"
+class="search"
+id="search"
+placeholder="Search games..."
+onkeyup="searchGame()">
+
+</div>
+
+</div>
+
+<!-- GAMES -->
+
+<div class="games"
+id="gamesContainer">
+
+<!-- OKWIN -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image1.png"
+class="logo">
+
+<div class="game">
+OKWIN
+</div>
+
+</div>
+
+<div class="badge">
+HOT
+</div>
+
+</div>
+
+<div class="sub">
+AI Prediction Available
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','okwin')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','okwin')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<!-- 51 GAME -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image2.png"
+class="logo">
+
+<div class="game">
+51 GAME
+</div>
+
+</div>
+
+<div class="badge">
+LIVE
+</div>
+
+</div>
+
+<div class="sub">
+Smart Signal System
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','game51')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','game51')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<!-- 55 CLUB -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image3.png"
+class="logo">
+
+<div class="game">
+55 CLUB
+</div>
+
+</div>
+
+<div class="badge">
+HOT
+</div>
+
+</div>
+
+<div class="sub">
+Fast Prediction Access
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','club55')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','club55')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<!-- 82 LOTTERY -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image4.png"
+class="logo">
+
+<div class="game">
+82 LOTTERY
+</div>
+
+</div>
+
+<div class="badge">
+NEW
+</div>
+
+</div>
+
+<div class="sub">
+Neural AI Analyzer
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','lottery82')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','lottery82')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<!-- DM WIN -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image5.png"
+class="logo">
+
+<div class="game">
+DM WIN
+</div>
+
+</div>
+
+<div class="badge">
+HOT
+</div>
+
+</div>
+
+<div class="sub">
+Advanced Win Mode
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','dmwin')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','dmwin')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<!-- JAI CLUB -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image6.png"
+class="logo">
+
+<div class="game">
+JAI CLUB
+</div>
+
+</div>
+
+<div class="badge">
+VIP
+</div>
+
+</div>
+
+<div class="sub">
+Premium AI Detection
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','jaiclub')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','jaiclub')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<!-- YAARWIN -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image7.png"
+class="logo">
+
+<div class="game">
+YAARWIN
+</div>
+
+</div>
+
+<div class="badge">
+HOT
+</div>
+
+</div>
+
+<div class="sub">
+Real Time Signal Engine
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','yaarwin')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','yaarwin')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<!-- BDG WIN -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image8.png"
+class="logo">
+
+<div class="game">
+BDG WIN
+</div>
+
+</div>
+
+<div class="badge">
+LIVE
+</div>
+
+</div>
+
+<div class="sub">
+High Accuracy Prediction
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','bdgwin')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','bdgwin')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<!-- BIG MUMBAI -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image9.png"
+class="logo">
+
+<div class="game">
+BIG MUMBAI
+</div>
+
+</div>
+
+<div class="badge">
+TREND
+</div>
+
+</div>
+
+<div class="sub">
+Fast Win Prediction
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','bigmumbai')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','bigmumbai')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<!-- TIRANGA -->
+
+<div class="card gameCard">
+
+<div class="top">
+
+<div class="left">
+
+<img src="image10.png"
+class="logo">
+
+<div class="game">
+TIRANGA
+</div>
+
+</div>
+
+<div class="badge">
+LIVE
+</div>
+
+</div>
+
+<div class="sub">
+AI Smart Prediction
+</div>
+
+<div class="row">
+
+<button class="btn"
+onclick="go('1m','tiranga')">
+1 MIN
+</button>
+
+<button class="btn btn2"
+onclick="go('30s','tiranga')">
+30 SEC
+</button>
+
+</div>
+
+</div>
+
+<div class="space"></div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+   MATRIX
+========================= */
+
+const canvas =
+document.getElementById('matrix');
+
+const ctx =
+canvas.getContext('2d');
+
+canvas.width =
+window.innerWidth;
+
+canvas.height =
+window.innerHeight;
+
+const letters='01';
+
+const fontSize=14;
+
+const columns =
+canvas.width/fontSize;
+
+const drops=[];
+
+for(let i=0;i<columns;i++){
+
+drops[i]=1;
+
+}
+
+function draw(){
+
+ctx.fillStyle='rgba(0,0,0,0.08)';
+
+ctx.fillRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+ctx.fillStyle='#00ff88';
+
+ctx.font=
+fontSize+'px monospace';
+
+for(let i=0;i<drops.length;i++){
+
+let text =
+letters[
+Math.floor(
+Math.random()*letters.length
+)
+];
+
+ctx.fillText(
+text,
+i*fontSize,
+drops[i]*fontSize
+);
+
+if(
+drops[i]*fontSize >
+canvas.height &&
+Math.random()>0.97
+){
+
+drops[i]=0;
+
+}
+
+drops[i]++;
+
+}
+
+}
+
+setInterval(draw,35);
+
+/* =========================
+   SEARCH
+========================= */
+
+function searchGame(){
+
+let input =
+document.getElementById('search')
+.value
+.toLowerCase();
+
+let cards =
+document.querySelectorAll('.gameCard');
+
+cards.forEach(card=>{
+
+let game =
+card.querySelector('.game')
+.innerText
+.toLowerCase();
+
+if(game.includes(input)){
+
+card.style.display='block';
+
+}else{
+
+card.style.display='none';
+
+}
+
+});
+
+}
+
+/* =========================
+   GAME DATA
+========================= */
+
+const gameData = {
+
+okwin:{
+name:'OKWIN',
+image:'image1.png'
+},
+
+game51:{
+name:'51 GAME',
+image:'image2.png'
+},
+
+club55:{
+name:'55 CLUB',
+image:'image3.png'
+},
+
+lottery82:{
+name:'82 LOTTERY',
+image:'image4.png'
+},
+
+dmwin:{
+name:'DM WIN',
+image:'image5.png'
+},
+
+jaiclub:{
+name:'JAI CLUB',
+image:'image6.png'
+},
+
+yaarwin:{
+name:'YAARWIN',
+image:'image7.png'
+},
+
+bdgwin:{
+name:'BDG WIN',
+image:'image8.png'
+},
+
+bigmumbai:{
+name:'BIG MUMBAI',
+image:'image9.png'
+},
+
+tiranga:{
+name:'TIRANGA',
+image:'image10.png'
+}
+
+};
+
+/* =========================
+   GO FUNCTION FIXED
+========================= */
+
+function go(type,gameKey){
+
+/* FULL DATA SAVE */
+
+const selectedData = {
+
+name: gameData[gameKey].name,
+
+image: gameData[gameKey].image,
+
+timer: type
+
+};
+
+/* SAVE */
+
+localStorage.setItem(
+'selectedGame',
+JSON.stringify(selectedData)
+);
+
+/* GO NEXT */
+
+window.location.href='Mode.html';
+
+}
+
+</script>
+
+</body>
+</html>

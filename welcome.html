@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Welcome</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    width:100%;
+    height:100vh;
+    overflow:hidden;
+    font-family:'Inter',sans-serif;
+    background:#050505;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+}
+
+/* APP */
+
+.app{
+    position:relative;
+    width:100%;
+    max-width:430px;
+    height:100vh;
+    overflow:hidden;
+    background:#050505;
+}
+
+/* MATRIX BG */
+
+canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.05;
+}
+
+/* GLOW */
+
+.bgGlow1,
+.bgGlow2{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(90px);
+}
+
+.bgGlow1{
+    width:240px;
+    height:240px;
+    background:#00ff8840;
+    top:-100px;
+    left:-80px;
+}
+
+.bgGlow2{
+    width:200px;
+    height:200px;
+    background:#00ff6640;
+    bottom:-80px;
+    right:-60px;
+}
+
+/* SMALL DOTS */
+
+.circle1,
+.circle2,
+.circle3{
+    position:absolute;
+    border-radius:50%;
+    background:#00ff88;
+    box-shadow:0 0 12px #00ff88;
+}
+
+.circle1{
+    width:10px;
+    height:10px;
+    top:140px;
+    left:35px;
+}
+
+.circle2{
+    width:8px;
+    height:8px;
+    top:220px;
+    right:45px;
+}
+
+.circle3{
+    width:6px;
+    height:6px;
+    bottom:180px;
+    left:70px;
+}
+
+/* CENTER */
+
+.center{
+    position:relative;
+    z-index:2;
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    padding:28px;
+}
+
+/* LOGO */
+
+.logoBox{
+    width:100px;
+    height:100px;
+
+    border-radius:30px;
+
+    background:rgba(255,255,255,.04);
+
+    border:1px solid rgba(0,255,136,.18);
+
+    backdrop-filter:blur(12px);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    box-shadow:
+    0 0 40px rgba(0,255,136,.10);
+
+    animation:float 3s ease-in-out infinite;
+}
+
+.logo{
+    font-size:42px;
+    color:#00ff88;
+
+    text-shadow:
+    0 0 20px rgba(0,255,136,.45);
+}
+
+/* TITLE */
+
+.title{
+    margin-top:30px;
+
+    font-size:28px;
+    font-weight:800;
+
+    color:white;
+
+    letter-spacing:.5px;
+
+    text-align:center;
+}
+
+.title span{
+    color:#00ff88;
+
+    text-shadow:
+    0 0 14px rgba(0,255,136,.45);
+}
+
+/* SUB */
+
+.sub{
+    margin-top:12px;
+
+    font-size:12px;
+
+    color:#8f8f8f;
+
+    letter-spacing:3px;
+
+    text-align:center;
+
+    line-height:20px;
+}
+
+/* BUTTONS */
+
+.buttons{
+    width:100%;
+    margin-top:45px;
+}
+
+/* BUTTON */
+
+.btn{
+    width:100%;
+    height:58px;
+
+    border:none;
+    border-radius:22px;
+
+    font-size:15px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.22s;
+
+    font-family:'Inter',sans-serif;
+}
+
+/* START */
+
+.primary{
+    background:#00ff88;
+    color:black;
+
+    box-shadow:
+    0 0 28px rgba(0,255,136,.28);
+}
+
+.primary:active{
+    transform:scale(.97);
+}
+
+/* TELEGRAM */
+
+.secondary{
+    margin-top:15px;
+
+    background:rgba(255,255,255,.04);
+
+    border:1px solid rgba(0,255,136,.16);
+
+    color:#00ff88;
+
+    backdrop-filter:blur(10px);
+}
+
+.secondary:active{
+    transform:scale(.97);
+}
+
+/* FOOTER */
+
+.footer{
+    position:absolute;
+
+    bottom:35px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    font-size:11px;
+
+    color:#666666;
+
+    letter-spacing:1px;
+
+    z-index:2;
+}
+
+/* ANIMATION */
+
+@keyframes float{
+
+    50%{
+        transform:translateY(-8px);
+    }
+
+}
+
+/* MOBILE */
+
+@media(max-width:360px){
+
+.title{
+    font-size:23px;
+}
+
+.logoBox{
+    width:88px;
+    height:88px;
+}
+
+.logo{
+    font-size:34px;
+}
+
+.btn{
+    height:54px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- MATRIX -->
+
+    <canvas id="matrix"></canvas>
+
+    <!-- GLOW -->
+
+    <div class="bgGlow1"></div>
+    <div class="bgGlow2"></div>
+
+    <!-- DOTS -->
+
+    <div class="circle1"></div>
+    <div class="circle2"></div>
+    <div class="circle3"></div>
+
+    <!-- MAIN -->
+
+    <div class="center">
+
+        <!-- LOGO -->
+
+        <div class="logoBox">
+
+            <div class="logo">
+                ⚡
+            </div>
+
+        </div>
+
+        <!-- TITLE -->
+
+        <div class="title">
+            DEVIL <span>PREDICTOR</span>
+        </div>
+
+        <!-- SUB -->
+
+        <div class="sub">
+            PREMIUM SERVER SYSTEM
+        </div>
+
+        <!-- BUTTONS -->
+
+        <div class="buttons">
+
+            <button class="btn primary"
+            onclick="location.href='Login.html'">
+
+                START NOW
+
+            </button>
+
+            <button class="btn secondary"
+            onclick="window.open('https://t.me/', '_blank')">
+
+                JOIN TELEGRAM
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+        Secure • Green UI • Fast
+    </div>
+
+</div>
+
+<script>
+
+/* MATRIX EFFECT */
+
+const canvas =
+document.getElementById('matrix');
+
+const ctx =
+canvas.getContext('2d');
+
+canvas.width =
+window.innerWidth;
+
+canvas.height =
+window.innerHeight;
+
+const letters = '01';
+
+const fontSize = 14;
+
+const columns =
+canvas.width / fontSize;
+
+const drops = [];
+
+for(let i=0;i<columns;i++){
+
+    drops[i]=1;
+
+}
+
+function draw(){
+
+    ctx.fillStyle='rgba(0,0,0,0.08)';
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle='#00ff88';
+
+    ctx.font=
+    fontSize+'px monospace';
+
+    for(let i=0;i<drops.length;i++){
+
+        let text =
+        letters[
+        Math.floor(
+        Math.random()*letters.length
+        )
+        ];
+
+        ctx.fillText(
+            text,
+            i*fontSize,
+            drops[i]*fontSize
+        );
+
+        if(
+        drops[i]*fontSize >
+        canvas.height &&
+        Math.random()>0.97
+        ){
+
+            drops[i]=0;
+
+        }
+
+        drops[i]++;
+
+    }
+
+}
+
+setInterval(draw,35);
+
+</script>
+
+</body>
+</html>

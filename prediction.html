@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>DEVIL PREDICTOR</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+body{
+width:100%;
+height:100vh;
+overflow:hidden;
+background:#050505;
+font-family:'Inter',sans-serif;
+display:flex;
+justify-content:center;
+color:white;
+}
+
+.app{
+width:100%;
+max-width:430px;
+height:100vh;
+overflow-y:auto;
+position:relative;
+background:#050505;
+}
+
+.app::-webkit-scrollbar{
+width:0;
+}
+
+/* MATRIX */
+
+canvas{
+position:fixed;
+inset:0;
+width:100%;
+height:100%;
+z-index:0;
+opacity:.05;
+}
+
+/* GLOW */
+
+.glow1,
+.glow2{
+position:absolute;
+border-radius:50%;
+filter:blur(90px);
+z-index:0;
+}
+
+.glow1{
+width:240px;
+height:240px;
+background:#00ff8840;
+top:-120px;
+left:-80px;
+}
+
+.glow2{
+width:220px;
+height:220px;
+background:#00ff6640;
+bottom:-100px;
+right:-60px;
+}
+
+/* MAIN */
+
+.main{
+position:relative;
+z-index:2;
+padding:20px;
+}
+
+/* TOP CARD */
+
+.topCard{
+background:rgba(12,12,12,.96);
+border:1px solid #1a1a1a;
+border-radius:30px;
+padding:20px;
+
+box-shadow:
+0 0 25px rgba(0,255,136,.06);
+}
+
+/* GAME INFO */
+
+.gameTop{
+display:flex;
+align-items:center;
+gap:14px;
+}
+
+.gameImage{
+width:72px;
+height:72px;
+border-radius:22px;
+object-fit:cover;
+border:1px solid #1f1f1f;
+
+box-shadow:
+0 0 20px rgba(0,255,136,.15);
+}
+
+.small{
+font-size:11px;
+color:#777;
+letter-spacing:1px;
+}
+
+.gameName{
+margin-top:4px;
+font-size:24px;
+font-weight:800;
+}
+
+.gameName span{
+color:#00ff88;
+}
+
+/* MODE */
+
+.modeBox{
+margin-top:10px;
+
+display:inline-flex;
+align-items:center;
+gap:8px;
+
+padding:8px 14px;
+
+border-radius:14px;
+
+background:#00ff8815;
+
+border:1px solid #00ff8835;
+
+font-size:11px;
+font-weight:700;
+letter-spacing:1px;
+
+color:#00ff88;
+}
+
+/* STATUS */
+
+.status{
+margin-top:18px;
+
+display:flex;
+align-items:center;
+gap:8px;
+
+font-size:12px;
+color:#9a9a9a;
+}
+
+.dot{
+width:8px;
+height:8px;
+border-radius:50%;
+background:#00ff88;
+
+box-shadow:
+0 0 12px #00ff88;
+
+animation:pulse 1s infinite;
+}
+
+/* CARD */
+
+.card{
+margin-top:18px;
+
+background:rgba(12,12,12,.96);
+
+border:1px solid #1a1a1a;
+
+border-radius:28px;
+
+padding:22px;
+
+box-shadow:
+0 0 22px rgba(0,255,136,.04);
+}
+
+/* LABEL */
+
+.label{
+font-size:11px;
+letter-spacing:1px;
+color:#6d6d6d;
+margin-bottom:12px;
+}
+
+/* TIMER */
+
+.timer{
+font-size:42px;
+font-weight:800;
+color:#00ff88;
+}
+
+/* PERIOD */
+
+.period{
+font-size:20px;
+font-weight:700;
+word-break:break-all;
+}
+
+/* RESULT */
+
+.predict{
+display:flex;
+justify-content:center;
+align-items:center;
+
+min-height:120px;
+
+font-weight:800;
+
+color:#00ff88;
+
+text-shadow:
+0 0 18px rgba(0,255,136,.35);
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+height:58px;
+
+margin-top:20px;
+
+border:none;
+border-radius:20px;
+
+background:#00ff88;
+color:black;
+
+font-size:15px;
+font-weight:700;
+
+cursor:pointer;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+transition:.2s;
+
+box-shadow:
+0 0 25px rgba(0,255,136,.25);
+}
+
+button:active{
+transform:scale(.97);
+}
+
+/* LOADER */
+
+.loader{
+display:none;
+
+width:24px;
+height:24px;
+
+border-radius:50%;
+
+border:3px solid rgba(0,0,0,.25);
+border-top:3px solid black;
+
+animation:spin 1s linear infinite;
+}
+
+/* FOOTER */
+
+.footer{
+margin-top:22px;
+margin-bottom:30px;
+
+text-align:center;
+
+font-size:11px;
+letter-spacing:1px;
+
+color:#666;
+}
+
+/* ANIMATION */
+
+@keyframes spin{
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+@keyframes pulse{
+
+50%{
+opacity:.3;
+}
+
+}
+
+/* MOBILE */
+
+@media(max-width:360px){
+
+.gameImage{
+width:64px;
+height:64px;
+}
+
+.gameName{
+font-size:20px;
+}
+
+.timer{
+font-size:36px;
+}
+
+.period{
+font-size:17px;
+}
+
+.predict{
+min-height:100px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="app">
+
+<div class="glow1"></div>
+<div class="glow2"></div>
+
+<div class="main">
+
+<!-- TOP CARD -->
+
+<div class="topCard">
+
+<div class="gameTop">
+
+<img src=""
+id="gameImage"
+class="gameImage">
+
+<div>
+
+<div class="small">
+CONNECTED GAME
+</div>
+
+<div class="gameName"
+id="gameName">
+OKWIN
+</div>
+
+<div class="modeBox"
+id="timerMode">
+⚡ 30 SEC MODE
+</div>
+
+</div>
+
+</div>
+
+<div class="status">
+
+<div class="dot"></div>
+
+AI SERVER CONNECTED
+
+</div>
+
+</div>
+
+<!-- TIMER -->
+
+<div class="card">
+
+<div class="label">
+LIVE TIMER
+</div>
+
+<div class="timer"
+id="timer">
+00:30
+</div>
+
+</div>
+
+<!-- PERIOD -->
+
+<div class="card">
+
+<div class="label">
+NEXT PERIOD
+</div>
+
+<div class="period"
+id="nextPeriod">
+----
+</div>
+
+</div>
+
+<!-- RESULT -->
+
+<div class="card">
+
+<div class="label">
+AI PREDICTION
+</div>
+
+<div class="predict"
+id="prediction">
+--
+</div>
+
+</div>
+
+<!-- BUTTON -->
+
+<button onclick="updateUI()">
+
+<span id="btnText">
+GET PREDICTION
+</span>
+
+<div class="loader"
+id="loader"></div>
+
+</button>
+
+<!-- FOOTER -->
+
+<div class="footer">
+Secure • AI Powered • Fast
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+   SECURE SETTINGS
+========================= */
+
+/* DISABLE RIGHT CLICK */
+
+document.addEventListener(
+'contextmenu',
+e=>e.preventDefault()
+);
+
+/* DISABLE DEVTOOLS */
+
+document.onkeydown=function(e){
+
+if(
+e.keyCode==123 ||
+(e.ctrlKey && e.shiftKey && e.keyCode==73) ||
+(e.ctrlKey && e.shiftKey && e.keyCode==74) ||
+(e.ctrlKey && e.keyCode==85)
+){
+
+return false;
+
+}
+
+};
+
+/* SCREENSHOT BLUR */
+
+window.addEventListener('blur',()=>{
+
+document.body.style.filter='blur(14px)';
+
+});
+
+window.addEventListener('focus',()=>{
+
+document.body.style.filter='blur(0px)';
+
+});
+
+/* =========================
+   GET STORAGE DATA
+========================= */
+
+const selectedGame =
+JSON.parse(
+localStorage.getItem('selectedGame')
+);
+
+const timerType =
+localStorage.getItem('timerType') || '30s';
+
+const predictionMode =
+localStorage.getItem('predictionMode') || 'BIG SMALL';
+
+/* =========================
+   REDIRECT
+========================= */
+
+if(!selectedGame){
+
+window.location.href='home.html';
+
+}
+
+/* =========================
+   SET GAME UI
+========================= */
+
+document.getElementById('gameImage')
+.src = selectedGame.image;
+
+document.getElementById('gameName')
+.innerHTML = selectedGame.name;
+
+/* TIMER MODE */
+
+if(timerType === '1m'){
+
+document.getElementById('timerMode')
+.innerHTML =
+'⚡ 1 MIN MODE';
+
+}else{
+
+document.getElementById('timerMode')
+.innerHTML =
+'⚡ 30 SEC MODE';
+
+}
+
+/* =========================
+   API
+========================= */
+
+const API_URL =
+timerType === '1m'
+? 'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageSize=10&pageNo=1'
+: 'https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?pageSize=10&pageNo=1';
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const timerEl =
+document.getElementById('timer');
+
+const nextPeriodEl =
+document.getElementById('nextPeriod');
+
+const predictionEl =
+document.getElementById('prediction');
+
+const btn =
+document.querySelector('button');
+
+const btnText =
+document.getElementById('btnText');
+
+const loader =
+document.getElementById('loader');
+
+/* =========================
+   STATE
+========================= */
+
+let latestData = [];
+
+let currentPeriod = '';
+
+let lastFetchedIssue = '';
+
+let predictionLocked = false;
+
+let totalTime =
+timerType === '1m'
+? 60
+: 30;
+
+let localTimer = totalTime;
+
+/* =========================
+   FETCH DATA
+========================= */
+
+async function fetchData(){
+
+try{
+
+const res =
+await fetch(
+API_URL + '&t=' + Date.now(),
+{
+cache:'no-store'
+}
+);
+
+const data =
+await res.json();
+
+return data?.data?.list || [];
+
+}catch(err){
+
+console.log(err);
+
+return [];
+
+}
+
+}
+
+/* =========================
+   UPDATE PERIOD
+========================= */
+
+async function updatePeriodLive(){
+
+const data =
+await fetchData();
+
+if(data.length === 0) return;
+
+latestData = data;
+
+/* CURRENT ISSUE */
+
+const latestIssue =
+data[0].issueNumber ||
+data[0].issue;
+
+/* NEW RESULT DETECT */
+
+if(
+lastFetchedIssue !== '' &&
+latestIssue !== lastFetchedIssue
+){
+
+predictionLocked = false;
+
+btn.disabled = false;
+
+btn.style.opacity = '1';
+
+btn.style.pointerEvents = 'auto';
+
+predictionEl.innerHTML = '--';
+
+predictionEl.style.color = '#00ff88';
+
+}
+
+lastFetchedIssue = latestIssue;
+
+currentPeriod = latestIssue;
+
+/* NEXT PERIOD */
+
+const nextPeriod =
+parseInt(currentPeriod)+1;
+
+nextPeriodEl.innerText =
+nextPeriod;
+
+/* TIMER */
+
+const now =
+new Date();
+
+/* 30 SEC */
+
+if(timerType === '30s'){
+
+const seconds =
+now.getSeconds();
+
+localTimer =
+30 - (seconds % 30);
+
+if(localTimer === 30){
+
+localTimer = 0;
+
+}
+
+}
+
+/* 1 MIN */
+
+else{
+
+localTimer =
+60 - now.getSeconds();
+
+if(localTimer === 60){
+
+localTimer = 0;
+
+}
+
+}
+
+updateTimerUI();
+
+}
+
+/* =========================
+   TIMER UI
+========================= */
+
+function updateTimerUI(){
+
+let m =
+String(
+Math.floor(localTimer/60)
+).padStart(2,'0');
+
+let s =
+String(
+localTimer%60
+).padStart(2,'0');
+
+timerEl.innerText =
+`${m}:${s}`;
+
+}
+
+/* =========================
+   LIVE TIMER
+========================= */
+
+setInterval(()=>{
+
+if(localTimer > 0){
+
+localTimer--;
+
+}else{
+
+updatePeriodLive();
+
+}
+
+updateTimerUI();
+
+},1000);
+
+/* =========================
+   AUTO PERIOD CHECK
+========================= */
+
+setInterval(()=>{
+
+updatePeriodLive();
+
+},5000);
+
+/* =========================
+   GAP
+========================= */
+
+function firstGaps(numbers){
+
+let gaps=[];
+
+for(let i=0;i<numbers.length-1;i++){
+
+gaps.push(
+Math.abs(
+numbers[i]-numbers[i+1]
+)
+);
+
+}
+
+return gaps;
+
+}
+
+/* =========================
+   LAYERS
+========================= */
+
+function makeLayers(gaps){
+
+let current=[...gaps];
+
+let binary=[];
+
+let leftover=null;
+
+while(current.length>1){
+
+let next=[];
+
+for(let i=0;i<current.length-1;i++){
+
+let diff =
+Math.abs(
+current[i]-current[i+1]
+);
+
+if(diff<=1){
+
+next.push(diff);
+
+}
+
+}
+
+if(current.length%2!==0){
+
+leftover =
+current[current.length-1];
+
+}
+
+current=[...next];
+
+binary=[...current];
+
+if(current.length<=1) break;
+
+}
+
+return {
+binary,
+leftover
+};
+
+}
+
+/* =========================
+   BIG SMALL
+========================= */
+
+function predictBS(binary){
+
+let zeros =
+binary.filter(x=>x===0).length;
+
+let ones =
+binary.filter(x=>x===1).length;
+
+let last =
+binary[binary.length-1] || 0;
+
+if(last===1){
+
+return ones%2!==0
+? 'BIG'
+: 'SMALL';
+
+}else{
+
+return zeros%2!==0
+? 'SMALL'
+: 'BIG';
+
+}
+
+}
+
+/* =========================
+   NUMBER
+========================= */
+
+function predictNumber(binary,leftover,bs){
+
+if(leftover!==null){
+
+let pool =
+bs==='BIG'
+? [5,6,7,8,9]
+: [0,1,2,3,4];
+
+let filtered =
+pool.filter(
+x=>x%2===leftover%2
+);
+
+return filtered[
+Math.floor(
+Math.random()*filtered.length
+)
+];
+
+}
+
+return Math.floor(Math.random()*10);
+
+}
+
+/* =========================
+   NUMBER COLORS
+========================= */
+
+function applyNumberColor(num){
+
+predictionEl.style.textShadow =
+'0 0 18px rgba(255,255,255,.15)';
+
+if(
+num == 1 ||
+num == 3 ||
+num == 7 ||
+num == 9
+){
+
+predictionEl.style.color =
+'#00ff88';
+
+}
+
+else if(
+num == 2 ||
+num == 4 ||
+num == 6 ||
+num == 8
+){
+
+predictionEl.style.color =
+'#ff3b3b';
+
+}
+
+else if(num == 0){
+
+predictionEl.style.color =
+'#ff4dff';
+
+}
+
+else if(num == 5){
+
+predictionEl.style.color =
+'#b266ff';
+
+}
+
+}
+
+/* =========================
+   GET PREDICTION
+========================= */
+
+async function updateUI(){
+
+/* LOCK */
+
+if(predictionLocked){
+
+return;
+
+}
+
+/* LOADING */
+
+btnText.style.display='none';
+
+loader.style.display='block';
+
+/* FETCH LATEST */
+
+await updatePeriodLive();
+
+/* NUMBERS */
+
+let numbers =
+latestData.map(
+x=>parseInt(x.number)
+);
+
+if(numbers.length===0){
+
+btnText.style.display='block';
+
+loader.style.display='none';
+
+return;
+
+}
+
+/* GAP */
+
+let gaps =
+firstGaps(numbers);
+
+let {binary,leftover} =
+makeLayers(gaps);
+
+if(binary.length===0){
+
+binary=[0];
+
+}
+
+/* PREDICT */
+
+let bs =
+predictBS(binary);
+
+let num =
+predictNumber(
+binary,
+leftover,
+bs
+);
+
+/* MODE */
+
+if(predictionMode === 'NUMBER'){
+
+predictionEl.style.fontSize='110px';
+
+predictionEl.innerText =
+num;
+
+applyNumberColor(num);
+
+}else{
+
+predictionEl.style.fontSize='58px';
+
+predictionEl.style.color =
+'#00ff88';
+
+predictionEl.innerText =
+bs;
+
+}
+
+/* BUTTON */
+
+setTimeout(()=>{
+
+btnText.style.display='block';
+
+loader.style.display='none';
+
+},400);
+
+/* LOCK BUTTON */
+
+predictionLocked = true;
+
+btn.disabled = true;
+
+btn.style.opacity = '.5';
+
+btn.style.pointerEvents = 'none';
+
+}
+
+/* =========================
+   MATRIX EFFECT
+========================= */
+
+const canvas =
+document.getElementById('matrix');
+
+const ctx =
+canvas.getContext('2d');
+
+canvas.width =
+window.innerWidth;
+
+canvas.height =
+window.innerHeight;
+
+const letters='01';
+
+const fontSize=14;
+
+const columns =
+canvas.width/fontSize;
+
+const drops=[];
+
+for(let i=0;i<columns;i++){
+
+drops[i]=1;
+
+}
+
+function draw(){
+
+ctx.fillStyle='rgba(0,0,0,0.08)';
+
+ctx.fillRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+ctx.fillStyle='#00ff88';
+
+ctx.font=
+fontSize+'px monospace';
+
+for(let i=0;i<drops.length;i++){
+
+let text =
+letters[
+Math.floor(
+Math.random()*letters.length
+)
+];
+
+ctx.fillText(
+text,
+i*fontSize,
+drops[i]*fontSize
+);
+
+if(
+drops[i]*fontSize >
+canvas.height &&
+Math.random()>0.97
+){
+
+drops[i]=0;
+
+}
+
+drops[i]++;
+
+}
+
+}
+
+setInterval(draw,35);
+
+/* =========================
+   START
+========================= */
+
+updatePeriodLive();
+
+</script>
+
+</body>
+</html>
