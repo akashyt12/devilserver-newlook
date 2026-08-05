@@ -4,293 +4,253 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DEVIL PREDICTOR</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Sans:wght@700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
---red:#ef4444;--red-light:#f87171;--red-dark:#dc2626;
---bg:#0a0a0a;--card:rgba(239,68,68,.03);--border:rgba(239,68,68,.1);
---text:#e5e5e5;--text-dim:#666;
+:root {
+  --green: #10b981;
+  --green-light: #34d399;
+  --green-dark: #059669;
+  --bg: #070b14;
+  --card: rgba(16,185,129,.04);
+  --border: rgba(16,185,129,.12);
 }
-body{
-background:var(--bg);color:var(--text);
-font-family:'Space Grotesk',sans-serif;
-min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;
-justify-content:center;position:relative;
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow-x:hidden;
 }
-#matrixCanvas{
-position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:.15;
-}
-#particleCanvas{
-position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;
-}
-.scanlines{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);
-z-index:9998;pointer-events:none;
-}
-.glitch-overlay{
-position:fixed;top:0;left:0;width:100%;height:100%;
-z-index:9997;pointer-events:none;opacity:0;
-}
-.welcome-container{
-position:relative;z-index:10;display:flex;flex-direction:column;
-align-items:center;gap:32px;padding:40px 20px;max-width:600px;width:100%;
-}
-.status-pill{
-display:inline-flex;align-items:center;gap:8px;
-background:rgba(239,68,68,.08);border:1px solid var(--border);
-border-radius:20px;padding:6px 16px;
-font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--red-light);
-letter-spacing:1.5px;text-transform:uppercase;
-}
-.pulse-dot{
-width:7px;height:7px;background:var(--red);border-radius:50%;
-animation:pulse 1.5s ease-in-out infinite;
-box-shadow:0 0 6px var(--red);
-}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 
-.logo-3d{
-position:relative;perspective:600px;cursor:default;
+/* STATUS BAR */
+.status-bar {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:12px 24px;
+  border-bottom:1px solid var(--border);
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:3px;
+  color:var(--green);
+  opacity:0;
+  animation:fadeIn .6s ease forwards;
 }
-.logo-inner{
-width:110px;height:110px;position:relative;
-transform-style:preserve-3d;
-animation:floatLogo 4s ease-in-out infinite;
+.status-dot {
+  width:8px; height:8px;
+  background:var(--green);
+  box-shadow:0 0 10px var(--green);
+  border-radius:0;
+  animation:pulse 2s infinite;
 }
-@keyframes floatLogo{0%,100%{transform:translateY(0) rotateY(0)}50%{transform:translateY(-12px) rotateY(5deg)}}
-.logo-icon{
-width:110px;height:110px;display:flex;align-items:center;justify-content:center;
-background:linear-gradient(135deg,var(--red-dark),var(--red));
-border-radius:22px;position:relative;
-box-shadow:0 8px 32px rgba(239,68,68,.3),0 0 60px rgba(239,68,68,.1);
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50% { opacity:.4; }
 }
-.logo-icon svg{width:50px;height:50px;filter:drop-shadow(0 0 10px rgba(255,255,255,.3))}
-.ring-pulse{
-position:absolute;top:-10px;left:-10px;right:-10px;bottom:-10px;
-border:2px solid var(--red);border-radius:28px;opacity:0;
-animation:ringPulse 2.5s ease-out infinite;
-}
-@keyframes ringPulse{0%{transform:scale(.85);opacity:.7}100%{transform:scale(1.3);opacity:0}}
 
-.title{
-font-family:'Outfit',sans-serif;font-size:clamp(32px,7vw,52px);font-weight:800;
-background:linear-gradient(135deg,var(--red-light),var(--red),var(--red-dark));
--webkit-background-clip:text;-webkit-text-fill-color:transparent;
-text-shadow:0 0 40px rgba(239,68,68,.4);
-letter-spacing:2px;text-align:center;
-animation:glitchText 4s infinite;
+/* MAIN */
+main {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px 20px;
+  text-align:center;
 }
-@keyframes glitchText{
-0%,90%,100%{transform:translate(0);opacity:1}
-92%{transform:translate(-3px,1px);opacity:.9}
-94%{transform:translate(3px,-1px);opacity:.95}
-96%{transform:translate(-1px,2px);opacity:.88}
-98%{transform:translate(2px,0);opacity:.92}
+
+/* LOTTIE */
+.lottie-wrap {
+  width:280px; height:280px;
+  opacity:0;
+  animation:fadeIn .8s ease .2s forwards;
 }
-.subtitle{
-font-family:'Share Tech Mono',monospace;font-size:13px;
-color:var(--red-light);letter-spacing:3px;text-transform:uppercase;
-opacity:.8;
+lottie-player {
+  width:100%; height:100%;
+  border-radius:0;
 }
-.features{
-display:flex;gap:32px;align-items:center;justify-content:center;
+
+/* TEXT */
+.title {
+  font-family:'DM Sans',sans-serif;
+  font-size:48px;
+  font-weight:700;
+  color:#fff;
+  margin-top:8px;
+  opacity:0;
+  animation:fadeSlideUp .7s ease .4s forwards;
 }
-.feature{
-display:flex;flex-direction:column;align-items:center;gap:8px;
+.subtitle {
+  font-size:13px;
+  font-weight:500;
+  color:var(--green);
+  letter-spacing:4px;
+  margin-top:12px;
+  opacity:0;
+  animation:fadeSlideUp .7s ease .55s forwards;
 }
-.feature-icon{
-width:48px;height:48px;border-radius:12px;
-background:var(--card);border:1px solid var(--border);
-display:flex;align-items:center;justify-content:center;
-transition:all .3s;cursor:default;
+
+/* FEATURES */
+.features {
+  display:flex;
+  gap:16px;
+  margin-top:48px;
+  flex-wrap:wrap;
+  justify-content:center;
 }
-.feature-icon:hover{
-background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);
-transform:translateY(-2px);box-shadow:0 4px 20px rgba(239,68,68,.15);
+.feature-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:28px 32px;
+  text-align:center;
+  min-width:150px;
+  opacity:0;
+  transition:background .3s, border-color .3s;
 }
-.feature-icon svg{width:22px;height:22px;stroke:var(--red);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.feature-label{
-font-family:'Share Tech Mono',monospace;font-size:10px;
-color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;
+.feature-card:nth-child(1) { animation:slideUp .6s ease .7s forwards; }
+.feature-card:nth-child(2) { animation:slideUp .6s ease .85s forwards; }
+.feature-card:nth-child(3) { animation:slideUp .6s ease 1s forwards; }
+.feature-card:hover {
+  background:rgba(16,185,129,.08);
+  border-color:var(--green-dark);
 }
-.divider{
-width:100%;height:1px;position:relative;
-background:linear-gradient(90deg,transparent,var(--red-dark),var(--red),var(--red-dark),transparent);
+.feature-card svg {
+  width:28px; height:28px;
+  fill:none;
+  stroke:var(--green);
+  stroke-width:1.8;
+  stroke-linecap:square;
+  margin-bottom:14px;
 }
-.divider::after{
-content:'';position:absolute;top:-3px;left:0;right:0;height:7px;
-background:linear-gradient(90deg,transparent,rgba(239,68,68,.15),transparent);filter:blur(3px);
+.feature-card span {
+  display:block;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:3px;
+  color:var(--green-light);
 }
-.buttons{display:flex;flex-direction:column;gap:14px;width:100%;max-width:320px}
-.btn{
-display:flex;align-items:center;justify-content:center;gap:10px;
-padding:14px 28px;border-radius:12px;border:none;
-font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;
-cursor:pointer;transition:all .3s;text-decoration:none;letter-spacing:.5px;
+
+/* BUTTONS */
+.btns {
+  display:flex;
+  gap:16px;
+  margin-top:48px;
+  flex-wrap:wrap;
+  justify-content:center;
 }
-.btn-primary{
-background:linear-gradient(135deg,var(--red-dark),var(--red));
-color:#fff;
-box-shadow:0 4px 24px rgba(239,68,68,.3);
+.btn {
+  display:inline-block;
+  padding:14px 40px;
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:2px;
+  border-radius:0;
+  border:1px solid transparent;
+  cursor:pointer;
+  text-decoration:none;
+  opacity:0;
+  transition:all .25s;
+  animation:fadeIn .6s ease 1.15s forwards;
 }
-.btn-primary:hover{
-transform:translateY(-2px);
-box-shadow:0 6px 32px rgba(239,68,68,.45);
+.btn:hover { transform:scale(1.04); }
+.btn:active { transform:scale(.97); }
+.btn-primary {
+  background:var(--green);
+  color:var(--bg);
+  border-color:var(--green);
 }
-.btn-primary svg{width:18px;height:18px}
-.btn-secondary{
-background:transparent;color:var(--red-light);
-border:1px solid var(--border);
+.btn-primary:hover { background:var(--green-light); border-color:var(--green-light); }
+.btn-secondary {
+  background:transparent;
+  color:var(--green);
+  border-color:var(--green);
 }
-.btn-secondary:hover{
-background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.25);
-transform:translateY(-1px);
+.btn-secondary:hover { background:rgba(16,185,129,.1); }
+
+/* FOOTER */
+footer {
+  padding:24px;
+  text-align:center;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:3px;
+  color:rgba(16,185,129,.5);
+  border-top:1px solid var(--border);
+  opacity:0;
+  animation:fadeIn .6s ease 1.3s forwards;
 }
-.btn-secondary svg{width:16px;height:16px}
-.footer{
-font-family:'Share Tech Mono',monospace;font-size:11px;
-color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;
-margin-top:12px;opacity:.5;
+
+/* KEYFRAMES */
+@keyframes fadeIn {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+@keyframes fadeSlideUp {
+  from { opacity:0; transform:translateY(24px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity:0; transform:translateY(40px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+@media (max-width:600px) {
+  .title { font-size:32px; }
+  .features { flex-direction:column; align-items:center; }
+  .feature-card { width:100%; max-width:260px; }
 }
 </style>
 </head>
 <body>
 
-<canvas id="matrixCanvas"></canvas>
-<canvas id="particleCanvas"></canvas>
-<div class="scanlines"></div>
-<div class="glitch-overlay" id="glitchOverlay"></div>
+<div class="status-bar">
+  <div class="status-dot"></div>
+  SYSTEM ONLINE
+</div>
 
-<div class="welcome-container">
-  <div class="status-pill"><div class="pulse-dot"></div>// AI ENGINE ONLINE</div>
-
-  <div class="logo-3d" id="logo3d">
-    <div class="logo-inner" id="logoInner">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-        </svg>
-      </div>
-      <div class="ring-pulse"></div>
-    </div>
+<main>
+  <div class="lottie-wrap">
+    <lottie-player
+      src="https://assets5.lottiefiles.com/packages/lf20_VAm4gY.json"
+      background="transparent"
+      speed="1"
+      loop
+      autoplay>
+    </lottie-player>
   </div>
 
   <h1 class="title">DEVIL PREDICTOR</h1>
-  <p class="subtitle">// QUANTUM PREDICTION ENGINE</p>
+  <p class="subtitle">QUANTUM PREDICTION ENGINE</p>
 
   <div class="features">
-    <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
-      <span class="feature-label">Secure</span>
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24"><path d="M12 2L3 7v6c0 5.25 3.75 10.05 9 11 5.25-.95 9-5.75 9-11V7l-9-5z"/></svg>
+      <span>SECURE</span>
     </div>
-    <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      </div>
-      <span class="feature-label">Fast</span>
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/></svg>
+      <span>FAST</span>
     </div>
-    <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      </div>
-      <span class="feature-label">AI Power</span>
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9c0 3.4 2.1 6.3 5 7.4V22h8v-3.6c2.9-1.1 5-4 5-7.4a9 9 0 0 0-9-9z"/><path d="M10 20v-6H8v6"/><path d="M16 20v-6h-2v6"/><path d="M12 10V8"/><path d="M9 12h6"/></svg>
+      <span>AI POWER</span>
     </div>
   </div>
 
-  <div class="divider"></div>
-
-  <div class="buttons">
-    <a href="login.html" class="btn btn-primary">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      START NOW
-    </a>
-    <a href="https://t.me/" target="_blank" class="btn btn-secondary">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      JOIN TELEGRAM
-    </a>
+  <div class="btns">
+    <a href="login.html" class="btn btn-primary">GET STARTED</a>
+    <a href="https://t.me/" target="_blank" class="btn btn-secondary">JOIN COMMUNITY</a>
   </div>
+</main>
 
-  <p class="footer">HACK THE SYSTEM</p>
-</div>
+<footer>SECURE &bull; FAST &bull; RELIABLE</footer>
 
-<script>
-(function(){
-  // MATRIX RAIN
-  const mc=document.getElementById('matrixCanvas'),mx=mc.getContext('2d');
-  function resizeMatrix(){mc.width=innerWidth;mc.height=innerHeight}
-  resizeMatrix();addEventListener('resize',resizeMatrix);
-  const katakana='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-  const chars='01'+katakana;
-  const fs=14;let cols=Math.floor(mc.width/fs),drops=new Array(cols).fill(1);
-  function drawMatrix(){
-    mx.fillStyle='rgba(10,10,10,.05)';mx.fillRect(0,0,mc.width,mc.height);
-    mx.fillStyle='rgba(239,68,68,.7)';mx.font=fs+'px "Share Tech Mono",monospace';
-    for(let i=0;i<drops.length;i++){
-      const c=chars[Math.floor(Math.random()*chars.length)];
-      mx.fillText(c,i*fs,drops[i]*fs);
-      if(drops[i]*fs>mc.height&&Math.random()>.975)drops[i]=0;
-      drops[i]++;
-    }
-  }
-  setInterval(drawMatrix,45);
-
-  // PARTICLES
-  const pc=document.getElementById('particleCanvas'),px=pc.getContext('2d');
-  function resizeParticles(){pc.width=innerWidth;pc.height=innerHeight}
-  resizeParticles();addEventListener('resize',resizeParticles);
-  const particles=[];
-  class Particle{
-    constructor(){this.reset()}
-    reset(){
-      this.x=Math.random()*pc.width;
-      this.y=pc.height+Math.random()*40;
-      this.size=Math.random()*2+.5;
-      this.speedY=-(Math.random()*.6+.2);
-      this.speedX=(Math.random()-.5)*.3;
-      this.opacity=Math.random()*.4+.1;
-      this.hue=Math.floor(Math.random()*20+350)%360;
-    }
-    update(){
-      this.x+=this.speedX;this.y+=this.speedY;
-      if(this.y<-10)this.reset();
-    }
-    draw(){
-      px.beginPath();px.arc(this.x,this.y,this.size,0,Math.PI*2);
-      px.fillStyle=`hsla(${this.hue},85%,55%,${this.opacity})`;px.fill();
-    }
-  }
-  for(let i=0;i<60;i++)particles.push(new Particle());
-  function animateParticles(){
-    px.clearRect(0,0,pc.width,pc.height);
-    particles.forEach(p=>{p.update();p.draw()});
-    requestAnimationFrame(animateParticles);
-  }
-  animateParticles();
-
-  // MOUSE PARALLAX
-  const logo3d=document.getElementById('logo3d');
-  document.addEventListener('mousemove',e=>{
-    const cx=innerWidth/2,cy=innerHeight/2;
-    const rx=(e.clientX-cx)/cx*12;
-    const ry=(e.clientY-cy)/cy*12;
-    logo3d.style.transform=`rotateY(${rx}deg) rotateX(${-ry}deg)`;
-  });
-
-  // GLITCH OVERLAY
-  const go=document.getElementById('glitchOverlay');
-  setInterval(()=>{
-    if(Math.random()>.92){
-      go.style.opacity='1';
-      go.style.background=`rgba(239,68,68,${Math.random()*.03})`;
-      go.style.mixBlendMode='overlay';
-      setTimeout(()=>{go.style.opacity='0'},60);
-    }
-  },120);
-})();
-</script>
 </body>
 </html>

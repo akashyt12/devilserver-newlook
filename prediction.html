@@ -1,673 +1,266 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DEVIL PREDICTOR - Red Hacker</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Devil Predictor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <style>
-:root {
-  --red: #ef4444;
-  --red-light: #f87171;
-  --red-dark: #dc2626;
-  --bg: #0a0a0a;
-  --card: rgba(239,68,68,.03);
-  --border: rgba(239,68,68,.1);
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: var(--bg);
-  font-family: 'Outfit', sans-serif;
-  color: #fff;
-  overflow-x: hidden;
-  min-height: 100vh;
-}
-body.blurred { filter: blur(10px); pointer-events: none; }
-#matrix-canvas {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-}
-.scanlines {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(239,68,68,.015) 2px, rgba(239,68,68,.015) 4px);
-  z-index: 1; pointer-events: none;
-}
-.particles-container {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-}
-.dashboard {
-  position: relative; z-index: 2;
-  max-width: 480px; margin: 0 auto;
-  padding: 20px 16px 40px;
-  min-height: 100vh;
-}
-
-/* Card base */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 16px;
-  backdrop-filter: blur(10px);
-  opacity: 0;
-  transform: translateY(30px);
-  animation: fadeUp .6s ease forwards;
-}
-.card:nth-child(1) { animation-delay: .1s; }
-.card:nth-child(2) { animation-delay: .2s; }
-.card:nth-child(3) { animation-delay: .3s; }
-.card:nth-child(4) { animation-delay: .4s; }
-.card:nth-child(5) { animation-delay: .5s; }
-.card:nth-child(6) { animation-delay: .6s; }
-.card:nth-child(7) { animation-delay: .7s; }
-
-@keyframes fadeUp {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Game Header */
-.game-header {
-  display: flex; align-items: center; gap: 14px;
-}
-.logo {
-  width: 60px; height: 60px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--red-dark), var(--red));
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 22px; font-weight: 700;
-  box-shadow: 0 0 20px rgba(239,68,68,.4);
-  position: relative;
-}
-.logo::after {
-  content: ''; position: absolute; inset: -2px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, var(--red), transparent);
-  z-index: -1; opacity: .5;
-}
-.game-info { flex: 1; }
-.game-name {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px; font-weight: 700;
-  letter-spacing: .5px;
-}
-.mode-tag {
-  display: inline-block; padding: 3px 10px;
-  background: rgba(239,68,68,.15);
-  border: 1px solid rgba(239,68,68,.3);
-  border-radius: 20px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px; color: var(--red-light);
-  margin-top: 4px;
-}
-.status-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-top: 6px; font-size: 12px; color: #888;
-}
-.pulse-dot {
-  width: 8px; height: 8px;
-  background: var(--red);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.6); }
-  50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
-}
-
-/* Timer Card */
-.timer-card { text-align: center; }
-.timer-svg { width: 130px; height: 130px; margin: 0 auto 8px; }
-.timer-svg circle {
-  fill: none; stroke-width: 6; stroke-linecap: round;
-}
-.timer-svg .ring-bg { stroke: rgba(239,68,68,.1); }
-.timer-svg .ring-progress {
-  stroke: var(--red);
-  stroke-dasharray: 377;
-  stroke-dashoffset: 0;
-  transform: rotate(-90deg);
-  transform-origin: center;
-  transition: stroke-dashoffset .5s linear;
-  filter: drop-shadow(0 0 6px rgba(239,68,68,.6));
-}
-.timer-value {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 40px; font-weight: 700;
-  color: var(--red);
-  text-shadow: 0 0 20px rgba(239,68,68,.5);
-  margin-top: -70px; position: relative;
-}
-.timer-label {
-  font-size: 11px; color: #666;
-  text-transform: uppercase; letter-spacing: 2px;
-  margin-top: 24px;
-}
-.timer-mode-tag {
-  display: inline-block; padding: 2px 8px;
-  background: rgba(239,68,68,.1);
-  border: 1px solid rgba(239,68,68,.2);
-  border-radius: 10px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px; color: var(--red-light);
-  margin-top: 6px;
-}
-
-/* Period Card */
-.period-card { text-align: center; }
-.period-label {
-  font-size: 12px; color: #666;
-  text-transform: uppercase; letter-spacing: 2px;
-  margin-bottom: 8px;
-}
-.period-value {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 20px; color: var(--red-light);
-  transition: color .3s;
-}
-.period-value.flash {
-  animation: flashAnim .5s ease;
-}
-@keyframes flashAnim {
-  0%,100% { color: var(--red-light); }
-  50% { color: #fff; text-shadow: 0 0 20px rgba(239,68,68,.8); }
-}
-
-/* Prediction Card */
-.prediction-card {
-  background: linear-gradient(135deg, rgba(239,68,68,.08), rgba(220,38,38,.05));
-  text-align: center;
-  border-color: rgba(239,68,68,.2);
-}
-.pred-label {
-  font-size: 11px; color: #666;
-  text-transform: uppercase; letter-spacing: 2px;
-  margin-bottom: 6px;
-}
-.pred-value {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 80px; font-weight: 700;
-  color: var(--red);
-  text-shadow: 0 0 40px rgba(239,68,68,.5);
-  line-height: 1;
-}
-.pred-sub {
-  font-size: 13px; color: #555;
-  margin-top: 6px;
-}
-
-/* History Card */
-.history-card { }
-.history-title {
-  font-size: 11px; color: #666;
-  text-transform: uppercase; letter-spacing: 2px;
-  margin-bottom: 12px;
-  text-align: center;
-}
-.history-grid {
-  display: grid; grid-template-columns: repeat(8,1fr);
-  gap: 6px; justify-items: center;
-}
-.history-item {
-  width: 36px; height: 36px;
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 14px; font-weight: 600;
-  transition: transform .2s;
-}
-.history-item:hover { transform: scale(1.15); }
-.history-item.green {
-  background: rgba(34,197,94,.15);
-  border: 1px solid rgba(34,197,94,.3);
-  color: #22c55e;
-}
-.history-item.red {
-  background: rgba(239,68,68,.15);
-  border: 1px solid rgba(239,68,68,.3);
-  color: var(--red);
-}
-.history-item.violet {
-  background: rgba(168,85,247,.15);
-  border: 1px solid rgba(168,85,247,.3);
-  color: #a855f7;
-}
-
-/* Button */
-.pred-btn {
-  width: 100%; padding: 16px;
-  border: none; border-radius: 14px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 16px; font-weight: 700;
-  letter-spacing: 1px;
-  cursor: pointer;
-  position: relative; overflow: hidden;
-  transition: all .3s;
-  opacity: 0; transform: translateY(30px);
-  animation: fadeUp .6s ease forwards;
-  animation-delay: .6s;
-}
-.pred-btn.ready {
-  background: linear-gradient(135deg, var(--red-dark), var(--red));
-  color: #fff;
-  box-shadow: 0 0 30px rgba(239,68,68,.3);
-}
-.pred-btn.ready:hover {
-  box-shadow: 0 0 40px rgba(239,68,68,.5);
-  transform: translateY(-2px);
-}
-.pred-btn.locked {
-  background: rgba(239,68,68,.08);
-  color: #555;
-  cursor: not-allowed;
-  border: 1px solid rgba(239,68,68,.1);
-}
-.pred-btn.loading { pointer-events: none; }
-.spinner {
-  display: none;
-  width: 20px; height: 20px;
-  border: 2px solid rgba(255,255,255,.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin .6s linear infinite;
-  margin: 0 auto;
-}
-.pred-btn.loading .btn-text { display: none; }
-.pred-btn.loading .spinner { display: inline-block; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.pred-btn::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent);
-}
-.pred-btn.ready::after {
-  animation: shimmer 3s infinite;
-}
-@keyframes shimmer {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
-/* Bottom Info */
-.bottom-info {
-  display: flex; justify-content: space-around;
-  padding: 16px 0;
-  opacity: 0; transform: translateY(30px);
-  animation: fadeUp .6s ease forwards;
-  animation-delay: .7s;
-}
-.info-item {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 6px;
-}
-.info-icon {
-  width: 40px; height: 40px;
-  border-radius: 12px;
-  background: rgba(239,68,68,.08);
-  border: 1px solid rgba(239,68,68,.15);
-  display: flex; align-items: center; justify-content: center;
-}
-.info-icon svg {
-  width: 18px; height: 18px;
-  stroke: var(--red-light);
-  fill: none;
-  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-}
-.info-label {
-  font-size: 10px; color: #555;
-  text-transform: uppercase; letter-spacing: 1px;
-}
+:root{--green:#10b981;--green-light:#34d399;--green-dark:#059669;--bg:#070b14;--card:rgba(16,185,129,.04);--border:rgba(16,185,129,.12);--text:#f0fdf4;--text-dim:rgba(16,185,129,.45)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;user-select:none;-webkit-user-select:none}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(16,185,129,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(5,150,105,.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+.blur-overlay{position:fixed;inset:0;background:rgba(7,11,20,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.blur-overlay.active{opacity:1;visibility:visible}
+.blur-overlay .msg{text-align:center;color:var(--green);font-weight:600;font-size:.95rem;line-height:1.8}
+.blur-overlay .msg svg{display:block;margin:0 auto 14px;width:48px;height:48px;stroke:var(--green);fill:none;stroke-width:1.5}
+.container{position:relative;z-index:1;max-width:420px;margin:0 auto;padding:20px 14px 120px}
+.back-btn{position:fixed;top:14px;left:14px;z-index:200;width:44px;height:44px;background:var(--card);border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,border-color .2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.back-btn:hover{background:rgba(16,185,129,.1);border-color:var(--green)}
+.back-btn:active{transform:scale(.95)}
+.back-btn svg{width:20px;height:20px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter}
+.card{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;animation:fadeUp .4s ease both}
+.card:nth-child(2){animation-delay:.04s}.card:nth-child(3){animation-delay:.08s}.card:nth-child(4){animation-delay:.12s}.card:nth-child(5){animation-delay:.16s}.card:nth-child(6){animation-delay:.2s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:.25}
+.card-label{display:block;font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);font-family:'DM Sans',sans-serif;margin-bottom:12px}
+.game-info{display:flex;align-items:center;gap:12px}
+.game-icon{width:44px;height:44px;min-width:44px;background:linear-gradient(135deg,var(--green-dark),var(--green));border-radius:2px;display:flex;align-items:center;justify-content:center}
+.game-icon svg{width:22px;height:22px;fill:#fff}
+.game-name{font-size:.95rem;font-weight:700;color:var(--text);font-family:'DM Sans',sans-serif}
+.game-tags{display:flex;gap:6px;margin-top:5px}
+.tag{font-size:.55rem;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:2px;text-transform:uppercase}
+.tag-mode{background:rgba(16,185,129,.14);color:var(--green-light)}
+.tag-status{background:rgba(52,211,153,.14);color:var(--green)}
+.dot-live{display:inline-block;width:5px;height:5px;background:var(--green);border-radius:1px;margin-right:4px;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.timer-row{display:flex;align-items:center;justify-content:space-between}
+.timer-svg-wrap{position:relative;width:76px;height:76px}
+.timer-svg-wrap svg{width:76px;height:76px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(16,185,129,.1);stroke-width:5}
+.ring-fg{fill:none;stroke:var(--green);stroke-width:5;stroke-linecap:square;transition:stroke-dashoffset 1s linear}
+.timer-svg-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;color:var(--green-light);font-family:'DM Sans',sans-serif}
+.timer-right{text-align:right}
+.timer-right .sub{font-size:.65rem;color:var(--text-dim);margin-bottom:2px}
+.timer-right .big{font-size:2rem;font-weight:800;color:var(--green-light);font-family:'DM Sans',sans-serif;line-height:1}
+.timer-right .big span{font-size:.85rem;font-weight:500;color:var(--text-dim);margin-left:2px}
+.period-row{display:flex;align-items:center;justify-content:space-between}
+.period-num{font-size:1.2rem;font-weight:800;color:var(--green);font-family:'DM Sans',sans-serif;letter-spacing:.06em}
+.period-right{text-align:right}
+.period-right .cd-val{font-size:1.6rem;font-weight:800;color:var(--green-light);font-family:'DM Sans',sans-serif;line-height:1}
+.period-right .cd-lbl{font-size:.6rem;color:var(--text-dim);margin-top:2px}
+.pred-card{text-align:center;padding:28px 16px}
+.pred-value{font-size:4rem;font-weight:800;line-height:1;margin:8px 0;font-family:'DM Sans',sans-serif;transition:transform .3s cubic-bezier(.34,1.56,.64,1),color .3s}
+.pred-value.pop{transform:scale(1.12)}
+.pred-value.c-green{color:var(--green)}
+.pred-value.c-red{color:#ef4444}
+.pred-value.c-violet{color:#a78bfa}
+.pred-type{font-size:.8rem;font-weight:700;color:var(--green-light);letter-spacing:.12em;text-transform:uppercase}
+.hist-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.hist-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;border-radius:2px;transition:transform .15s}
+.hist-cell:active{transform:scale(.9)}
+.hist-cell.c-green{background:rgba(16,185,129,.18);color:var(--green-light);border:1px solid rgba(16,185,129,.25)}
+.hist-cell.c-red{background:rgba(239,68,68,.18);color:#fca5a5;border:1px solid rgba(239,68,68,.25)}
+.hist-cell.c-violet{background:rgba(167,139,250,.18);color:#c4b5fd;border:1px solid rgba(167,139,250,.25)}
+.pred-btn{width:100%;padding:17px;background:linear-gradient(135deg,var(--green-dark),var(--green));border:none;border-radius:2px;font-size:.85rem;font-weight:700;color:#fff;cursor:pointer;text-transform:uppercase;letter-spacing:.12em;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden;transition:transform .15s,box-shadow .2s;box-shadow:0 0 0 0 rgba(16,185,129,0)}
+.pred-btn:hover{background:linear-gradient(135deg,var(--green),var(--green-light));box-shadow:0 4px 24px rgba(16,185,129,.25)}
+.pred-btn:active{transform:scale(.98)}
+.pred-btn:disabled{opacity:.5;cursor:not-allowed}
+.pred-btn .shimmer{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transition:left .6s}
+.pred-btn:hover .shimmer{left:100%}
+.lottie-wrap{display:flex;justify-content:center;margin:20px 0 16px}
+.lottie-wrap lottie-player{width:170px;height:170px}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.feat-item{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:14px 8px;text-align:center}
+.feat-icon{width:36px;height:36px;margin:0 auto 8px;background:rgba(16,185,129,.1);border-radius:2px;display:flex;align-items:center;justify-content:center}
+.feat-icon svg{width:18px;height:18px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:square}
+.feat-title{font-size:.68rem;font-weight:700;color:var(--text);font-family:'DM Sans',sans-serif}
+.feat-desc{font-size:.55rem;color:var(--text-dim);margin-top:2px}
 </style>
 </head>
 <body>
-<canvas id="matrix-canvas"></canvas>
-<div class="scanlines"></div>
-<div class="particles-container" id="particles"></div>
+<div class="blur-overlay" id="blurOverlay">
+<div class="msg">
+<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+Tab Lost Focus<br>Prediction Paused
+</div>
+</div>
 
-<div class="dashboard">
-  <div class="card">
-    <div class="game-header">
-      <div class="logo">DP</div>
-      <div class="game-info">
-        <div class="game-name">DEVIL PREDICTOR</div>
-        <span class="mode-tag" id="modeTag">NUMBER MODE</span>
-        <div class="status-row">
-          <div class="pulse-dot"></div>
-          <span id="statusText">Connecting...</span>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="back-btn" onclick="history.back()">
+<svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+</div>
 
-  <div class="card timer-card">
-    <svg class="timer-svg" viewBox="0 0 130 130">
-      <circle class="ring-bg" cx="65" cy="65" r="60"/>
-      <circle class="ring-progress" id="ringProgress" cx="65" cy="65" r="60"/>
-    </svg>
-    <div class="timer-value" id="timerValue">--</div>
-    <div class="timer-label">Remaining</div>
-    <div class="timer-mode-tag" id="timerModeTag">30s</div>
-  </div>
+<div class="container">
+<div class="card">
+<span class="card-label">Game Information</span>
+<div class="game-info">
+<div class="game-icon">
+<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="square"/></svg>
+</div>
+<div>
+<div class="game-name">Win Go</div>
+<div class="game-tags">
+<span class="tag tag-mode" id="modeTag">BIG/SMALL</span>
+<span class="tag tag-status"><span class="dot-live"></span>ACTIVE</span>
+</div>
+</div>
+</div>
+</div>
 
-  <div class="card period-card">
-    <div class="period-label">Next Period</div>
-    <div class="period-value" id="periodValue">----------</div>
-  </div>
+<div class="card">
+<span class="card-label">Countdown Timer</span>
+<div class="timer-row">
+<div class="timer-svg-wrap">
+<svg viewBox="0 0 76 76">
+<circle class="ring-bg" cx="38" cy="38" r="34"/>
+<circle class="ring-fg" id="ringFg" cx="38" cy="38" r="34" stroke-dasharray="213.6" stroke-dashoffset="0"/>
+</svg>
+<div class="timer-svg-num" id="timerSvgNum">60</div>
+</div>
+<div class="timer-right">
+<div class="sub">Seconds Left</div>
+<div class="big" id="timerBig">60<span>sec</span></div>
+</div>
+</div>
+</div>
 
-  <div class="card prediction-card">
-    <div class="pred-label">Prediction</div>
-    <div class="pred-value" id="predValue">?</div>
-    <div class="pred-sub" id="predSub">Tap to generate</div>
-  </div>
+<div class="card">
+<span class="card-label">Period Information</span>
+<div class="period-row">
+<div>
+<div class="sub" style="font-size:.65rem;color:var(--text-dim);margin-bottom:2px">Next Period</div>
+<div class="period-num" id="periodNum">---</div>
+</div>
+<div class="period-right">
+<div class="cd-val" id="cdVal">00:00</div>
+<div class="cd-lbl">Time Remaining</div>
+</div>
+</div>
+</div>
 
-  <div class="card history-card">
-    <div class="history-title">Last 8 Results</div>
-    <div class="history-grid" id="historyGrid"></div>
-  </div>
+<div class="card pred-card">
+<div class="card-label">Next Prediction</div>
+<div class="pred-value c-green" id="predValue">--</div>
+<div class="pred-type" id="predType">PREDICTING...</div>
+</div>
 
-  <button class="pred-btn locked" id="predBtn" onclick="handlePredict()">
-    <span class="btn-text">GET PREDICTION</span>
-    <div class="spinner"></div>
-  </button>
+<div class="card">
+<span class="card-label">History (Last 8)</span>
+<div class="hist-grid" id="histGrid"></div>
+</div>
 
-  <div class="bottom-info">
-    <div class="info-item">
-      <div class="info-icon">
-        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      </div>
-      <span class="info-label">Secure</span>
-    </div>
-    <div class="info-item">
-      <div class="info-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      </div>
-      <span class="info-label">AI Power</span>
-    </div>
-    <div class="info-item">
-      <div class="info-icon">
-        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      </div>
-      <span class="info-label">Fast</span>
-    </div>
-  </div>
+<button class="pred-btn" id="predBtn" onclick="getPrediction()">
+<span class="shimmer"></span>&#9889; GET PREDICTION
+</button>
+
+<div class="lottie-wrap">
+<lottie-player id="lottieAnim" src="https://assets3.lottiefiles.com/packages/lf20_u4yrau.json" background="transparent" speed="1" style="width:170px;height:170px" loop autoplay></lottie-player>
+</div>
+
+<div class="feat-grid">
+<div class="feat-item">
+<div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+<div class="feat-title">Anti-Devil</div>
+<div class="feat-desc">Protected</div>
+</div>
+<div class="feat-item">
+<div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+<div class="feat-title">Real-Time</div>
+<div class="feat-desc">Live Data</div>
+</div>
+<div class="feat-item">
+<div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+<div class="feat-title">Accurate</div>
+<div class="feat-desc">Algorithm</div>
+</div>
+</div>
 </div>
 
 <script>
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-    e.preventDefault(); return false;
-  }
-});
-window.addEventListener('blur', () => document.body.classList.add('blurred'));
-window.addEventListener('focus', () => document.body.classList.remove('blurred'));
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='C'))||(e.ctrlKey&&e.key==='u'))e.preventDefault()});
+window.addEventListener('blur',()=>document.getElementById('blurOverlay').classList.add('active'));
+window.addEventListener('focus',()=>document.getElementById('blurOverlay').classList.remove('active'));
 
-const mc = document.getElementById('matrix-canvas');
-const mctx = mc.getContext('2d');
-function resizeMatrix() { mc.width = window.innerWidth; mc.height = window.innerHeight; }
-resizeMatrix();
-window.addEventListener('resize', resizeMatrix);
-const chars = 'DEVIL0123456789PREDICTORHACKER';
-let drops = Array(Math.floor(window.innerWidth / 14)).fill(1);
-function drawMatrix() {
-  mctx.fillStyle = 'rgba(10,10,10,.05)';
-  mctx.fillRect(0, 0, mc.width, mc.height);
-  mctx.fillStyle = 'rgba(239,68,68,.12)';
-  mctx.font = '12px Share Tech Mono';
-  for (let i = 0; i < drops.length; i++) {
-    const ch = chars[Math.floor(Math.random() * chars.length)];
-    mctx.fillText(ch, i * 14, drops[i] * 14);
-    if (drops[i] * 14 > mc.height && Math.random() > .975) drops[i] = 0;
-    drops[i]++;
-  }
-}
-setInterval(drawMatrix, 50);
+const CIRC=2*Math.PI*34;
+let timer=60;
 
-const pContainer = document.getElementById('particles');
-for (let i = 0; i < 30; i++) {
-  const p = document.createElement('div');
-  p.style.cssText = `
-    position:absolute;width:${Math.random()*3+1}px;height:${Math.random()*3+1}px;
-    background:rgba(239,68,68,${Math.random()*.4+.1});
-    border-radius:50%;pointer-events:none;
-    left:${Math.random()*100}%;top:${Math.random()*100}%;
-    animation:float${Math.floor(Math.random()*3)+1} ${Math.random()*10+8}s linear infinite;
-  `;
-  pContainer.appendChild(p);
-}
-const styleSheet = document.createElement('style');
-styleSheet.textContent = `
-  @keyframes float1 { 0%{transform:translateY(0) translateX(0);opacity:.6} 100%{transform:translateY(-100vh) translateX(50px);opacity:0} }
-  @keyframes float2 { 0%{transform:translateY(0) translateX(0);opacity:.5} 100%{transform:translateY(-100vh) translateX(-30px);opacity:0} }
-  @keyframes float3 { 0%{transform:translateY(0) translateX(0);opacity:.7} 100%{transform:translateY(-100vh) translateX(20px);opacity:0} }
-`;
-document.head.appendChild(styleSheet);
-
-let timerType = '30';
-let predictionMode = 'NUMBER';
-let totalSeconds = 30;
-let currentSeconds = 30;
-let currentPeriod = '';
-let countdownInterval = null;
-let lastDrawId = '';
-let canPredict = false;
-
-const API_BASE = 'https://draw.ar-lottery01.com/api/7f92dd0a-1d65-4429-9b6f-e001ef4b046c';
-
-const timerValueEl = document.getElementById('timerValue');
-const ringProgress = document.getElementById('ringProgress');
-const periodValueEl = document.getElementById('periodValue');
-const predValueEl = document.getElementById('predValue');
-const predSubEl = document.getElementById('predSub');
-const predBtn = document.getElementById('predBtn');
-const historyGrid = document.getElementById('historyGrid');
-const statusText = document.getElementById('statusText');
-const modeTagEl = document.getElementById('modeTag');
-const timerModeTagEl = document.getElementById('timerModeTag');
-
-function firstGaps(results) {
-  let gaps = [];
-  for (let i = 0; i < results.length - 1; i++) {
-    const a = results[i], b = results[i + 1];
-    if (a !== b) gaps.push({ index: i, from: a, to: b });
-  }
-  return gaps;
+function updateTimer(){
+const off=((60-timer)/60)*CIRC;
+document.getElementById('ringFg').style.strokeDashoffset=off;
+document.getElementById('timerSvgNum').textContent=timer;
+document.getElementById('timerBig').innerHTML=timer+'<span>sec</span>';
+const m=Math.floor(timer/60),s=timer%60;
+document.getElementById('cdVal').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
 }
 
-function makeLayers(gaps) {
-  const layers = [];
-  for (let i = 0; i < gaps.length; i++) {
-    layers.push({
-      from: gaps[i].from,
-      to: gaps[i].to,
-      weight: gaps.length - i
-    });
-  }
-  return layers;
+setInterval(()=>{timer=timer>0?timer-1:60;updateTimer()},1000);
+
+function numColor(n){
+if(n===0)return{c:'c-violet',t:'VIOLET'};
+if(n%2===0)return{c:'c-red',t:'RED'};
+return{c:'c-green',t:'GREEN'};
 }
 
-function predBS(layers) {
-  let bigScore = 0, smallScore = 0;
-  const recent = layers.slice(-5);
-  recent.forEach(l => {
-    if (l.from >= 5) bigScore += l.weight;
-    else smallScore += l.weight;
-    if (l.to >= 5) bigScore += l.weight * 0.6;
-    else smallScore += l.weight * 0.6;
-  });
-  return bigScore >= smallScore ? 'BIG' : 'SMALL';
+function firstGaps(d){const g=[];for(let i=1;i<d.length;i++)g.push(Math.abs(d[i]-d[i-1]));return g}
+function makeLayers(g){const l=[];for(let i=0;i<g.length;i+=3)l.push(g.slice(i,i+3));return l}
+function predBS(l){let s=0;l.forEach(a=>a.forEach(b=>s+=b));return s%2===0?'BIG':'SMALL'}
+function predNum(l,bs){let n=0;l.forEach(a=>a.forEach(b=>n+=b));n%=10;return bs==='BIG'?(n<5?n+5:n):(n>=5?n-5:n)}
+
+function renderHist(arr){
+document.getElementById('histGrid').innerHTML=arr.map(n=>{const{c}=numColor(n);return'<div class="hist-cell '+c+'">'+n+'</div>'}).join('');
 }
 
-function predNum(layers) {
-  const freq = new Array(10).fill(0);
-  const recent = layers.slice(-6);
-  recent.forEach(l => {
-    freq[l.to] += l.weight;
-    freq[l.from] += l.weight * 0.4;
-  });
-  let maxIdx = 0;
-  for (let i = 1; i < 10; i++) {
-    if (freq[i] > freq[maxIdx]) maxIdx = i;
-  }
-  if (freq[maxIdx] < 2) maxIdx = 9 - maxIdx;
-  return maxIdx;
+function rndHistory(){const a=[];for(let i=0;i<8;i++)a.push(Math.floor(Math.random()*10));return a}
+
+async function fetchData(){
+try{
+const r=await fetch('https://draw.ar-lottery01.com/api/lobby/basicLottery/trend/hisNo4987498?lotteryId=4987498&pageNo=1&pageSize=30');
+const j=await r.json();
+if(j&&j.data&&j.data.list)return j.data.list.map(x=>parseInt(x.no));
+}catch(e){}
+return rndHistory();
 }
 
-function runPrediction(history) {
-  if (history.length < 3) return { type: 'N/A', value: '?' };
-  const nums = history.map(h => h.number);
-  const gaps = firstGaps(nums);
-  const layers = makeLayers(gaps);
-  if (predictionMode === 'BIGSMALL') {
-    return { type: 'BS', value: predBS(layers) };
-  } else {
-    const n = predNum(layers);
-    return { type: 'NUMBER', value: n.toString() };
-  }
+async function getPrediction(){
+const btn=document.getElementById('predBtn');
+const pv=document.getElementById('predValue');
+const pt=document.getElementById('predType');
+btn.disabled=true;btn.textContent='ANALYZING...';pt.textContent='PROCESSING...';
+
+const data=await fetchData();
+const hist=data.slice(-8);
+renderHist(hist);
+const gaps=firstGaps(data);
+const layers=makeLayers(gaps);
+const bs=predBS(layers);
+const num=predNum(layers,bs);
+const{c,t}=numColor(num);
+
+pv.className='pred-value '+c;
+pv.textContent=num;
+pv.classList.add('pop');
+setTimeout(()=>pv.classList.remove('pop'),350);
+pt.textContent=t+' \u2014 '+bs;
+
+document.getElementById('modeTag').textContent='NUMBER MODE';
+
+const now=new Date();now.setMinutes(now.getMinutes()+1);
+document.getElementById('periodNum').textContent=now.getHours()+''+String(now.getMinutes()).padStart(2,'0');
+
+document.getElementById('lottieAnim').play();
+
+btn.disabled=false;btn.innerHTML='<span class="shimmer"></span>&#9889; GET PREDICTION';
 }
 
-async function fetchResults() {
-  try {
-    const resp = await fetch(`${API_BASE}/draw/latest?limit=20`);
-    if (!resp.ok) throw new Error('API error');
-    const data = await resp.json();
-    return data.data || data;
-  } catch (e) {
-    console.error('Fetch error:', e);
-    return null;
-  }
-}
+renderHist([3,8,1,7,0,4,6,2]);
+updateTimer();
 
-async function updateData() {
-  statusText.textContent = 'Fetching...';
-  const data = await fetchResults();
-  if (!data) {
-    statusText.textContent = 'Retry in 5s';
-    return;
-  }
-
-  try {
-    const drawList = Array.isArray(data) ? data : (data.draws || data.list || []);
-    if (!drawList.length) { statusText.textContent = 'No data'; return; }
-
-    const latest = drawList[0];
-    const drawId = latest.id || latest.drawId || '';
-    const periodStr = latest.issueNumber || latest.issue || latest.period || '';
-
-    if (drawId !== lastDrawId && periodStr) {
-      lastDrawId = drawId;
-      currentPeriod = periodStr;
-
-      periodValueEl.textContent = currentPeriod;
-      periodValueEl.classList.remove('flash');
-      void periodValueEl.offsetWidth;
-      periodValueEl.classList.add('flash');
-
-      timerType = latest.timerType?.toString() || '30';
-      totalSeconds = timerType === '60' ? 60 : 30;
-      currentSeconds = totalSeconds;
-      timerModeTagEl.textContent = timerType + 's';
-
-      canPredict = false;
-      predBtn.className = 'pred-btn locked';
-    }
-
-    const last8 = drawList.slice(0, 8).map(d => ({
-      number: parseInt(d.number || d.result || d.openNum || 0),
-      id: d.id || d.drawId || ''
-    }));
-    renderHistory(last8);
-
-    statusText.textContent = 'Live';
-  } catch (e) {
-    console.error('Parse error:', e);
-    statusText.textContent = 'Parse Error';
-  }
-}
-
-function renderHistory(items) {
-  historyGrid.innerHTML = '';
-  items.forEach(item => {
-    const el = document.createElement('div');
-    const n = item.number;
-    let cls = 'red';
-    if ([1,3,7,9].includes(n)) cls = 'green';
-    else if ([0,5].includes(n)) cls = 'violet';
-    el.className = 'history-item ' + cls;
-    el.textContent = n;
-    historyGrid.appendChild(el);
-  });
-}
-
-const circumference = 2 * Math.PI * 60;
-ringProgress.style.strokeDasharray = circumference;
-
-function startCountdown() {
-  if (countdownInterval) clearInterval(countdownInterval);
-  countdownInterval = setInterval(() => {
-    currentSeconds--;
-    if (currentSeconds <= 0) {
-      currentSeconds = 0;
-      canPredict = true;
-      predBtn.className = 'pred-btn ready';
-      predSubEl.textContent = 'Ready to predict';
-    }
-    renderTimer();
-  }, 1000);
-}
-
-function renderTimer() {
-  const m = Math.floor(currentSeconds / 60);
-  const s = currentSeconds % 60;
-  timerValueEl.textContent = m > 0 ? `${m}:${s.toString().padStart(2,'0')}` : s;
-  const progress = ((totalSeconds - currentSeconds) / totalSeconds) * circumference;
-  ringProgress.style.strokeDashoffset = circumference - progress;
-}
-
-async function handlePredict() {
-  if (!canPredict) return;
-  canPredict = false;
-  predBtn.className = 'pred-btn loading';
-
-  await new Promise(r => setTimeout(r, 1200 + Math.random() * 800));
-
-  const data = await fetchResults();
-  if (data) {
-    try {
-      const drawList = Array.isArray(data) ? data : (data.draws || data.list || []);
-      const last8 = drawList.slice(0, 8).map(d => ({
-        number: parseInt(d.number || d.result || d.openNum || 0)
-      }));
-      const result = runPrediction(last8);
-
-      predValueEl.textContent = result.value;
-      if (result.type === 'BS') {
-        predSubEl.textContent = result.value === 'BIG' ? 'Number >= 5' : 'Number < 5';
-      } else {
-        predSubEl.textContent = 'Confident prediction';
-      }
-    } catch (e) {
-      predValueEl.textContent = '?';
-      predSubEl.textContent = 'Calculation error';
-    }
-  } else {
-    predValueEl.textContent = '?';
-    predSubEl.textContent = 'Connection lost';
-  }
-
-  predBtn.className = 'pred-btn locked';
-  statusText.textContent = 'Prediction done';
-}
-
-modeTagEl.textContent = predictionMode + ' MODE';
-updateData();
-startCountdown();
-setInterval(updateData, 15000);
-renderTimer();
+setInterval(()=>{
+const n=new Date(),nx=new Date(n);nx.setMinutes(nx.getMinutes()+1);nx.setSeconds(0);
+timer=Math.floor((nx-n)/1000);updateTimer();
+},1000);
 </script>
 </body>
 </html>

@@ -1,230 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>DEVIL PREDICTOR - Select Mode</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--red:#ef4444;--red-light:#f87171;--red-dark:#dc2626;--bg:#0a0a0a;--card:rgba(239,68,68,.03);--border:rgba(239,68,68,.1);--text:#e5e5e5;--text-dim:#737373}
-html{font-size:16px;scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;position:relative}
-#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.scanlines{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);opacity:.4}
-.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.particle{position:absolute;width:2px;height:2px;background:var(--red);border-radius:50%;animation:floatUp linear infinite;opacity:0}
-@keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(1)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-100vh) scale(0)}}
-.content{position:relative;z-index:10;padding:0 16px 120px;max-width:480px;margin:0 auto}
-.back-btn{position:fixed;top:16px;left:16px;z-index:100;width:44px;height:44px;border-radius:14px;border:1px solid var(--border);background:rgba(239,68,68,.06);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s ease}
-.back-btn:hover{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3)}
-.back-btn svg{width:20px;height:20px;stroke:var(--red-light);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.header{padding-top:76px;text-align:center;margin-bottom:28px;opacity:0;animation:fadeUp .6s ease forwards;animation-delay:.1s}
-.logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,var(--red),var(--red-dark));box-shadow:0 0 30px rgba(239,68,68,.3),0 0 60px rgba(239,68,68,.1);margin-bottom:14px;position:relative}
-.logo-wrap::after{content:'';position:absolute;inset:-3px;border-radius:25px;background:linear-gradient(135deg,var(--red),transparent);opacity:.3;filter:blur(8px)}
-.logo-wrap svg{width:38px;height:38px;fill:#fff;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
-.game-name{font-family:'Space Grotesk',sans-serif;font-size:1.7rem;font-weight:700;color:#fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
-.game-name span{color:var(--red)}
-.ai-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--red-light);letter-spacing:2px;text-transform:uppercase}
-.ai-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulseDot 2s ease infinite}
-@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-.status-bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 20px;margin-bottom:28px;border-radius:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.08);opacity:0;animation:fadeUp .6s ease forwards;animation-delay:.2s}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red),0 0 20px rgba(239,68,68,.4);animation:pulseDot 2s ease infinite}
-.status-text{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:var(--text-dim);letter-spacing:1px}
-.section{margin-bottom:24px;opacity:0;animation:fadeUp .6s ease forwards}
-.section:nth-child(1){animation-delay:.3s}
-.section:nth-child(2){animation-delay:.4s}
-.section:nth-child(3){animation-delay:.5s}
-.section:nth-child(4){animation-delay:.6s}
-.section-title{font-family:'Space Grotesk',sans-serif;font-size:.8rem;font-weight:600;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.section-title .g{color:var(--red);font-weight:700}
-.timer-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.timer-card{position:relative;padding:20px 14px;border-radius:16px;border:1px solid var(--border);background:var(--card);cursor:pointer;transition:all .3s ease;text-align:center;overflow:hidden}
-.timer-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(220,38,38,.03));opacity:0;transition:opacity .3s ease}
-.timer-card:hover::before{opacity:1}
-.timer-card.selected{border-color:var(--red);box-shadow:0 0 20px rgba(239,68,68,.15),inset 0 0 20px rgba(239,68,68,.05)}
-.timer-card.selected::before{opacity:1}
-.timer-card.selected .timer-icon{background:linear-gradient(135deg,var(--red),var(--red-dark));box-shadow:0 0 20px rgba(239,68,68,.4)}
-.timer-card.selected .timer-icon svg{stroke:#fff}
-.timer-card.selected .timer-value{color:#fff}
-.timer-icon{width:60px;height:60px;border-radius:16px;background:rgba(239,68,68,.08);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;transition:all .3s ease;position:relative;z-index:1}
-.timer-icon svg{width:28px;height:28px;stroke:var(--red-light);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:all .3s ease}
-.timer-value{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:1px;margin-bottom:4px;position:relative;z-index:1;transition:color .3s ease}
-.timer-label{font-size:.7rem;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;position:relative;z-index:1}
-.mode-stack{display:flex;flex-direction:column;gap:12px}
-.mode-card{display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:16px;border:1px solid var(--border);background:var(--card);cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden}
-.mode-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(220,38,38,.03));opacity:0;transition:opacity .3s ease}
-.mode-card:hover::before{opacity:1}
-.mode-card.selected{border-color:var(--red);box-shadow:0 0 20px rgba(239,68,68,.15),inset 0 0 20px rgba(239,68,68,.05)}
-.mode-card.selected::before{opacity:1}
-.mode-card.selected .mode-icon{background:linear-gradient(135deg,var(--red),var(--red-dark));box-shadow:0 0 20px rgba(239,68,68,.4)}
-.mode-card.selected .mode-icon svg{stroke:#fff;fill:#fff}
-.mode-card.selected .mode-name{color:#fff}
-.mode-card.selected .mode-check{border-color:var(--red);background:var(--red)}
-.mode-card.selected .mode-check svg{opacity:1;transform:scale(1)}
-.mode-icon{width:60px;height:60px;min-width:60px;border-radius:16px;background:rgba(239,68,68,.08);display:flex;align-items:center;justify-content:center;transition:all .3s ease;position:relative;z-index:1}
-.mode-icon svg{width:26px;height:26px;stroke:var(--red-light);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:all .3s ease}
-.mode-info{flex:1;position:relative;z-index:1}
-.mode-name{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:3px;transition:color .3s ease}
-.mode-desc{font-size:.7rem;color:var(--text-dim);letter-spacing:.5px}
-.mode-check{width:24px;height:24px;min-width:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .3s ease;position:relative;z-index:1}
-.mode-check svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;opacity:0;transform:scale(.5);transition:all .3s ease}
-.continue-bar{position:fixed;bottom:0;left:0;right:0;padding:16px 20px 28px;background:linear-gradient(0deg,var(--bg) 60%,transparent);z-index:100;display:flex;justify-content:center}
-.continue-btn{width:100%;max-width:440px;padding:16px;border:none;border-radius:16px;font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .4s ease;position:relative;overflow:hidden}
-.continue-btn.locked{background:rgba(239,68,68,.08);color:var(--text-dim);border:1px solid rgba(239,68,68,.1);cursor:not-allowed}
-.continue-btn.ready{background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;border:1px solid var(--red);box-shadow:0 0 30px rgba(239,68,68,.3),0 8px 32px rgba(239,68,68,.2)}
-.continue-btn.ready::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:btnShine 3s ease infinite}
-@keyframes btnShine{0%{left:-100%}50%,100%{left:100%}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(239,68,68,.2);border-radius:4px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Mode - Devil Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #10b981;
+            --green-light: #34d399;
+            --green-dark: #059669;
+            --bg: #070b14;
+            --text: #e5e7eb;
+            --text-muted: #9ca3af;
+            --card-bg: #0f1724;
+            --border: #1a2535;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            width: 44px;
+            height: 44px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--green-dark);
+            border-color: var(--green);
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: square;
+            stroke-linejoin: miter;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding-top: 70px;
+            margin-bottom: 24px;
+            animation: fadeUp 0.5s ease forwards;
+        }
+
+        .logo {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--green-dark), var(--green));
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--bg);
+        }
+
+        .game-name {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .sync-tag {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--green-dark);
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--green);
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 32px;
+            padding: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            animation: fadeUp 0.5s ease 0.1s forwards;
+            opacity: 0;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 0;
+            animation: pulse 2s infinite;
+        }
+
+        .status-text {
+            font-size: 12px;
+            color: var(--green);
+            font-weight: 500;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            animation: fadeUp 0.5s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+            animation: fadeUp 0.5s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 2px;
+            padding: 20px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: transparent;
+            transition: background 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: var(--green-dark);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .card.selected {
+            border-color: var(--green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .card.selected::before {
+            background: var(--green);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 2px;
+        }
+
+        .card.selected .card-icon {
+            background: var(--green);
+        }
+
+        .card-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--green);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .card.selected .card-icon svg {
+            stroke: var(--bg);
+        }
+
+        .card-value {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .card-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .card.selected .card-value {
+            color: var(--green);
+        }
+
+        /* Mode Cards */
+        .mode-section {
+            margin-bottom: 32px;
+            animation: fadeUp 0.5s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .mode-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 2px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: transparent;
+            transition: background 0.2s ease;
+        }
+
+        .mode-card:hover {
+            border-color: var(--green-dark);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .mode-card:active {
+            transform: scale(0.98);
+        }
+
+        .mode-card.selected {
+            border-color: var(--green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .mode-card.selected::before {
+            background: var(--green);
+        }
+
+        .mode-card-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mode-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mode-card.selected .mode-icon {
+            background: var(--green);
+        }
+
+        .mode-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--green);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .mode-card.selected .mode-icon svg {
+            stroke: var(--bg);
+        }
+
+        .mode-info {
+            text-align: left;
+            flex: 1;
+        }
+
+        .mode-title {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .mode-card.selected .mode-title {
+            color: var(--green);
+        }
+
+        .mode-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Continue Button */
+        .continue-section {
+            animation: fadeUp 0.5s ease 0.5s forwards;
+            opacity: 0;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--border);
+            border: none;
+            border-radius: 2px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .continue-btn.ready {
+            background: var(--green);
+            color: var(--bg);
+            cursor: pointer;
+        }
+
+        .continue-btn.ready:hover {
+            background: var(--green-light);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+        }
+
+        .continue-btn.ready:active {
+            transform: scale(0.98);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(16, 185, 129, 0.5);
+            }
+        }
+
+        .card.selected .card-icon,
+        .mode-card.selected .mode-icon {
+            animation: glow 2s infinite;
+        }
+
+        /* Selection feedback */
+        .vibrate {
+            animation: vibrate 0.1s ease;
+        }
+
+        @keyframes vibrate {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+    </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
-<div class="scanlines"></div>
-<div class="particles" id="particles"></div>
+    <div class="container">
+        <!-- Back Button -->
+        <button class="back-btn" onclick="goBack()">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="square" stroke-linejoin="miter"/>
+            </svg>
+        </button>
 
-<div class="back-btn" onclick="location.href='login.html'">
-  <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-</div>
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <h1 class="game-name">DEVIL PREDICTOR</h1>
+            <span class="sync-tag">AI SYNCED</span>
+        </div>
 
-<div class="content">
-  <div class="header">
-    <div class="logo-wrap">
-      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-dot"></div>
+            <span class="status-text">Server Connected</span>
+        </div>
+
+        <!-- Timer Section -->
+        <h2 class="section-title">SELECT SPEED</h2>
+        <div class="card-grid">
+            <div class="card" onclick="selTimer(30, this)">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                </div>
+                <div class="card-value">30 SEC</div>
+                <div class="card-label">Quick Round</div>
+            </div>
+            <div class="card" onclick="selTimer(60, this)">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                </div>
+                <div class="card-value">1 MIN</div>
+                <div class="card-label">Standard</div>
+            </div>
+        </div>
+
+        <!-- Mode Section -->
+        <div class="mode-section">
+            <h2 class="section-title">SELECT MODE</h2>
+            <div class="mode-card" onclick="selMode('bigsmall', this)">
+                <div class="mode-card-content">
+                    <div class="mode-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>
+                        </svg>
+                    </div>
+                    <div class="mode-info">
+                        <div class="mode-title">BIG / SMALL</div>
+                        <div class="mode-desc">Predict the size outcome</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mode-card" onclick="selMode('number', this)">
+                <div class="mode-card-content">
+                    <div class="mode-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 7h16M4 12h16M4 17h16"/>
+                            <circle cx="8" cy="7" r="2"/>
+                            <circle cx="16" cy="12" r="2"/>
+                            <circle cx="10" cy="17" r="2"/>
+                        </svg>
+                    </div>
+                    <div class="mode-info">
+                        <div class="mode-title">NUMBER</div>
+                        <div class="mode-desc">Predict exact number</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="continue-section">
+            <button class="continue-btn" id="continueBtn" onclick="cont()">SELECT OPTIONS TO CONTINUE</button>
+        </div>
     </div>
-    <div class="game-name">DEVIL <span>PREDICTOR</span></div>
-    <div class="ai-tag"><span class="dot"></span>AI SYNCED</div>
-  </div>
 
-  <div class="status-bar">
-    <div class="status-dot"></div>
-    <div class="status-text">Quantum AI Server Connected</div>
-  </div>
+    <script>
+        let timer = null;
+        let mode = null;
 
-  <div class="section" id="secTimer">
-    <div class="section-title"><span class="g">▶</span> SELECT TIMER</div>
-    <div class="timer-grid">
-      <div class="timer-card" id="t30" onclick="selTimer('30s')">
-        <div class="timer-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <div class="timer-value">30 SEC</div>
-        <div class="timer-label">Fast Mode</div>
-      </div>
-      <div class="timer-card" id="t60" onclick="selTimer('1m')">
-        <div class="timer-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <div class="timer-value">1 MIN</div>
-        <div class="timer-label">Stable Mode</div>
-      </div>
-    </div>
-  </div>
+        function selTimer(t, el) {
+            if (navigator.vibrate) navigator.vibrate(10);
+            
+            el.classList.add('vibrate');
+            setTimeout(() => el.classList.remove('vibrate'), 100);
+            
+            document.querySelectorAll('.card-grid .card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            timer = t;
+            checkReady();
+        }
 
-  <div class="section" id="secMode">
-    <div class="section-title"><span class="g">▶</span> SELECT MODE</div>
-    <div class="mode-stack">
-      <div class="mode-card" id="mbs" onclick="selMode('bigsmall')">
-        <div class="mode-icon">
-          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
-        </div>
-        <div class="mode-info">
-          <div class="mode-name">BIG / SMALL</div>
-          <div class="mode-desc">Predict big or small outcome</div>
-        </div>
-        <div class="mode-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      </div>
-      <div class="mode-card" id="mnm" onclick="selMode('number')">
-        <div class="mode-icon">
-          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        </div>
-        <div class="mode-info">
-          <div class="mode-name">NUMBER MODE</div>
-          <div class="mode-desc">Predict exact number result</div>
-        </div>
-        <div class="mode-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      </div>
-    </div>
-  </div>
-</div>
+        function selMode(m, el) {
+            if (navigator.vibrate) navigator.vibrate(10);
+            
+            el.classList.add('vibrate');
+            setTimeout(() => el.classList.remove('vibrate'), 100);
+            
+            document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            mode = m;
+            checkReady();
+        }
 
-<div class="continue-bar">
-  <button class="continue-btn locked" id="contBtn" onclick="cont()">SELECT OPTIONS</button>
-</div>
+        function checkReady() {
+            const btn = document.getElementById('continueBtn');
+            if (timer && mode) {
+                btn.classList.add('ready');
+                btn.textContent = 'CONTINUE';
+            } else {
+                btn.classList.remove('ready');
+                btn.textContent = 'SELECT OPTIONS TO CONTINUE';
+            }
+        }
 
-<script>
-var sel_timer=null,sel_mode=null;
+        function cont() {
+            if (!timer || !mode) return;
+            
+            if (navigator.vibrate) navigator.vibrate(20);
+            
+            localStorage.setItem('selectedTimer', timer);
+            localStorage.setItem('selectedMode', mode);
+            
+            const btn = document.getElementById('continueBtn');
+            btn.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                window.location.href = 'prediction.html';
+            }, 150);
+        }
 
-function selTimer(t){
-  navigator.vibrate&&navigator.vibrate(10);
-  sel_timer=sel_timer===t?null:t;
-  document.getElementById('t30').classList.toggle('selected',sel_timer==='30s');
-  document.getElementById('t60').classList.toggle('selected',sel_timer==='1m');
-  chk();
-}
-
-function selMode(m){
-  navigator.vibrate&&navigator.vibrate(10);
-  sel_mode=sel_mode===m?null:m;
-  document.getElementById('mbs').classList.toggle('selected',sel_mode==='bigsmall');
-  document.getElementById('mnm').classList.toggle('selected',sel_mode==='number');
-  chk();
-}
-
-function chk(){
-  var btn=document.getElementById('contBtn');
-  if(sel_timer&&sel_mode){
-    btn.className='continue-btn ready';
-    btn.textContent='CONTINUE';
-  }else{
-    btn.className='continue-btn locked';
-    btn.textContent='SELECT OPTIONS';
-  }
-}
-
-function cont(){
-  if(!sel_timer||!sel_mode)return;
-  localStorage.setItem('timerType',sel_timer);
-  localStorage.setItem('predictionMode',sel_mode);
-  localStorage.setItem('selectedGame','Wingo');
-  location.href='prediction.html';
-}
-
-// Matrix rain
-var c=document.getElementById('matrix'),ctx=c.getContext('2d');
-function resizeMatrix(){c.width=window.innerWidth;c.height=window.innerHeight}
-resizeMatrix();window.addEventListener('resize',resizeMatrix);
-var cols=Math.floor(c.width/14),drops=[];
-for(var i=0;i<cols;i++)drops[i]=Math.random()*-100;
-var chars='01アイウエオカキクケコサシスセソ';
-function drawMatrix(){
-  ctx.fillStyle='rgba(10,10,10,0.05)';
-  ctx.fillRect(0,0,c.width,c.height);
-  ctx.fillStyle='rgba(239,68,68,0.12)';
-  ctx.font='14px Share Tech Mono, monospace';
-  for(var i=0;i<drops.length;i++){
-    var t=chars[Math.floor(Math.random()*chars.length)];
-    ctx.fillText(t,i*14,drops[i]*14);
-    if(drops[i]*14>c.height&&Math.random()>0.975)drops[i]=0;
-    drops[i]++;
-  }
-}
-setInterval(drawMatrix,50);
-
-// Particles
-var pEl=document.getElementById('particles');
-for(var i=0;i<20;i++){
-  var p=document.createElement('div');
-  p.className='particle';
-  p.style.left=Math.random()*100+'%';
-  p.style.top=Math.random()*100+'%';
-  p.style.animationDuration=(4+Math.random()*8)+'s';
-  p.style.animationDelay=Math.random()*6+'s';
-  pEl.appendChild(p);
-}
-</script>
+        function goBack() {
+            if (navigator.vibrate) navigator.vibrate(10);
+            window.location.href = 'login.html';
+        }
+    </script>
 </body>
 </html>
