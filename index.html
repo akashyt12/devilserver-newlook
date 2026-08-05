@@ -6,38 +6,36 @@
 <title>DEVIL PREDICTOR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-:root{--emerald:#10b981;--emerald-light:#34d399;--emerald-dark:#059669;--bg:#030712;--card:rgba(255,255,255,.02);--border:rgba(255,255,255,.06);--text:#f9fafb;--muted:#6b7280;--dim:#374151}
+:root{--red:#ef4444;--red-light:#f87171;--red-dark:#dc2626;--red-deep:#991b1b;--bg:#0a0a0a;--card:rgba(239,68,68,.03);--border:rgba(239,68,68,.1);--text:#f9fafb;--muted:#6b7280;--dim:#374151}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)}
 
-/* ANIMATED BACKGROUND */
+/* BG */
 .bg{position:fixed;inset:0;z-index:0}
 .bg::before{content:'';position:absolute;inset:0;background:
-  radial-gradient(ellipse 80% 50% at 50% -20%,rgba(16,185,129,.12),transparent),
-  radial-gradient(ellipse 60% 40% at 80% 100%,rgba(5,150,105,.08),transparent),
-  radial-gradient(ellipse 40% 30% at 10% 60%,rgba(16,185,129,.05),transparent)}
+  radial-gradient(ellipse 80% 50% at 50% -20%,rgba(239,68,68,.12),transparent),
+  radial-gradient(ellipse 60% 40% at 80% 100%,rgba(220,38,38,.08),transparent),
+  radial-gradient(ellipse 40% 30% at 10% 50%,rgba(239,68,68,.04),transparent)}
 .bg-grid{position:absolute;inset:0;background-image:
-  linear-gradient(rgba(16,185,129,.025) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(16,185,129,.025) 1px,transparent 1px);
-  background-size:80px 80px;animation:gridShift 30s linear infinite}
-@keyframes gridShift{to{background-position:80px 80px}}
+  linear-gradient(rgba(239,68,68,.02) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(239,68,68,.02) 1px,transparent 1px);
+  background-size:60px 60px;animation:gridShift 25s linear infinite}
+@keyframes gridShift{to{background-position:60px 60px}}
 
-/* AURORA */
-.aurora{position:fixed;inset:0;overflow:hidden;z-index:0}
-.aurora-beam{position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:conic-gradient(from 0deg,transparent,rgba(16,185,129,.03),transparent,rgba(52,211,153,.02),transparent);animation:auroraRotate 25s linear infinite;filter:blur(60px)}
-@keyframes auroraRotate{to{transform:rotate(360deg)}}
+/* SCAN LINES */
+.scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px)}
 
-/* FLOATING ORBS */
-.orb{position:fixed;border-radius:50%;filter:blur(80px);z-index:0;animation:orbFloat 8s ease-in-out infinite}
-.orb-1{width:400px;height:400px;background:rgba(16,185,129,.08);top:-200px;left:50%;transform:translateX(-50%);animation-delay:0s}
-.orb-2{width:300px;height:300px;background:rgba(5,150,105,.06);bottom:-150px;right:-100px;animation-delay:2s}
-.orb-3{width:250px;height:250px;background:rgba(52,211,153,.05);top:40%;left:-100px;animation-delay:4s}
-@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(30px) scale(1.05)}}
+/* GLITCH OVERLAY */
+.glitch-overlay{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.03;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");animation:glitchAnim .5s infinite}
+@keyframes glitchAnim{0%{transform:translate(0)}20%{transform:translate(-2px,2px)}40%{transform:translate(2px,-2px)}60%{transform:translate(-1px,-1px)}80%{transform:translate(1px,2px)}100%{transform:translate(0)}}
+
+/* MATRIX RAIN */
+.matrix-canvas{position:fixed;inset:0;z-index:0;opacity:.06;pointer-events:none}
 
 /* PARTICLES */
-.particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.particles{position:fixed;inset:0;z-index:1;pointer-events:none}
 .p{position:absolute;border-radius:50%;animation:particleRise linear infinite}
 @keyframes particleRise{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
 
@@ -45,59 +43,62 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif
 .loader{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--bg);transition:all .8s cubic-bezier(.4,0,.2,1)}
 .loader.done{opacity:0;visibility:hidden;transform:scale(1.05)}
 
-.loader-content{display:flex;flex-direction:column;align-items:center;gap:48px;animation:loaderEntry 1s ease-out}
+.loader-content{display:flex;flex-direction:column;align-items:center;gap:40px;animation:loaderEntry 1s ease-out}
 @keyframes loaderEntry{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 
-/* HEXAGON LOGO */
+/* GLITCH TITLE */
+.glitch-wrap{position:relative}
+.glitch{font-family:'Share Tech Mono',monospace;font-size:52px;font-weight:700;letter-spacing:4px;color:var(--text);position:relative;text-transform:uppercase}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%}
+.glitch::before{animation:glitch1 2s infinite;color:var(--red);z-index:-1}
+.glitch::after{animation:glitch2 2s infinite;color:var(--red-light);z-index:-2}
+@keyframes glitch1{0%,100%{clip-path:inset(0 0 95% 0);transform:translate(0)}10%{clip-path:inset(20% 0 60% 0);transform:translate(-3px,2px)}20%{clip-path:inset(50% 0 20% 0);transform:translate(3px,-1px)}30%{clip-path:inset(10% 0 70% 0);transform:translate(-2px,1px)}40%{clip-path:inset(80% 0 5% 0);transform:translate(2px,-2px)}50%{clip-path:inset(0 0 95% 0);transform:translate(0)}}
+@keyframes glitch2{0%,100%{clip-path:inset(95% 0 0 0);transform:translate(0)}10%{clip-path:inset(60% 0 20% 0);transform:translate(3px,-2px)}20%{clip-path:inset(20% 0 50% 0);transform:translate(-3px,1px)}30%{clip-path:inset(70% 0 10% 0);transform:translate(2px,-1px)}40%{clip-path:inset(5% 0 80% 0);transform:translate(-2px,2px)}50%{clip-path:inset(95% 0 0 0);transform:translate(0)}}
+
+.title-sub{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--red);letter-spacing:6px;text-transform:uppercase;margin-top:12px;text-shadow:0 0 10px rgba(239,68,68,.5)}
+
+/* HEX LOGO */
 .hex-wrap{position:relative;width:180px;height:180px}
 .hex-outer{position:absolute;inset:0;animation:hexSpin 12s linear infinite}
 @keyframes hexSpin{to{transform:rotate(360deg)}}
-.hex-ring{position:absolute;inset:0;border:1.5px solid transparent;border-top-color:var(--emerald);border-radius:50%}
-.hex-ring:nth-child(2){inset:15px;border-top-color:var(--emerald-light);border-right-color:var(--emerald-light);animation-duration:8s;animation-direction:reverse}
-.hex-ring:nth-child(3){inset:30px;border-bottom-color:var(--emerald-light);border-left-color:var(--emerald-light);animation-duration:6s}
-.hex-ring:nth-child(4){inset:45px;border-top-color:var(--emerald);border-radius:50%;animation-duration:4s;animation-direction:reverse}
+.hex-ring{position:absolute;inset:0;border:1.5px solid transparent;border-top-color:var(--red);border-radius:50%}
+.hex-ring:nth-child(2){inset:15px;border-top-color:var(--red-light);border-right-color:var(--red-light);animation-duration:8s;animation-direction:reverse}
+.hex-ring:nth-child(3){inset:30px;border-bottom-color:var(--red-light);border-left-color:var(--red-light);animation-duration:6s}
+.hex-ring:nth-child(4){inset:45px;border-top-color:var(--red);animation-duration:4s;animation-direction:reverse}
 
-.hex-center{position:absolute;inset:60px;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));border-radius:50%;box-shadow:0 0 80px rgba(16,185,129,.4),0 0 120px rgba(16,185,129,.2),inset 0 0 40px rgba(255,255,255,.1);animation:hexPulse 3s ease-in-out infinite}
-@keyframes hexPulse{0%,100%{box-shadow:0 0 80px rgba(16,185,129,.4),0 0 120px rgba(16,185,129,.2),inset 0 0 40px rgba(255,255,255,.1)}50%{box-shadow:0 0 100px rgba(16,185,129,.5),0 0 160px rgba(16,185,129,.3),inset 0 0 50px rgba(255,255,255,.15)}}
+.hex-center{position:absolute;inset:60px;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,var(--red),var(--red-dark));border-radius:50%;box-shadow:0 0 80px rgba(239,68,68,.4),0 0 120px rgba(239,68,68,.2),inset 0 0 40px rgba(255,255,255,.1);animation:hexPulse 3s ease-in-out infinite}
+@keyframes hexPulse{0%,100%{box-shadow:0 0 80px rgba(239,68,68,.4),0 0 120px rgba(239,68,68,.2)}50%{box-shadow:0 0 100px rgba(239,68,68,.6),0 0 160px rgba(239,68,68,.3)}}
 
-.hex-icon{position:relative;z-index:2}
 .hex-icon svg{width:52px;height:52px;fill:#fff;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
 
 /* SPARKLES */
-.sparkle{position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;animation:sparkle 2s ease-in-out infinite}
+.sparkle{position:absolute;width:4px;height:4px;background:var(--red);border-radius:50%;box-shadow:0 0 10px var(--red);animation:sparkle 2s ease-in-out infinite}
 @keyframes sparkle{0%,100%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1)}}
-
-/* TEXT */
-.title-group{text-align:center}
-.title-main{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;letter-spacing:3px;line-height:1}
-.title-main .g{background:linear-gradient(135deg,var(--emerald),var(--emerald-light),#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 200%;animation:gradientShift 4s ease infinite}
-@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.title-sub{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:6px;text-transform:uppercase;margin-top:12px;font-weight:400}
 
 /* LOADING BAR */
 .load-section{display:flex;flex-direction:column;align-items:center;gap:16px;width:300px}
-.load-track{width:100%;height:4px;background:rgba(255,255,255,.03);border-radius:10px;overflow:hidden;position:relative}
-.load-fill{height:100%;background:linear-gradient(90deg,var(--emerald),var(--emerald-light),var(--emerald));border-radius:10px;width:0%;transition:width .4s cubic-bezier(.4,0,.2,1);position:relative}
-.load-fill::after{content:'';position:absolute;right:0;top:-2px;width:8px;height:8px;background:var(--emerald-light);border-radius:50%;box-shadow:0 0 15px var(--emerald),0 0 30px rgba(16,185,129,.5)}
-.load-info{display:flex;justify-content:space-between;width:100%;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px}
-.load-pct{color:var(--emerald);font-weight:600}
+.load-track{width:100%;height:4px;background:rgba(239,68,68,.1);border-radius:10px;overflow:hidden;position:relative}
+.load-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--red-light),var(--red));border-radius:10px;width:0%;transition:width .4s cubic-bezier(.4,0,.2,1);position:relative}
+.load-fill::after{content:'';position:absolute;right:0;top:-2px;width:8px;height:8px;background:var(--red-light);border-radius:50%;box-shadow:0 0 15px var(--red),0 0 30px rgba(239,68,68,.5)}
+.load-info{display:flex;justify-content:space-between;width:100%;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px}
+.load-pct{color:var(--red);font-weight:600;text-shadow:0 0 10px rgba(239,68,68,.5)}
 
 /* STATUS */
 .status-row{display:flex;align-items:center;gap:12px;padding:12px 24px;background:var(--card);border:1px solid var(--border);border-radius:100px;backdrop-filter:blur(20px)}
 .status-dots{display:flex;gap:6px}
-.s-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:statusPulse 1.5s ease-in-out infinite}
+.s-dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:statusPulse 1.5s ease-in-out infinite;box-shadow:0 0 10px var(--red)}
 .s-dot:nth-child(2){animation-delay:.15s}
 .s-dot:nth-child(3){animation-delay:.3s}
 @keyframes statusPulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.3)}}
-.status-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.status-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
 
 /* FOOTER */
 .footer{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:12px;z-index:10}
-.footer-line{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--emerald),transparent);opacity:.3}
-.footer-text{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:4px;text-transform:uppercase}
+.footer-line{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent);opacity:.3}
+.footer-text{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:4px;text-transform:uppercase}
 
 @media(max-width:400px){
-  .title-main{font-size:36px}
+  .glitch{font-size:36px}
   .hex-wrap{width:150px;height:150px}
   .hex-center{inset:50px}
   .hex-icon svg{width:42px;height:42px}
@@ -108,10 +109,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif
 <body>
 
 <div class="bg"><div class="bg-grid"></div></div>
-<div class="aurora"><div class="aurora-beam"></div></div>
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
+<canvas class="matrix-canvas" id="matrixCanvas"></canvas>
+<div class="scanlines"></div>
+<div class="glitch-overlay"></div>
 <div class="particles" id="particles"></div>
 
 <div class="loader" id="loader">
@@ -135,15 +135,15 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif
       <div class="sparkle" style="bottom:30%;right:15%;animation-delay:1.6s"></div>
     </div>
 
-    <div class="title-group">
-      <div class="title-main">DEVIL <span class="g">PREDICTOR</span></div>
-      <div class="title-sub">Quantum AI Engine v4.0</div>
+    <div class="glitch-wrap">
+      <div class="glitch" data-text="DEVIL">DEVIL</div>
+      <div class="title-sub">// QUANTUM AI ENGINE v4.0</div>
     </div>
 
     <div class="load-section">
       <div class="load-track"><div class="load-fill" id="loadFill"></div></div>
       <div class="load-info">
-        <span>INITIALIZING</span>
+        <span id="loadStage">[INITIALIZING]</span>
         <span class="load-pct" id="loadPct">0%</span>
       </div>
     </div>
@@ -154,40 +154,47 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif
         <div class="s-dot"></div>
         <div class="s-dot"></div>
       </div>
-      <div class="status-label">Connecting to quantum servers</div>
+      <div class="status-label">Connecting to dark servers</div>
     </div>
   </div>
 
   <div class="footer">
     <div class="footer-line"></div>
-    <div class="footer-text">Quantum • Secure • Fast</div>
+    <div class="footer-text">HACK THE SYSTEM</div>
   </div>
 </div>
 
 <script>
+// Matrix rain
+const mc=document.getElementById('matrixCanvas');const mx=mc.getContext('2d');
+function resizeMatrix(){mc.width=innerWidth;mc.height=innerHeight}
+resizeMatrix();addEventListener('resize',resizeMatrix);
+const chars='01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+const fontSize=14;let columns=mc.width/fontSize;let drops=Array.from({length:columns},()=>1);
+function drawMatrix(){mx.fillStyle='rgba(10,10,10,0.05)';mx.fillRect(0,0,mc.width,mc.height);mx.fillStyle='#ef4444';mx.font=fontSize+'px monospace';for(let i=0;i<drops.length;i++){const t=chars[Math.floor(Math.random()*chars.length)];mx.fillText(t,i*fontSize,drops[i]*fontSize);if(drops[i]*fontSize>mc.height&&Math.random()>.975)drops[i]=0;drops[i]++}}
+setInterval(drawMatrix,45);
+
 // Particles
 const pc=document.getElementById('particles');
 for(let i=0;i<40;i++){
   const p=document.createElement('div');p.className='p';
   const size=Math.random()*3+1;
-  p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:hsl(${150+Math.random()*30},${70+Math.random()*30}%,${60+Math.random()*30}%);animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*6}s;opacity:${.2+Math.random()*.5}`;
+  p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:hsl(${0+Math.random()*10},${80+Math.random()*20}%,${50+Math.random()*20}%);animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*6}s;opacity:${.2+Math.random()*.5}`;
   pc.appendChild(p);
 }
 
 // Loading
-let pct=0;const fill=document.getElementById('loadFill');const pctEl=document.getElementById('loadPct');
-const stages=['INITIALIZING','LOADING MODULES','CONNECTING AI','SYNCING DATA','READY'];
-let stageIdx=0;
-
+let pct=0;const fill=document.getElementById('loadFill');const pctEl=document.getElementById('loadPct');const stageEl=document.getElementById('loadStage');
+const stages=['[INITIALIZING]','[LOADING MODULES]','[CONNECTING AI]','[SYNCING DATA]','[READY]'];
+let si=0;
 const iv=setInterval(()=>{
   pct+=Math.random()*12+3;
   if(pct>=100){pct=100;clearInterval(iv);
     setTimeout(()=>{document.getElementById('loader').classList.add('done');
       setTimeout(()=>window.location.href='welcome.html',800)},500)}
-  fill.style.width=pct+'%';
-  pctEl.textContent=Math.floor(pct)+'%';
-  const newIdx=Math.min(Math.floor(pct/25),stages.length-1);
-  if(newIdx!==stageIdx){stageIdx=newIdx;document.querySelector('.load-info span:first-child').textContent=stages[stageIdx]}
+  fill.style.width=pct+'%';pctEl.textContent=Math.floor(pct)+'%';
+  const ni=Math.min(Math.floor(pct/25),stages.length-1);
+  if(ni!==si){si=ni;stageEl.textContent=stages[si]}
 },180);
 </script>
 </body>

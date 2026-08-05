@@ -2,247 +2,403 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DEVIL HOME</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>DEVIL PREDICTOR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-:root{--emerald:#10b981;--emerald-light:#34d399;--emerald-dark:#059669;--bg:#030712;--card:rgba(255,255,255,.02);--border:rgba(255,255,255,.06);--text:#f9fafb;--muted:#6b7280;--dim:#374151}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --red:#ef4444;--red-light:#f87171;--red-dark:#dc2626;
+  --bg:#0a0a0a;--card:rgba(239,68,68,.03);--border:rgba(239,68,68,.1);
+  --glow:rgba(239,68,68,.15);--glass:rgba(255,255,255,.04);
+  --text:#e5e5e5;--muted:#737373;--dim:#525252;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+canvas#matrix{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.12}
+.scanlines{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(239,68,68,.015) 2px,rgba(239,68,68,.015) 4px);
+}
+.particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.particle{
+  position:absolute;width:2px;height:2px;background:var(--red);
+  border-radius:50%;animation:floatUp linear infinite;
+  box-shadow:0 0 6px var(--red),0 0 12px var(--red-dark);
+}
+@keyframes floatUp{
+  0%{transform:translateY(100vh) scale(0);opacity:0}
+  10%{opacity:1}
+  90%{opacity:.6}
+  100%{transform:translateY(-10vh) scale(1.5);opacity:0}
+}
+.content{position:relative;z-index:2;max-width:480px;margin:0 auto;padding-bottom:100px}
 
-/* BG */
-.bg{position:fixed;inset:0;z-index:0}
-.bg::before{content:'';position:absolute;inset:0;background:
-  radial-gradient(ellipse 80% 50% at 50% -20%,rgba(16,185,129,.1),transparent),
-  radial-gradient(ellipse 60% 40% at 80% 100%,rgba(5,150,105,.06),transparent)}
-.bg-grid{position:absolute;inset:0;background-image:
-  linear-gradient(rgba(16,185,129,.015) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(16,185,129,.015) 1px,transparent 1px);
-  background-size:80px 80px;animation:gridShift 30s linear infinite}
-@keyframes gridShift{to{background-position:80px 80px}}
+.top-section{
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(10,10,10,.85);
+  border-bottom:1px solid var(--border);
+  padding:16px 20px 12px;
+}
+.top-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.header-left{display:flex;flex-direction:column;gap:2px}
+.welcome-back{
+  font-family:'Share Tech Mono',monospace;font-size:11px;
+  color:var(--muted);letter-spacing:3px;text-transform:uppercase;
+}
+.title-main{
+  font-family:'Space Grotesk',sans-serif;font-size:28px;
+  font-weight:700;letter-spacing:1px;
+  background:linear-gradient(135deg,#fff 0%,var(--red-light) 50%,var(--red) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.title-main .g{
+  color:var(--red);-webkit-text-fill-color:var(--red);
+  text-shadow:0 0 20px var(--glow),0 0 40px rgba(239,68,68,.2);
+}
+.telegram-btn{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--glass);border:1px solid var(--border);
+  backdrop-filter:blur(10px);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;transition:all .3s;
+  color:var(--red);font-size:20px;
+}
+.telegram-btn:hover{
+  background:rgba(239,68,68,.1);border-color:var(--red);
+  box-shadow:0 0 20px var(--glow);
+}
+.search-wrap{position:relative}
+.search-input{
+  width:100%;height:52px;border-radius:14px;padding:0 20px 0 48px;
+  background:var(--glass);border:1px solid var(--border);
+  color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;
+  outline:none;transition:all .3s;
+}
+.search-input::placeholder{color:var(--dim)}
+.search-input:focus{border-color:var(--red);box-shadow:0 0 0 3px var(--glow)}
+.search-icon{
+  position:absolute;left:16px;top:50%;transform:translateY(-50%);
+  color:var(--dim);font-size:16px;pointer-events:none;
+}
 
-.particles{position:fixed;inset:0;z-index:1;pointer-events:none}
-.p{position:absolute;border-radius:50%;animation:particleRise linear infinite}
-@keyframes particleRise{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
+.stats-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  padding:16px 20px 8px;
+}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:14px 10px;text-align:center;
+  transition:all .3s;
+}
+.stat-card:hover{border-color:var(--red);box-shadow:0 0 15px var(--glow)}
+.stat-val{
+  font-family:'Space Grotesk',sans-serif;font-size:24px;
+  font-weight:700;color:var(--red);
+}
+.stat-label{
+  font-size:11px;color:var(--muted);margin-top:2px;
+  text-transform:uppercase;letter-spacing:1px;
+}
 
-/* SCROLL */
-.scroll{width:100%;height:100%;overflow-y:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.scroll::-webkit-scrollbar{display:none}
+.section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 20px 12px;
+}
+.section-title{
+  font-family:'Space Grotesk',sans-serif;font-size:18px;
+  font-weight:600;color:#fff;
+}
+.live-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:20px;font-size:11px;
+  font-weight:600;text-transform:uppercase;letter-spacing:1px;
+  background:rgba(239,68,68,.12);color:var(--red);
+  border:1px solid rgba(239,68,68,.25);
+  animation:pulseBadge 2s ease-in-out infinite;
+}
+.live-badge::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--red);animation:blink 1.5s ease-in-out infinite;
+}
+@keyframes pulseBadge{0%,100%{opacity:1}50%{opacity:.7}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* STICKY TOP */
-.top{position:sticky;top:0;z-index:100;padding:20px 20px 16px;background:linear-gradient(to bottom,rgba(3,7,18,.98) 70%,transparent);backdrop-filter:blur(20px)}
+.games-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  padding:0 20px;
+}
+.game-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;cursor:pointer;
+  transition:all .4s cubic-bezier(.4,0,.2,1);
+  opacity:0;transform:translateY(30px);
+  animation:cardIn .6s ease forwards;
+}
+.game-card:nth-child(1){animation-delay:.05s}
+.game-card:nth-child(2){animation-delay:.1s}
+.game-card:nth-child(3){animation-delay:.15s}
+.game-card:nth-child(4){animation-delay:.2s}
+.game-card:nth-child(5){animation-delay:.25s}
+.game-card:nth-child(6){animation-delay:.3s}
+.game-card:nth-child(7){animation-delay:.35s}
+.game-card:nth-child(8){animation-delay:.4s}
+.game-card:nth-child(9){animation-delay:.45s}
+.game-card:nth-child(10){animation-delay:.5s}
+.game-card:nth-child(11){animation-delay:.55s}
+.game-card:nth-child(12){animation-delay:.6s}
+@keyframes cardIn{
+  to{opacity:1;transform:translateY(0)}
+}
+.game-card:hover{
+  border-color:var(--red);
+  box-shadow:0 0 25px var(--glow),0 8px 32px rgba(0,0,0,.4);
+  transform:translateY(-4px) !important;
+}
+.card-img{
+  position:relative;width:100%;aspect-ratio:1.2;
+  overflow:hidden;background:rgba(239,68,68,.03);
+}
+.card-img img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s;
+}
+.game-card:hover .card-img img{transform:scale(1.08)}
+.card-img::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(10,10,10,.95) 100%);
+}
+.card-badge{
+  position:absolute;top:10px;left:10px;z-index:2;
+  padding:3px 10px;border-radius:6px;font-size:10px;
+  font-weight:700;text-transform:uppercase;letter-spacing:1px;
+}
+.badge-hot{background:var(--red);color:#fff;box-shadow:0 0 12px rgba(239,68,68,.5)}
+.badge-live{background:var(--red-dark);color:#fff;animation:blink 1.5s ease-in-out infinite}
+.badge-new{background:#3b82f6;color:#fff}
+.badge-vip{background:#a855f7;color:#fff}
+.badge-trend{background:#f97316;color:#fff}
+.badge-best{background:var(--red);color:#fff}
+.card-info{padding:12px 12px 14px}
+.card-name{
+  font-family:'Space Grotesk',sans-serif;font-size:14px;
+  font-weight:600;color:#fff;margin-bottom:3px;
+}
+.card-desc{
+  font-size:11px;color:var(--muted);margin-bottom:10px;
+  line-height:1.4;
+}
+.card-btns{display:flex;gap:6px}
+.btn{
+  flex:1;height:34px;border-radius:8px;border:none;
+  font-family:'Outfit',sans-serif;font-size:12px;
+  font-weight:600;cursor:pointer;transition:all .3s;
+  display:flex;align-items:center;justify-content:center;
+  gap:4px;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--red),var(--red-dark));
+  color:#fff;box-shadow:0 2px 10px rgba(239,68,68,.3);
+}
+.btn-primary:hover{box-shadow:0 4px 20px rgba(239,68,68,.5);transform:translateY(-1px)}
+.btn-secondary{
+  background:var(--glass);color:var(--text);
+  border:1px solid var(--border);
+}
+.btn-secondary:hover{border-color:var(--red);color:var(--red)}
 
-/* HEADER */
-.header{display:flex;justify-content:space-between;align-items:flex-start}
-.h-left{}
-.greet{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
-.title{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;margin-top:4px}
-.title .g{background:linear-gradient(135deg,var(--emerald),var(--emerald-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.h-right{display:flex;gap:10px}
-.h-btn{width:44px;height:44px;background:var(--card);border:1px solid var(--border);border-radius:14px;display:flex;justify-content:center;align-items:center;cursor:pointer;transition:all .3s;backdrop-filter:blur(10px)}
-.h-btn:active{transform:scale(.9)}
-.h-btn svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(10,10,10,.9);
+  border-top:1px solid var(--border);
+  padding:10px 20px;padding-bottom:max(10px,env(safe-area-inset-bottom));
+}
+.nav-inner{
+  display:flex;align-items:center;justify-content:center;
+  gap:40px;max-width:480px;margin:0 auto;
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;
+  gap:4px;cursor:pointer;transition:all .3s;
+  padding:4px 16px;border-radius:12px;
+  text-decoration:none;
+}
+.nav-item.active{background:rgba(239,68,68,.1)}
+.nav-item.active .nav-icon{color:var(--red);filter:drop-shadow(0 0 8px var(--glow))}
+.nav-item.active .nav-label{color:var(--red)}
+.nav-icon{font-size:22px;color:var(--muted);transition:all .3s}
+.nav-label{
+  font-size:10px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;
+}
 
-/* SEARCH */
-.search-wrap{position:relative;margin-top:16px}
-.search{width:100%;height:52px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0 16px 0 48px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:all .3s;backdrop-filter:blur(10px)}
-.search:focus{border-color:rgba(16,185,129,.25);background:rgba(16,185,129,.015);box-shadow:0 0 0 4px rgba(16,185,129,.04)}
-.search::placeholder{color:var(--dim)}
-.s-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--dim);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
-.search:focus~.s-icon{stroke:var(--emerald)}
+.hidden{display:none!important}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 20px 0}
-.stat{padding:16px 12px;background:var(--card);border:1px solid var(--border);border-radius:18px;text-align:center;backdrop-filter:blur(10px);position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.15),transparent)}
-.stat-val{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--emerald)}
-.stat-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
-
-/* SECTION */
-.sec{padding:20px 20px 0;display:flex;justify-content:space-between;align-items:center}
-.sec-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
-.sec-badge{padding:5px 12px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.1);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--emerald);font-weight:600;letter-spacing:1px}
-
-/* GAMES GRID */
-.games{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 20px 120px}
-
-/* GAME CARD */
-.gc{background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1);cursor:pointer;position:relative;animation:cardIn .6s ease-out both}
-@keyframes cardIn{from{opacity:0;transform:translateY(30px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
-.gc:active{transform:scale(.96)}
-.gc:hover{border-color:rgba(16,185,129,.15)}
-
-/* IMAGE WRAP */
-.gc-img{width:100%;aspect-ratio:1.2;overflow:hidden;position:relative;background:linear-gradient(135deg,rgba(16,185,129,.05),rgba(16,185,129,.01))}
-.gc-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.4,0,.2,1);filter:brightness(.9)}
-.gc:hover .gc-img img{transform:scale(1.08)}
-.gc-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(3,7,12,.9) 0%,transparent 60%)}
-.gc-fallback{width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(16,185,129,.02))}
-.gc-fallback svg{width:40px;height:40px;stroke:var(--emerald);fill:none;stroke-width:1.5;opacity:.4}
-
-/* BADGE */
-.gc-badge{position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1px;z-index:2;backdrop-filter:blur(10px)}
-.b-hot{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
-.b-live{background:rgba(16,185,129,.15);color:var(--emerald);border:1px solid rgba(16,185,129,.2)}
-.b-new{background:rgba(59,130,246,.15);color:#3b82f6;border:1px solid rgba(59,130,246,.2)}
-.b-vip{background:rgba(168,85,247,.15);color:#a855f7;border:1px solid rgba(168,85,247,.2)}
-.b-trend{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
-.b-best{background:rgba(16,185,129,.15);color:var(--emerald);border:1px solid rgba(16,185,129,.2)}
-
-/* CONTENT */
-.gc-body{padding:14px}
-.gc-name{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px}
-.gc-desc{font-size:11px;color:var(--muted);line-height:15px;margin-bottom:12px}
-
-/* BTNS */
-.gc-btns{display:flex;gap:8px}
-.gc-btn{flex:1;height:38px;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:5px;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.gc-btn:active{transform:scale(.93)}
-.gc-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);opacity:0;transition:opacity .25s}
-.gc-btn:hover::before{opacity:1}
-.gc-p{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;box-shadow:0 6px 20px rgba(16,185,129,.25)}
-.gc-s{background:rgba(255,255,255,.03);color:var(--emerald);border:1px solid rgba(16,185,129,.1)}
-.gc-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-
-/* BOTTOM NAV */
-.bnav{position:fixed;bottom:0;left:0;right:0;z-index:100;padding:12px 20px;padding-bottom:calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(3,7,18,.98) 60%,transparent);backdrop-filter:blur(20px)}
-.nav{display:flex;justify-content:space-around;align-items:center;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:22px;padding:12px 20px;backdrop-filter:blur(20px)}
-.n-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:4px 16px;transition:all .3s}
-.n-item:active{transform:scale(.9)}
-.n-item.active .n-icon{stroke:var(--emerald)}
-.n-item.active .n-lbl{color:var(--emerald)}
-.n-icon{width:22px;height:22px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:all .3s}
-.n-item.active .n-icon{filter:drop-shadow(0 0 8px rgba(16,185,129,.4))}
-.n-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;transition:color .3s}
-
-.footer-space{height:20px}
-
-@media(max-width:400px){
-  .title{font-size:24px}
-  .gc-body{padding:12px}
-  .gc-name{font-size:13px}
+@media(max-width:360px){
+  .games-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .title-main{font-size:24px}
 }
 </style>
 </head>
 <body>
-
-<div class="bg"><div class="bg-grid"></div></div>
+<canvas id="matrix"></canvas>
+<div class="scanlines"></div>
 <div class="particles" id="particles"></div>
 
-<div class="scroll">
-  <div class="top">
-    <div class="header">
-      <div class="h-left">
-        <div class="greet">WELCOME BACK</div>
-        <div class="title">DEVIL <span class="g">PREDICTOR</span></div>
+<div class="content">
+  <!-- TOP SECTION -->
+  <div class="top-section">
+    <div class="top-header">
+      <div class="header-left">
+        <span class="welcome-back">Welcome Back</span>
+        <div class="title-main">DEVIL PREDICTOR<span class="g">.</span></div>
       </div>
-      <div class="h-right">
-        <div class="h-btn" onclick="window.open('https://t.me/','_blank')">
-          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-        </div>
-      </div>
+      <a class="telegram-btn" href="https://t.me/" target="_blank" title="Telegram">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+      </a>
     </div>
     <div class="search-wrap">
-      <input class="search" id="search" placeholder="Search games..." onkeyup="searchGame()">
-      <svg class="s-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span class="search-icon">&#128269;</span>
+      <input class="search-input" type="text" placeholder="Search games..." oninput="searchGame(this.value)">
     </div>
   </div>
 
-  <div class="stats">
-    <div class="stat"><div class="stat-val">12</div><div class="stat-lbl">Games</div></div>
-    <div class="stat"><div class="stat-val">2</div><div class="stat-lbl">Modes</div></div>
-    <div class="stat"><div class="stat-val">AI</div><div class="stat-lbl">Engine</div></div>
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val">12</div>
+      <div class="stat-label">Games</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">2</div>
+      <div class="stat-label">Modes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">AI</div>
+      <div class="stat-label">Engine</div>
+    </div>
   </div>
 
-  <div class="sec">
-    <div class="sec-title">Select Game</div>
-    <div class="sec-badge">ALL LIVE</div>
+  <!-- SECTION HEADER -->
+  <div class="section-header">
+    <div class="section-title">Select Game</div>
+    <div class="live-badge">ALL LIVE</div>
   </div>
 
-  <div class="games" id="gc"></div>
-  <div class="footer-space"></div>
+  <!-- GAMES GRID -->
+  <div class="games-grid" id="gamesGrid"></div>
 </div>
 
-<div class="bnav">
-  <div class="nav">
-    <div class="n-item active">
-      <svg class="n-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <div class="n-lbl">HOME</div>
-    </div>
-    <div class="n-item" onclick="window.open('https://t.me/','_blank')">
-      <svg class="n-icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-      <div class="n-lbl">SUPPORT</div>
-    </div>
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-inner">
+    <a class="nav-item active" href="home.html">
+      <span class="nav-icon">&#127968;</span>
+      <span class="nav-label">Home</span>
+    </a>
+    <a class="nav-item" href="support.html">
+      <span class="nav-icon">&#128172;</span>
+      <span class="nav-label">Support</span>
+    </a>
   </div>
 </div>
 
 <script>
 const games=[
-  {name:'OKWIN',img:'image1.png',badge:'HOT',bc:'b-hot',desc:'AI Prediction Available',key:'okwin'},
-  {name:'51 GAME',img:'image2.png',badge:'LIVE',bc:'b-live',desc:'Smart Signal System',key:'game51'},
-  {name:'55 CLUB',img:'image3.png',badge:'HOT',bc:'b-hot',desc:'Fast Prediction Access',key:'club55'},
-  {name:'82 LOTTERY',img:'image4.png',badge:'NEW',bc:'b-new',desc:'Neural AI Analyzer',key:'lottery82'},
-  {name:'DM WIN',img:'image5.png',badge:'HOT',bc:'b-hot',desc:'Advanced Win Mode',key:'dmwin'},
-  {name:'JAI CLUB',img:'image6.png',badge:'VIP',bc:'b-vip',desc:'Premium AI Detection',key:'jaiclub'},
-  {name:'YAARWIN',img:'image7.png',badge:'HOT',bc:'b-hot',desc:'Real Time Signal Engine',key:'yaarwin'},
-  {name:'BDG WIN',img:'image8.png',badge:'LIVE',bc:'b-live',desc:'High Accuracy Prediction',key:'bdgwin'},
-  {name:'BIG MUMBAI',img:'image9.png',badge:'TREND',bc:'b-trend',desc:'Fast Win Prediction',key:'bigmumbai'},
-  {name:'TIRANGA',img:'image10.png',badge:'LIVE',bc:'b-live',desc:'AI Smart Prediction',key:'tiranga'},
-  {name:'TASHAN WIN',img:'image11.png',badge:'BEST',bc:'b-best',desc:'Good Win Prediction',key:'tashanwin'},
-  {name:'SIKKIM',img:'image12.png',badge:'NEW',bc:'b-new',desc:'Sikkim AI Engine',key:'sikkim'}
+  {key:"okwin",name:"OKWIN",desc:"Premium prediction platform with instant results",badge:"hot",img:"image1.png"},
+  {key:"51game",name:"51 GAME",desc:"Live gaming experience with real-time updates",badge:"live",img:"image2.png"},
+  {key:"55club",name:"55 CLUB",desc:"Exclusive club games with high win rates",badge:"hot",img:"image3.png"},
+  {key:"82lottery",name:"82 LOTTERY",desc:"New lottery system with AI-powered predictions",badge:"new",img:"image4.png"},
+  {key:"dmwin",name:"DM WIN",desc:"Daily winning predictions with proven accuracy",badge:"hot",img:"image5.png"},
+  {key:"jaiclub",name:"JAI CLUB",desc:"VIP exclusive club with premium features",badge:"vip",img:"image6.png"},
+  {key:"yaarwin",name:"YAARWIN",desc:"Trusted platform with consistent daily wins",badge:"hot",img:"image7.png"},
+  {key:"bdgwin",name:"BDG WIN",desc:"Live betting guide with smart AI analysis",badge:"live",img:"image8.png"},
+  {key:"bigmumbai",name:"BIG MUMBAI",desc:"Trending game with massive reward pools",badge:"trend",img:"image9.png"},
+  {key:"tiranga",name:"TIRANGA",desc:"Live national games with secure predictions",badge:"live",img:"image10.png"},
+  {key:"tashanwin",name:"TASHAN WIN",desc:"Best-in-class prediction engine with top accuracy",badge:"best",img:"image11.png"},
+  {key:"sikkim",name:"SIKKIM",desc:"New regional lottery with exciting new format",badge:"new",img:"image12.png"}
 ];
 
-const gC=document.getElementById('gc');
-games.forEach((g,i)=>{
-  gC.innerHTML+=`
-    <div class="gc" style="animation-delay:${i*.06}s" onclick="go('${g.key}','1m')">
-      <div class="gc-img">
-        <img src="${g.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="${g.name}">
-        <div class="gc-fallback" style="display:none"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-        <div class="gc-badge ${g.bc}">${g.badge}</div>
+const badgeLabels={hot:"HOT",live:"LIVE",new:"NEW",vip:"VIP",trend:"TREND",best:"BEST"};
+const badgeClasses={hot:"badge-hot",live:"badge-live",new:"badge-new",vip:"badge-vip",trend:"badge-trend",best:"badge-best"};
+
+function renderGames(list){
+  const g=document.getElementById("gamesGrid");
+  g.innerHTML=list.map((gm,i)=>`
+    <div class="game-card" data-name="${gm.name.toLowerCase()}" onclick="go('${gm.key}',60)">
+      <div class="card-img">
+        <img src="${gm.img}" alt="${gm.name}" onerror="this.onerror=null;this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 160%22><rect fill=%22%23111%22 width=%22200%22 height=%22160%22/><text fill=%22%23333%22 font-family=%22monospace%22 font-size=%2214%22 x=%22100%22 y=%2285%22 text-anchor=%22middle%22>${gm.name}</text></svg>'">
+        <span class="card-badge ${badgeClasses[gm.badge]}">${badgeLabels[gm.badge]}</span>
       </div>
-      <div class="gc-body">
-        <div class="gc-name">${g.name}</div>
-        <div class="gc-desc">${g.desc}</div>
-        <div class="gc-btns">
-          <button class="gc-btn gc-p" onclick="event.stopPropagation();go('${g.key}','1m')">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            1 MIN
-          </button>
-          <button class="gc-btn gc-s" onclick="event.stopPropagation();go('${g.key}','30s')">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            30 SEC
-          </button>
+      <div class="card-info">
+        <div class="card-name">${gm.name}</div>
+        <div class="card-desc">${gm.desc}</div>
+        <div class="card-btns">
+          <button class="btn btn-primary" onclick="event.stopPropagation();go('${gm.key}',60)">1 MIN</button>
+          <button class="btn btn-secondary" onclick="event.stopPropagation();go('${gm.key}',30)">30 SEC</button>
         </div>
       </div>
     </div>
-  `;
-});
-
-const GD={okwin:{name:'OKWIN',image:'image1.png'},game51:{name:'51 GAME',image:'image2.png'},club55:{name:'55 CLUB',image:'image3.png'},lottery82:{name:'82 LOTTERY',image:'image4.png'},dmwin:{name:'DM WIN',image:'image5.png'},jaiclub:{name:'JAI CLUB',image:'image6.png'},yaarwin:{name:'YAARWIN',image:'image7.png'},bdgwin:{name:'BDG WIN',image:'image8.png'},bigmumbai:{name:'BIG MUMBAI',image:'image9.png'},tiranga:{name:'TIRANGA',image:'image10.png'},tashanwin:{name:'TASHAN WIN',image:'image11.png'},sikkim:{name:'SIKKIM',image:'image12.png'}};
-
-function go(key,timer){
-  if(!GD[key])return;
-  localStorage.setItem('selectedGame',JSON.stringify({name:GD[key].name,image:GD[key].image,timer}));
-  location.href='mode.html';
+  `).join("");
 }
 
-function searchGame(){
-  const q=document.getElementById('search').value.toLowerCase();
-  document.querySelectorAll('.gc').forEach(c=>{
-    c.style.display=c.querySelector('.gc-name').innerText.toLowerCase().includes(q)?'':'none';
+function go(key,timer){
+  localStorage.setItem("selectedGame",key);
+  localStorage.setItem("selectedTimer",timer);
+  window.location.href="mode.html";
+}
+
+function searchGame(q){
+  const v=q.toLowerCase().trim();
+  document.querySelectorAll(".game-card").forEach(c=>{
+    c.style.display=!v||c.dataset.name.includes(v)?"":"none";
   });
 }
 
-const pc=document.getElementById('particles');
-for(let i=0;i<20;i++){
-  const p=document.createElement('div');p.className='p';
-  const s=Math.random()*3+1;
-  p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:hsl(${150+Math.random()*30},${70+Math.random()*30}%,${60+Math.random()*30}%);animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*6}s;opacity:${.15+Math.random()*.3}`;
-  pc.appendChild(p);
-}
+// MATRIX CANVAS
+(function(){
+  const c=document.getElementById("matrix"),ctx=c.getContext("2d");
+  let w,h,cols,drops;
+  function resize(){w=c.width=innerWidth;h=c.height=innerHeight;cols=Math.floor(w/14);drops=Array(cols).fill(1)}
+  resize();window.addEventListener("resize",resize);
+  const chars="DEVILPREDICTOR0123456789ABCDEF";
+  function draw(){
+    ctx.fillStyle="rgba(10,10,10,.05)";ctx.fillRect(0,0,w,h);
+    ctx.fillStyle="#ef4444";ctx.font="14px monospace";
+    for(let i=0;i<drops.length;i++){
+      const ch=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(ch,i*14,drops[i]*14);
+      if(drops[i]*14>h&&Math.random()>.975)drops[i]=0;
+      drops[i]++;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// PARTICLES
+(function(){
+  const c=document.getElementById("particles");
+  for(let i=0;i<25;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left=Math.random()*100+"%";
+    p.style.animationDuration=(6+Math.random()*8)+"s";
+    p.style.animationDelay=Math.random()*10+"s";
+    p.style.width=p.style.height=(1+Math.random()*2)+"px";
+    c.appendChild(p);
+  }
+})();
+
+renderGames(games);
 </script>
 </body>
 </html>

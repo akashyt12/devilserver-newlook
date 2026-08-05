@@ -2,196 +2,148 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DEVIL MODE</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>DEVIL PREDICTOR - Select Mode</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-:root{--emerald:#10b981;--emerald-light:#34d399;--emerald-dark:#059669;--bg:#030712;--card:rgba(255,255,255,.02);--border:rgba(255,255,255,.06);--text:#f9fafb;--muted:#6b7280;--dim:#374151}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)}
-
-.bg{position:fixed;inset:0;z-index:0}
-.bg::before{content:'';position:absolute;inset:0;background:
-  radial-gradient(ellipse 80% 50% at 50% -20%,rgba(16,185,129,.1),transparent),
-  radial-gradient(ellipse 60% 40% at 80% 100%,rgba(5,150,105,.06),transparent)}
-.bg-grid{position:absolute;inset:0;background-image:
-  linear-gradient(rgba(16,185,129,.015) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(16,185,129,.015) 1px,transparent 1px);
-  background-size:80px 80px;animation:gridShift 30s linear infinite}
-@keyframes gridShift{to{background-position:80px 80px}}
-
-.particles{position:fixed;inset:0;z-index:1;pointer-events:none}
-.p{position:absolute;border-radius:50%;animation:particleRise linear infinite}
-@keyframes particleRise{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
-
-/* BACK */
-.back{position:fixed;top:20px;left:20px;z-index:100;width:48px;height:48px;background:var(--card);border:1px solid var(--border);border-radius:16px;display:flex;justify-content:center;align-items:center;cursor:pointer;backdrop-filter:blur(20px);transition:all .3s}
-.back:active{transform:scale(.9)}
-.back svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-/* SCROLL */
-.scroll{width:100%;height:100%;overflow-y:auto;scrollbar-width:none}
-.scroll::-webkit-scrollbar{display:none}
-
-/* MAIN */
-.main{position:relative;z-index:10;width:100%;min-height:100%;padding:80px 20px 40px;display:flex;flex-direction:column;gap:24px}
-
-/* GAME HEADER */
-.game-hdr{display:flex;align-items:center;gap:16px;animation:fadeUp .6s ease-out both}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#ef4444;--red-light:#f87171;--red-dark:#dc2626;--bg:#0a0a0a;--card:rgba(239,68,68,.03);--border:rgba(239,68,68,.1);--text:#e5e5e5;--text-dim:#737373}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;position:relative}
+#matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.scanlines{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);opacity:.4}
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.particle{position:absolute;width:2px;height:2px;background:var(--red);border-radius:50%;animation:floatUp linear infinite;opacity:0}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(1)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-100vh) scale(0)}}
+.content{position:relative;z-index:10;padding:0 16px 120px;max-width:480px;margin:0 auto}
+.back-btn{position:fixed;top:16px;left:16px;z-index:100;width:44px;height:44px;border-radius:14px;border:1px solid var(--border);background:rgba(239,68,68,.06);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s ease}
+.back-btn:hover{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3)}
+.back-btn svg{width:20px;height:20px;stroke:var(--red-light);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.header{padding-top:76px;text-align:center;margin-bottom:28px;opacity:0;animation:fadeUp .6s ease forwards;animation-delay:.1s}
+.logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,var(--red),var(--red-dark));box-shadow:0 0 30px rgba(239,68,68,.3),0 0 60px rgba(239,68,68,.1);margin-bottom:14px;position:relative}
+.logo-wrap::after{content:'';position:absolute;inset:-3px;border-radius:25px;background:linear-gradient(135deg,var(--red),transparent);opacity:.3;filter:blur(8px)}
+.logo-wrap svg{width:38px;height:38px;fill:#fff;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.game-name{font-family:'Space Grotesk',sans-serif;font-size:1.7rem;font-weight:700;color:#fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.game-name span{color:var(--red)}
+.ai-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--red-light);letter-spacing:2px;text-transform:uppercase}
+.ai-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulseDot 2s ease infinite}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.status-bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 20px;margin-bottom:28px;border-radius:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.08);opacity:0;animation:fadeUp .6s ease forwards;animation-delay:.2s}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red),0 0 20px rgba(239,68,68,.4);animation:pulseDot 2s ease infinite}
+.status-text{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:var(--text-dim);letter-spacing:1px}
+.section{margin-bottom:24px;opacity:0;animation:fadeUp .6s ease forwards}
+.section:nth-child(1){animation-delay:.3s}
+.section:nth-child(2){animation-delay:.4s}
+.section:nth-child(3){animation-delay:.5s}
+.section:nth-child(4){animation-delay:.6s}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:.8rem;font-weight:600;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title .g{color:var(--red);font-weight:700}
+.timer-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.timer-card{position:relative;padding:20px 14px;border-radius:16px;border:1px solid var(--border);background:var(--card);cursor:pointer;transition:all .3s ease;text-align:center;overflow:hidden}
+.timer-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(220,38,38,.03));opacity:0;transition:opacity .3s ease}
+.timer-card:hover::before{opacity:1}
+.timer-card.selected{border-color:var(--red);box-shadow:0 0 20px rgba(239,68,68,.15),inset 0 0 20px rgba(239,68,68,.05)}
+.timer-card.selected::before{opacity:1}
+.timer-card.selected .timer-icon{background:linear-gradient(135deg,var(--red),var(--red-dark));box-shadow:0 0 20px rgba(239,68,68,.4)}
+.timer-card.selected .timer-icon svg{stroke:#fff}
+.timer-card.selected .timer-value{color:#fff}
+.timer-icon{width:60px;height:60px;border-radius:16px;background:rgba(239,68,68,.08);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;transition:all .3s ease;position:relative;z-index:1}
+.timer-icon svg{width:28px;height:28px;stroke:var(--red-light);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:all .3s ease}
+.timer-value{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:1px;margin-bottom:4px;position:relative;z-index:1;transition:color .3s ease}
+.timer-label{font-size:.7rem;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;position:relative;z-index:1}
+.mode-stack{display:flex;flex-direction:column;gap:12px}
+.mode-card{display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:16px;border:1px solid var(--border);background:var(--card);cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden}
+.mode-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(220,38,38,.03));opacity:0;transition:opacity .3s ease}
+.mode-card:hover::before{opacity:1}
+.mode-card.selected{border-color:var(--red);box-shadow:0 0 20px rgba(239,68,68,.15),inset 0 0 20px rgba(239,68,68,.05)}
+.mode-card.selected::before{opacity:1}
+.mode-card.selected .mode-icon{background:linear-gradient(135deg,var(--red),var(--red-dark));box-shadow:0 0 20px rgba(239,68,68,.4)}
+.mode-card.selected .mode-icon svg{stroke:#fff;fill:#fff}
+.mode-card.selected .mode-name{color:#fff}
+.mode-card.selected .mode-check{border-color:var(--red);background:var(--red)}
+.mode-card.selected .mode-check svg{opacity:1;transform:scale(1)}
+.mode-icon{width:60px;height:60px;min-width:60px;border-radius:16px;background:rgba(239,68,68,.08);display:flex;align-items:center;justify-content:center;transition:all .3s ease;position:relative;z-index:1}
+.mode-icon svg{width:26px;height:26px;stroke:var(--red-light);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:all .3s ease}
+.mode-info{flex:1;position:relative;z-index:1}
+.mode-name{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:3px;transition:color .3s ease}
+.mode-desc{font-size:.7rem;color:var(--text-dim);letter-spacing:.5px}
+.mode-check{width:24px;height:24px;min-width:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .3s ease;position:relative;z-index:1}
+.mode-check svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;opacity:0;transform:scale(.5);transition:all .3s ease}
+.continue-bar{position:fixed;bottom:0;left:0;right:0;padding:16px 20px 28px;background:linear-gradient(0deg,var(--bg) 60%,transparent);z-index:100;display:flex;justify-content:center}
+.continue-btn{width:100%;max-width:440px;padding:16px;border:none;border-radius:16px;font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .4s ease;position:relative;overflow:hidden}
+.continue-btn.locked{background:rgba(239,68,68,.08);color:var(--text-dim);border:1px solid rgba(239,68,68,.1);cursor:not-allowed}
+.continue-btn.ready{background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;border:1px solid var(--red);box-shadow:0 0 30px rgba(239,68,68,.3),0 8px 32px rgba(239,68,68,.2)}
+.continue-btn.ready::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:btnShine 3s ease infinite}
+@keyframes btnShine{0%{left:-100%}50%,100%{left:100%}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.game-logo{width:72px;height:72px;background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.12);border-radius:22px;display:flex;justify-content:center;align-items:center;overflow:hidden;flex-shrink:0;position:relative}
-.game-logo::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));opacity:.08}
-.game-logo img{width:100%;height:100%;object-fit:cover}
-.game-logo svg{width:32px;height:32px;stroke:var(--emerald);fill:none;stroke-width:1.5;opacity:.5}
-.game-info{flex:1}
-.game-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
-.game-name{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-top:2px}
-.game-name .g{color:var(--emerald)}
-.game-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.1);border-radius:10px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--emerald);font-weight:600;letter-spacing:1px}
-.game-tag svg{width:12px;height:12px;stroke:var(--emerald);fill:none;stroke-width:2}
-
-/* STATUS */
-.status{display:flex;align-items:center;gap:10px;padding:14px 18px;background:rgba(16,185,129,.03);border:1px solid rgba(16,185,129,.06);border-radius:16px;backdrop-filter:blur(10px);animation:fadeUp .6s ease-out .1s both}
-.status-dot{width:8px;height:8px;background:var(--emerald);border-radius:50%;box-shadow:0 0 12px var(--emerald);animation:pulseDot 2s ease-in-out infinite}
-@keyframes pulseDot{0%,100%{box-shadow:0 0 12px var(--emerald)}50%{box-shadow:0 0 24px var(--emerald),0 0 48px rgba(16,185,129,.2)}}
-.status-text{font-size:12px;color:var(--muted)}
-
-/* SECTION */
-.sec{animation:fadeUp .6s ease-out .2s both}
-.sec-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-bottom:6px}
-.sec-title .g{color:var(--emerald)}
-.sec-sub{font-size:13px;color:var(--muted);line-height:20px}
-
-/* TIMER CARDS */
-.timer-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;animation:fadeUp .6s ease-out .3s both}
-.timer-card{padding:28px 16px;background:var(--card);border:1px solid var(--border);border-radius:24px;text-align:center;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.timer-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(16,185,129,.04),transparent);opacity:0;transition:opacity .3s}
-.timer-card:active{transform:scale(.95)}
-.timer-card.sel{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04)}
-.timer-card.sel::before{opacity:1}
-.timer-icon{width:60px;height:60px;margin:0 auto 16px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.1);border-radius:20px;display:flex;justify-content:center;align-items:center;transition:all .3s}
-.timer-card.sel .timer-icon{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));border-color:transparent;box-shadow:0 12px 35px rgba(16,185,129,.3)}
-.timer-icon svg{width:28px;height:28px;stroke:var(--emerald);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:all .3s}
-.timer-card.sel .timer-icon svg{stroke:#fff}
-.timer-val{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px}
-.timer-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-
-/* MODE CARDS */
-.mode-grid{display:flex;flex-direction:column;gap:14px;margin-top:16px;animation:fadeUp .6s ease-out .4s both}
-.mode-card{padding:24px;background:var(--card);border:1px solid var(--border);border-radius:24px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.mode-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(16,185,129,.04),transparent);opacity:0;transition:opacity .3s}
-.mode-card:active{transform:scale(.97)}
-.mode-card.sel{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04)}
-.mode-card.sel::before{opacity:1}
-.mode-icon{width:60px;height:60px;flex-shrink:0;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.1);border-radius:20px;display:flex;justify-content:center;align-items:center;transition:all .3s}
-.mode-card.sel .mode-icon{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));border-color:transparent;box-shadow:0 12px 35px rgba(16,185,129,.3)}
-.mode-icon svg{width:28px;height:28px;stroke:var(--emerald);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:all .3s}
-.mode-card.sel .mode-icon svg{stroke:#fff}
-.mode-info{flex:1}
-.mode-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
-.mode-desc{font-size:12px;color:var(--muted);line-height:16px}
-.mode-check{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.08);display:flex;justify-content:center;align-items:center;transition:all .3s;flex-shrink:0}
-.mode-card.sel .mode-check{background:var(--emerald);border-color:var(--emerald);box-shadow:0 0 20px rgba(16,185,129,.3)}
-.mode-check svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:3;opacity:0;transition:opacity .3s}
-.mode-card.sel .mode-check svg{opacity:1}
-
-/* CONTINUE */
-.cont-wrap{padding:0 20px 40px;animation:fadeUp .6s ease-out .5s both}
-.cont-btn{width:100%;height:62px;border:none;border-radius:22px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:10px;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.cont-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);opacity:0;transition:opacity .3s}
-.cont-btn:active{transform:scale(.96)}
-.cont-btn.ready{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;box-shadow:0 12px 40px rgba(16,185,129,.35),0 0 0 1px rgba(16,185,129,.3)}
-.cont-btn.ready:hover::before{opacity:1}
-.cont-btn.locked{background:rgba(255,255,255,.03);color:var(--dim);cursor:not-allowed;box-shadow:none;border:1px solid var(--border)}
-.cont-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-.footer{text-align:center;padding:16px 0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:3px;text-transform:uppercase}
-
-@media(max-width:400px){
-  .timer-val{font-size:20px}
-  .sec-title{font-size:22px}
-}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(239,68,68,.2);border-radius:4px}
 </style>
 </head>
 <body>
-
-<div class="bg"><div class="bg-grid"></div></div>
+<canvas id="matrix"></canvas>
+<div class="scanlines"></div>
 <div class="particles" id="particles"></div>
 
-<div class="back" onclick="location.href='login.html'">
+<div class="back-btn" onclick="location.href='login.html'">
   <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
 </div>
 
-<div class="scroll">
-  <div class="main">
-    <div class="game-hdr">
-      <div class="game-logo">
-        <img src="" id="gameImage" alt="Game">
-        <svg style="display:none" id="gameFallback" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      </div>
-      <div class="game-info">
-        <div class="game-lbl">Connected Game</div>
-        <div class="game-name" id="gameName">OKWIN</div>
-        <div class="game-tag">
-          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          AI SYNCED
-        </div>
-      </div>
+<div class="content">
+  <div class="header">
+    <div class="logo-wrap">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
     </div>
+    <div class="game-name">DEVIL <span>PREDICTOR</span></div>
+    <div class="ai-tag"><span class="dot"></span>AI SYNCED</div>
+  </div>
 
-    <div class="status">
-      <div class="status-dot"></div>
-      <div class="status-text">Quantum AI Server Connected Successfully</div>
-    </div>
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    <div class="status-text">Quantum AI Server Connected</div>
+  </div>
 
-    <div class="sec">
-      <div class="sec-title">SELECT <span class="g">TIMER</span></div>
-      <div class="sec-sub">Choose your prediction speed mode for optimal accuracy.</div>
-    </div>
-
+  <div class="section" id="secTimer">
+    <div class="section-title"><span class="g">▶</span> SELECT TIMER</div>
     <div class="timer-grid">
       <div class="timer-card" id="t30" onclick="selTimer('30s')">
         <div class="timer-icon">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <div class="timer-val">30 SEC</div>
-        <div class="timer-lbl">Fast Mode</div>
+        <div class="timer-value">30 SEC</div>
+        <div class="timer-label">Fast Mode</div>
       </div>
       <div class="timer-card" id="t60" onclick="selTimer('1m')">
         <div class="timer-icon">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <div class="timer-val">1 MIN</div>
-        <div class="timer-lbl">Stable Mode</div>
+        <div class="timer-value">1 MIN</div>
+        <div class="timer-label">Stable Mode</div>
       </div>
     </div>
+  </div>
 
-    <div class="sec">
-      <div class="sec-title">SELECT <span class="g">MODE</span></div>
-      <div class="sec-sub">Choose your AI prediction engine type.</div>
-    </div>
-
-    <div class="mode-grid">
-      <div class="mode-card" id="mBS" onclick="selMode('BIG SMALL')">
+  <div class="section" id="secMode">
+    <div class="section-title"><span class="g">▶</span> SELECT MODE</div>
+    <div class="mode-stack">
+      <div class="mode-card" id="mbs" onclick="selMode('bigsmall')">
         <div class="mode-icon">
-          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
         </div>
         <div class="mode-info">
           <div class="mode-name">BIG / SMALL</div>
-          <div class="mode-desc">Predict if next number is 0-4 or 5-9</div>
+          <div class="mode-desc">Predict big or small outcome</div>
         </div>
         <div class="mode-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
       </div>
-
-      <div class="mode-card" id="mNUM" onclick="selMode('NUMBER')">
+      <div class="mode-card" id="mnm" onclick="selMode('number')">
         <div class="mode-icon">
-          <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         </div>
         <div class="mode-info">
           <div class="mode-name">NUMBER MODE</div>
-          <div class="mode-desc">Predict exact number (0-9) with AI</div>
+          <div class="mode-desc">Predict exact number result</div>
         </div>
         <div class="mode-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
       </div>
@@ -199,64 +151,79 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif
   </div>
 </div>
 
-<div class="cont-wrap">
-  <button class="cont-btn locked" id="contBtn" onclick="cont()">
-    CONTINUE
-    <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-  </button>
-  <div class="footer">Secure • Quantum • Fast</div>
+<div class="continue-bar">
+  <button class="continue-btn locked" id="contBtn" onclick="cont()">SELECT OPTIONS</button>
 </div>
 
 <script>
-const gd=JSON.parse(localStorage.getItem('selectedGame')||'null');
-if(!gd)location.href='home.html';
-
-if(gd){
-  const img=document.getElementById('gameImage');
-  const fb=document.getElementById('gameFallback');
-  img.src=gd.image||'';
-  img.onerror=function(){this.style.display='none';fb.style.display='block'};
-  document.getElementById('gameName').innerHTML=gd.name||'OKWIN';
-}
-
-let sT=null,sM=null;
+var sel_timer=null,sel_mode=null;
 
 function selTimer(t){
-  sT=t;
-  document.getElementById('t30').classList.toggle('sel',t==='30s');
-  document.getElementById('t60').classList.toggle('sel',t==='1m');
-  if(navigator.vibrate)navigator.vibrate(10);
+  navigator.vibrate&&navigator.vibrate(10);
+  sel_timer=sel_timer===t?null:t;
+  document.getElementById('t30').classList.toggle('selected',sel_timer==='30s');
+  document.getElementById('t60').classList.toggle('selected',sel_timer==='1m');
   chk();
 }
 
 function selMode(m){
-  sM=m;
-  document.getElementById('mBS').classList.toggle('sel',m==='BIG SMALL');
-  document.getElementById('mNUM').classList.toggle('sel',m==='NUMBER');
-  if(navigator.vibrate)navigator.vibrate(10);
+  navigator.vibrate&&navigator.vibrate(10);
+  sel_mode=sel_mode===m?null:m;
+  document.getElementById('mbs').classList.toggle('selected',sel_mode==='bigsmall');
+  document.getElementById('mnm').classList.toggle('selected',sel_mode==='number');
   chk();
 }
 
 function chk(){
-  const b=document.getElementById('contBtn');
-  if(sT&&sM){b.className='cont-btn ready'}else{b.className='cont-btn locked'}
+  var btn=document.getElementById('contBtn');
+  if(sel_timer&&sel_mode){
+    btn.className='continue-btn ready';
+    btn.textContent='CONTINUE';
+  }else{
+    btn.className='continue-btn locked';
+    btn.textContent='SELECT OPTIONS';
+  }
 }
 
 function cont(){
-  if(!sT||!sM)return;
-  if(navigator.vibrate)navigator.vibrate([10,50,10]);
-  localStorage.setItem('timerType',sT);
-  localStorage.setItem('predictionMode',sM);
-  localStorage.setItem('selectedGame',JSON.stringify(gd));
+  if(!sel_timer||!sel_mode)return;
+  localStorage.setItem('timerType',sel_timer);
+  localStorage.setItem('predictionMode',sel_mode);
+  localStorage.setItem('selectedGame','Wingo');
   location.href='prediction.html';
 }
 
-const pc=document.getElementById('particles');
-for(let i=0;i<18;i++){
-  const p=document.createElement('div');p.className='p';
-  const s=Math.random()*3+1;
-  p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:hsl(${150+Math.random()*30},${70+Math.random()*30}%,${60+Math.random()*30}%);animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*6}s;opacity:${.15+Math.random()*.3}`;
-  pc.appendChild(p);
+// Matrix rain
+var c=document.getElementById('matrix'),ctx=c.getContext('2d');
+function resizeMatrix(){c.width=window.innerWidth;c.height=window.innerHeight}
+resizeMatrix();window.addEventListener('resize',resizeMatrix);
+var cols=Math.floor(c.width/14),drops=[];
+for(var i=0;i<cols;i++)drops[i]=Math.random()*-100;
+var chars='01アイウエオカキクケコサシスセソ';
+function drawMatrix(){
+  ctx.fillStyle='rgba(10,10,10,0.05)';
+  ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle='rgba(239,68,68,0.12)';
+  ctx.font='14px Share Tech Mono, monospace';
+  for(var i=0;i<drops.length;i++){
+    var t=chars[Math.floor(Math.random()*chars.length)];
+    ctx.fillText(t,i*14,drops[i]*14);
+    if(drops[i]*14>c.height&&Math.random()>0.975)drops[i]=0;
+    drops[i]++;
+  }
+}
+setInterval(drawMatrix,50);
+
+// Particles
+var pEl=document.getElementById('particles');
+for(var i=0;i<20;i++){
+  var p=document.createElement('div');
+  p.className='particle';
+  p.style.left=Math.random()*100+'%';
+  p.style.top=Math.random()*100+'%';
+  p.style.animationDuration=(4+Math.random()*8)+'s';
+  p.style.animationDelay=Math.random()*6+'s';
+  pEl.appendChild(p);
 }
 </script>
 </body>
