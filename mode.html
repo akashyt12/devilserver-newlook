@@ -619,21 +619,29 @@
 
   <script>
     const games = {
-      'wingo': { name: 'WINGO', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
-      'k3': { name: 'K3 LOTTERY', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
-      '5d': { name: '5D LOTTERY', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
-      'trx': { name: 'TRX WIN', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' }
+      'okwin': { name: 'OKWIN', img: 'image1.png' },
+      '51game': { name: '51 GAME', img: 'image2.png' },
+      '55club': { name: '55 CLUB', img: 'image3.png' },
+      '82lottery': { name: '82 LOTTERY', img: 'image4.png' },
+      'dmwin': { name: 'DM WIN', img: 'image5.png' },
+      'jaiclub': { name: 'JAI CLUB', img: 'image6.png' },
+      'yaarwin': { name: 'YAARWIN', img: 'image7.png' },
+      'bdgwin': { name: 'BDG WIN', img: 'image8.png' },
+      'bigmumbai': { name: 'BIG MUMBAI', img: 'image9.png' },
+      'tiranga': { name: 'TIRANGA', img: 'image10.png' },
+      'tashanwin': { name: 'TASHAN WIN', img: 'image11.png' },
+      'sikkim': { name: 'SIKKIM', img: 'image12.png' }
     };
 
-    let selectedGame = localStorage.getItem('selectedGame') || 'wingo';
+    let selectedGame = localStorage.getItem('selectedGame') || 'okwin';
     let timerSelected = null;
     let modeSelected = null;
 
     function init() {
-      const game = games[selectedGame] || games['wingo'];
+      const game = games[selectedGame] || games['okwin'];
       document.getElementById('gameName').textContent = game.name;
-      const logoSvg = document.querySelector('.logo-box svg');
-      logoSvg.innerHTML = `<path d="${game.icon}"/>`;
+      const logoBox = document.querySelector('.logo-box');
+      logoBox.innerHTML = `<img src="${game.img}" alt="${game.name}" style="width:100%;height:100%;object-fit:cover;border-radius:18px;">`;
     }
 
     function selTimer(el) {

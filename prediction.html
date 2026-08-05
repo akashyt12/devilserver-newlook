@@ -217,9 +217,32 @@ function drawParticles(){
 }
 drawParticles();
 
+// Game data
+const games={
+  'okwin':{name:'OKWIN',img:'image1.png'},
+  '51game':{name:'51 GAME',img:'image2.png'},
+  '55club':{name:'55 CLUB',img:'image3.png'},
+  '82lottery':{name:'82 LOTTERY',img:'image4.png'},
+  'dmwin':{name:'DM WIN',img:'image5.png'},
+  'jaiclub':{name:'JAI CLUB',img:'image6.png'},
+  'yaarwin':{name:'YAARWIN',img:'image7.png'},
+  'bdgwin':{name:'BDG WIN',img:'image8.png'},
+  'bigmumbai':{name:'BIG MUMBAI',img:'image9.png'},
+  'tiranga':{name:'TIRANGA',img:'image10.png'},
+  'tashanwin':{name:'TASHAN WIN',img:'image11.png'},
+  'sikkim':{name:'SIKKIM',img:'image12.png'}
+};
+const selectedGame=localStorage.getItem('selectedGame')||'okwin';
+const gameData=games[selectedGame]||games['okwin'];
+document.querySelector('.game-logo').innerHTML=`<img src="${gameData.img}" alt="${gameData.name}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;">`;
+document.querySelector('.game-name').textContent=gameData.name;
+
 // Timer logic
-const TOTAL_TIME=30;
-let timerType='30s';
+const selectedTimer=localStorage.getItem('selectedTimer')||'30';
+const TOTAL_TIME=parseInt(selectedTimer);
+let timerType=selectedTimer==='60'?'1m':'30s';
+document.getElementById('modeTag').textContent=selectedTimer==='60'?'1 MIN MODE':'30 SEC MODE';
+document.getElementById('timerModeTag').textContent=selectedTimer==='60'?'60S':'30S';
 let currentTime=TOTAL_TIME;
 let timerInterval=null;
 const timerRing=document.getElementById('timerRing');
