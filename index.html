@@ -6,127 +6,189 @@
 <title>DEVIL PREDICTOR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+:root{--emerald:#10b981;--emerald-light:#34d399;--emerald-dark:#059669;--bg:#030712;--card:rgba(255,255,255,.02);--border:rgba(255,255,255,.06);--text:#f9fafb;--muted:#6b7280;--dim:#374151}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:#030712;color:#fff}
-
-.loader-screen{position:fixed;inset:0;z-index:999;background:#030712;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity .6s,visibility .6s}
-.loader-screen.hidden{opacity:0;visibility:hidden}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)}
 
 /* ANIMATED BACKGROUND */
-.bg-grid{position:fixed;inset:0;background-image:
-  linear-gradient(rgba(16,185,129,.03) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(16,185,129,.03) 1px,transparent 1px);
-  background-size:60px 60px;animation:gridMove 20s linear infinite}
-@keyframes gridMove{to{background-position:60px 60px}}
+.bg{position:fixed;inset:0;z-index:0}
+.bg::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(ellipse 80% 50% at 50% -20%,rgba(16,185,129,.12),transparent),
+  radial-gradient(ellipse 60% 40% at 80% 100%,rgba(5,150,105,.08),transparent),
+  radial-gradient(ellipse 40% 30% at 10% 60%,rgba(16,185,129,.05),transparent)}
+.bg-grid{position:absolute;inset:0;background-image:
+  linear-gradient(rgba(16,185,129,.025) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(16,185,129,.025) 1px,transparent 1px);
+  background-size:80px 80px;animation:gridShift 30s linear infinite}
+@keyframes gridShift{to{background-position:80px 80px}}
 
-.bg-glow{position:fixed;width:600px;height:600px;border-radius:50%;filter:blur(150px);opacity:.15;pointer-events:none}
-.bg-glow-1{background:#10b981;top:-300px;left:50%;transform:translateX(-50%);animation:floatGlow 8s ease-in-out infinite}
-.bg-glow-2{background:#059669;bottom:-300px;right:-200px;animation:floatGlow 10s ease-in-out infinite reverse}
-@keyframes floatGlow{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(30px)}}
+/* AURORA */
+.aurora{position:fixed;inset:0;overflow:hidden;z-index:0}
+.aurora-beam{position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:conic-gradient(from 0deg,transparent,rgba(16,185,129,.03),transparent,rgba(52,211,153,.02),transparent);animation:auroraRotate 25s linear infinite;filter:blur(60px)}
+@keyframes auroraRotate{to{transform:rotate(360deg)}}
+
+/* FLOATING ORBS */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);z-index:0;animation:orbFloat 8s ease-in-out infinite}
+.orb-1{width:400px;height:400px;background:rgba(16,185,129,.08);top:-200px;left:50%;transform:translateX(-50%);animation-delay:0s}
+.orb-2{width:300px;height:300px;background:rgba(5,150,105,.06);bottom:-150px;right:-100px;animation-delay:2s}
+.orb-3{width:250px;height:250px;background:rgba(52,211,153,.05);top:40%;left:-100px;animation-delay:4s}
+@keyframes orbFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(30px) scale(1.05)}}
 
 /* PARTICLES */
-.particles{position:fixed;inset:0;pointer-events:none;overflow:hidden}
-.particle{position:absolute;width:4px;height:4px;background:#10b981;border-radius:50%;opacity:0;animation:particleFloat 4s ease-in-out infinite}
-@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}50%{opacity:.6}100%{opacity:0;transform:translateY(-100px) scale(1)}}
+.particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.p{position:absolute;border-radius:50%;animation:particleRise linear infinite}
+@keyframes particleRise{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
 
-/* CENTER CONTENT */
-.loader-center{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;gap:40px}
+/* LOADER */
+.loader{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--bg);transition:all .8s cubic-bezier(.4,0,.2,1)}
+.loader.done{opacity:0;visibility:hidden;transform:scale(1.05)}
 
-/* LOGO ANIMATION */
-.logo-wrap{position:relative;width:140px;height:140px}
-.logo-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:#10b981;border-right-color:#10b981;animation:ringRotate 2s linear infinite}
-.logo-ring:nth-child(2){inset:12px;border-top-color:#34d399;border-left-color:#34d399;animation-duration:3s;animation-direction:reverse}
-.logo-ring:nth-child(3){inset:24px;border-bottom-color:#6ee7b7;border-right-color:#6ee7b7;animation-duration:1.5s}
-@keyframes ringRotate{to{transform:rotate(360deg)}}
+.loader-content{display:flex;flex-direction:column;align-items:center;gap:48px;animation:loaderEntry 1s ease-out}
+@keyframes loaderEntry{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 
-.logo-icon{position:absolute;inset:36px;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#10b981,#059669);border-radius:50%;box-shadow:0 0 60px rgba(16,185,129,.4),inset 0 0 30px rgba(255,255,255,.1);animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 60px rgba(16,185,129,.4),inset 0 0 30px rgba(255,255,255,.1)}50%{box-shadow:0 0 80px rgba(16,185,129,.6),inset 0 0 40px rgba(255,255,255,.15)}}
+/* HEXAGON LOGO */
+.hex-wrap{position:relative;width:180px;height:180px}
+.hex-outer{position:absolute;inset:0;animation:hexSpin 12s linear infinite}
+@keyframes hexSpin{to{transform:rotate(360deg)}}
+.hex-ring{position:absolute;inset:0;border:1.5px solid transparent;border-top-color:var(--emerald);border-radius:50%}
+.hex-ring:nth-child(2){inset:15px;border-top-color:var(--emerald-light);border-right-color:var(--emerald-light);animation-duration:8s;animation-direction:reverse}
+.hex-ring:nth-child(3){inset:30px;border-bottom-color:var(--emerald-light);border-left-color:var(--emerald-light);animation-duration:6s}
+.hex-ring:nth-child(4){inset:45px;border-top-color:var(--emerald);border-radius:50%;animation-duration:4s;animation-direction:reverse}
 
-.logo-svg{width:48px;height:48px;fill:#fff;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3))}
+.hex-center{position:absolute;inset:60px;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));border-radius:50%;box-shadow:0 0 80px rgba(16,185,129,.4),0 0 120px rgba(16,185,129,.2),inset 0 0 40px rgba(255,255,255,.1);animation:hexPulse 3s ease-in-out infinite}
+@keyframes hexPulse{0%,100%{box-shadow:0 0 80px rgba(16,185,129,.4),0 0 120px rgba(16,185,129,.2),inset 0 0 40px rgba(255,255,255,.1)}50%{box-shadow:0 0 100px rgba(16,185,129,.5),0 0 160px rgba(16,185,129,.3),inset 0 0 50px rgba(255,255,255,.15)}}
+
+.hex-icon{position:relative;z-index:2}
+.hex-icon svg{width:52px;height:52px;fill:#fff;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
+
+/* SPARKLES */
+.sparkle{position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;animation:sparkle 2s ease-in-out infinite}
+@keyframes sparkle{0%,100%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1)}}
 
 /* TEXT */
-.loader-title{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;letter-spacing:4px;text-transform:uppercase;background:linear-gradient(135deg,#fff 0%,#10b981 50%,#34d399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:textGlow 3s ease-in-out infinite}
-@keyframes textGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(16,185,129,.3))}50%{filter:drop-shadow(0 0 20px rgba(16,185,129,.5))}}
+.title-group{text-align:center}
+.title-main{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;letter-spacing:3px;line-height:1}
+.title-main .g{background:linear-gradient(135deg,var(--emerald),var(--emerald-light),#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 200%;animation:gradientShift 4s ease infinite}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.title-sub{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:6px;text-transform:uppercase;margin-top:12px;font-weight:400}
 
-.loader-sub{font-size:13px;letter-spacing:6px;text-transform:uppercase;color:#6b7280;font-weight:500}
-
-/* PROGRESS BAR */
-.progress-wrap{width:280px;display:flex;flex-direction:column;align-items:center;gap:12px}
-.progress-bar{width:100%;height:3px;background:rgba(255,255,255,.05);border-radius:10px;overflow:hidden;position:relative}
-.progress-fill{height:100%;background:linear-gradient(90deg,#10b981,#34d399,#6ee7b7);border-radius:10px;width:0%;transition:width .3s;box-shadow:0 0 15px rgba(16,185,129,.5)}
-.progress-text{font-size:12px;color:#6b7280;letter-spacing:2px;font-weight:500}
-.progress-pct{color:#10b981;font-weight:700;font-family:'Space Grotesk',sans-serif}
+/* LOADING BAR */
+.load-section{display:flex;flex-direction:column;align-items:center;gap:16px;width:300px}
+.load-track{width:100%;height:4px;background:rgba(255,255,255,.03);border-radius:10px;overflow:hidden;position:relative}
+.load-fill{height:100%;background:linear-gradient(90deg,var(--emerald),var(--emerald-light),var(--emerald));border-radius:10px;width:0%;transition:width .4s cubic-bezier(.4,0,.2,1);position:relative}
+.load-fill::after{content:'';position:absolute;right:0;top:-2px;width:8px;height:8px;background:var(--emerald-light);border-radius:50%;box-shadow:0 0 15px var(--emerald),0 0 30px rgba(16,185,129,.5)}
+.load-info{display:flex;justify-content:space-between;width:100%;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px}
+.load-pct{color:var(--emerald);font-weight:600}
 
 /* STATUS */
-.status-dots{display:flex;gap:8px;align-items:center}
-.status-dot{width:8px;height:8px;border-radius:50%;background:#10b981;animation:statusPulse 1.5s ease-in-out infinite}
-.status-dot:nth-child(2){animation-delay:.2s}
-.status-dot:nth-child(3){animation-delay:.4s}
-@keyframes statusPulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
-.status-text{font-size:11px;color:#4b5563;letter-spacing:2px;margin-left:12px}
+.status-row{display:flex;align-items:center;gap:12px;padding:12px 24px;background:var(--card);border:1px solid var(--border);border-radius:100px;backdrop-filter:blur(20px)}
+.status-dots{display:flex;gap:6px}
+.s-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:statusPulse 1.5s ease-in-out infinite}
+.s-dot:nth-child(2){animation-delay:.15s}
+.s-dot:nth-child(3){animation-delay:.3s}
+@keyframes statusPulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.3)}}
+.status-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
 
 /* FOOTER */
-.loader-footer{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:16px;z-index:10}
-.footer-line{width:40px;height:1px;background:linear-gradient(90deg,transparent,#10b981,transparent)}
-.footer-text{font-size:10px;color:#374151;letter-spacing:3px;text-transform:uppercase}
+.footer{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:12px;z-index:10}
+.footer-line{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--emerald),transparent);opacity:.3}
+.footer-text{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:4px;text-transform:uppercase}
 
 @media(max-width:400px){
-  .loader-title{font-size:26px;letter-spacing:3px}
-  .logo-wrap{width:120px;height:120px}
-  .logo-icon{inset:30px}
-  .logo-svg{width:40px;height:40px}
+  .title-main{font-size:36px}
+  .hex-wrap{width:150px;height:150px}
+  .hex-center{inset:50px}
+  .hex-icon svg{width:42px;height:42px}
+  .load-section{width:260px}
 }
 </style>
 </head>
 <body>
 
-<!-- BG EFFECTS -->
-<div class="bg-grid"></div>
-<div class="bg-glow bg-glow-1"></div>
-<div class="bg-glow bg-glow-2"></div>
-
+<div class="bg"><div class="bg-grid"></div></div>
+<div class="aurora"><div class="aurora-beam"></div></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
 <div class="particles" id="particles"></div>
 
-<!-- LOADER -->
-<div class="loader-screen" id="loader">
-  <div class="loader-center">
-    <div class="logo-wrap">
-      <div class="logo-ring"></div>
-      <div class="logo-ring"></div>
-      <div class="logo-ring"></div>
-      <div class="logo-icon">
-        <svg class="logo-svg" viewBox="0 0 24 24"><path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/></svg>
+<div class="loader" id="loader">
+  <div class="loader-content">
+    <div class="hex-wrap">
+      <div class="hex-outer">
+        <div class="hex-ring"></div>
+        <div class="hex-ring"></div>
+        <div class="hex-ring"></div>
+        <div class="hex-ring"></div>
+      </div>
+      <div class="hex-center">
+        <div class="hex-icon">
+          <svg viewBox="0 0 24 24"><path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/></svg>
+        </div>
+      </div>
+      <div class="sparkle" style="top:10%;left:50%;animation-delay:0s"></div>
+      <div class="sparkle" style="top:50%;right:5%;animation-delay:.4s"></div>
+      <div class="sparkle" style="bottom:10%;left:30%;animation-delay:.8s"></div>
+      <div class="sparkle" style="top:30%;left:5%;animation-delay:1.2s"></div>
+      <div class="sparkle" style="bottom:30%;right:15%;animation-delay:1.6s"></div>
+    </div>
+
+    <div class="title-group">
+      <div class="title-main">DEVIL <span class="g">PREDICTOR</span></div>
+      <div class="title-sub">Quantum AI Engine v4.0</div>
+    </div>
+
+    <div class="load-section">
+      <div class="load-track"><div class="load-fill" id="loadFill"></div></div>
+      <div class="load-info">
+        <span>INITIALIZING</span>
+        <span class="load-pct" id="loadPct">0%</span>
       </div>
     </div>
-    <div class="loader-title">DEVIL PREDICTOR</div>
-    <div class="loader-sub">QUANTUM AI ENGINE</div>
-    <div class="progress-wrap">
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-text">INITIALIZING <span class="progress-pct" id="progressPct">0%</span></div>
-    </div>
-    <div class="status-dots">
-      <div class="status-dot"></div>
-      <div class="status-dot"></div>
-      <div class="status-dot"></div>
-      <div class="status-text">CONNECTING TO SERVERS</div>
+
+    <div class="status-row">
+      <div class="status-dots">
+        <div class="s-dot"></div>
+        <div class="s-dot"></div>
+        <div class="s-dot"></div>
+      </div>
+      <div class="status-label">Connecting to quantum servers</div>
     </div>
   </div>
-  <div class="loader-footer">
+
+  <div class="footer">
     <div class="footer-line"></div>
-    <div class="footer-text">Secure • Quantum • Fast</div>
+    <div class="footer-text">Quantum • Secure • Fast</div>
   </div>
 </div>
 
 <script>
 // Particles
 const pc=document.getElementById('particles');
-for(let i=0;i<30;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*4+'s';p.style.animationDuration=(3+Math.random()*3)+'s';pc.appendChild(p)}
+for(let i=0;i<40;i++){
+  const p=document.createElement('div');p.className='p';
+  const size=Math.random()*3+1;
+  p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:hsl(${150+Math.random()*30},${70+Math.random()*30}%,${60+Math.random()*30}%);animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*6}s;opacity:${.2+Math.random()*.5}`;
+  pc.appendChild(p);
+}
 
-// Progress
-let pct=0;const fill=document.getElementById('progressFill');const pctEl=document.getElementById('progressPct');
-const iv=setInterval(()=>{pct+=Math.random()*15+5;if(pct>=100){pct=100;clearInterval(iv);setTimeout(()=>{document.getElementById('loader').classList.add('hidden');setTimeout(()=>window.location.href='welcome.html',600)},400)}fill.style.width=pct+'%';pctEl.textContent=Math.floor(pct)+'%'},200);
+// Loading
+let pct=0;const fill=document.getElementById('loadFill');const pctEl=document.getElementById('loadPct');
+const stages=['INITIALIZING','LOADING MODULES','CONNECTING AI','SYNCING DATA','READY'];
+let stageIdx=0;
+
+const iv=setInterval(()=>{
+  pct+=Math.random()*12+3;
+  if(pct>=100){pct=100;clearInterval(iv);
+    setTimeout(()=>{document.getElementById('loader').classList.add('done');
+      setTimeout(()=>window.location.href='welcome.html',800)},500)}
+  fill.style.width=pct+'%';
+  pctEl.textContent=Math.floor(pct)+'%';
+  const newIdx=Math.min(Math.floor(pct/25),stages.length-1);
+  if(newIdx!==stageIdx){stageIdx=newIdx;document.querySelector('.load-info span:first-child').textContent=stages[stageIdx]}
+},180);
 </script>
 </body>
 </html>

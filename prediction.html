@@ -6,130 +6,136 @@
 <title>DEVIL PREDICTOR • SYNC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+:root{--emerald:#10b981;--emerald-light:#34d399;--emerald-dark:#059669;--bg:#030712;--card:rgba(255,255,255,.02);--border:rgba(255,255,255,.06);--text:#f9fafb;--muted:#6b7280;--dim:#374151}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:#030712;color:#fff}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)}
 
-/* BG */
-.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(16,185,129,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,.03) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite}
-@keyframes gridMove{to{background-position:60px 60px}}
-.bg-glow{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.12;pointer-events:none}
-.bg-glow-1{background:#10b981;top:-250px;left:50%;transform:translateX(-50%)}
-.bg-glow-2{background:#059669;bottom:-250px;right:-150px}
+.bg{position:fixed;inset:0;z-index:0}
+.bg::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(ellipse 80% 50% at 50% -20%,rgba(16,185,129,.1),transparent),
+  radial-gradient(ellipse 60% 40% at 80% 100%,rgba(5,150,105,.06),transparent)}
+.bg-grid{position:absolute;inset:0;background-image:
+  linear-gradient(rgba(16,185,129,.015) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(16,185,129,.015) 1px,transparent 1px);
+  background-size:80px 80px;animation:gridShift 30s linear infinite}
+@keyframes gridShift{to{background-position:80px 80px}}
 
-.particles{position:fixed;inset:0;pointer-events:none;overflow:hidden}
-.particle{position:absolute;width:3px;height:3px;background:#10b981;border-radius:50%;opacity:0;animation:particleFloat 5s ease-in-out infinite}
-@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}50%{opacity:.5}100%{opacity:0;transform:translateY(-100px) scale(1)}}
+.particles{position:fixed;inset:0;z-index:1;pointer-events:none}
+.p{position:absolute;border-radius:50%;animation:particleRise linear infinite}
+@keyframes particleRise{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
 
 /* SCROLL */
 .scroll{width:100%;height:100%;overflow-y:auto;scrollbar-width:none}
 .scroll::-webkit-scrollbar{display:none}
 
 /* MAIN */
-.main{position:relative;z-index:10;width:100%;min-height:100%;padding:20px;display:flex;flex-direction:column;gap:16px;animation:fadeIn .6s ease-out}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.main{position:relative;z-index:10;width:100%;min-height:100%;padding:20px;display:flex;flex-direction:column;gap:14px}
 
 /* TOP CARD */
-.top-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:28px;padding:20px;backdrop-filter:blur(20px);position:relative;overflow:hidden}
-.top-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.3),transparent)}
+.top-card{background:var(--card);border:1px solid var(--border);border-radius:28px;padding:20px;backdrop-filter:blur(20px);position:relative;overflow:hidden;animation:fadeUp .5s ease-out both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.top-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.2),transparent)}
 
-.game-header{display:flex;align-items:center;gap:14px}
-.game-logo{width:64px;height:64px;background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.15);border-radius:18px;display:flex;justify-content:center;align-items:center;overflow:hidden;flex-shrink:0}
+.game-row{display:flex;align-items:center;gap:14px}
+.game-logo{width:60px;height:60px;background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.12);border-radius:18px;display:flex;justify-content:center;align-items:center;overflow:hidden;flex-shrink:0}
 .game-logo img{width:100%;height:100%;object-fit:cover}
 .game-info{flex:1;min-width:0}
-.game-label{font-size:10px;color:#6b7280;letter-spacing:2px;text-transform:uppercase;font-weight:500}
-.game-name{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;margin-top:2px}
-.game-name .highlight{color:#10b981}
-.game-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.12);border-radius:8px;margin-top:6px;font-size:10px;color:#10b981;font-weight:600;letter-spacing:1px}
-.game-tag svg{width:12px;height:12px;stroke:#10b981;fill:none;stroke-width:2}
-.status-row{display:flex;align-items:center;gap:8px;margin-top:14px;padding:10px 14px;background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.08);border-radius:12px}
-.status-dot{width:6px;height:6px;background:#10b981;border-radius:50%;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 8px #10b981}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.status-text{font-size:11px;color:#9ca3af}
+.game-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.game-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-top:2px}
+.game-name .g{color:var(--emerald)}
+.game-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.08);border-radius:8px;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--emerald);font-weight:600;letter-spacing:1px}
+.game-tag svg{width:10px;height:10px;stroke:var(--emerald);fill:none;stroke-width:2}
+
+.s-row{display:flex;align-items:center;gap:8px;margin-top:14px;padding:10px 14px;background:rgba(16,185,129,.03);border:1px solid rgba(16,185,129,.06);border-radius:12px}
+.s-dot{width:6px;height:6px;background:var(--emerald);border-radius:50%;box-shadow:0 0 10px var(--emerald);animation:pulseDot 2s ease-in-out infinite}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 10px var(--emerald)}50%{box-shadow:0 0 20px var(--emerald),0 0 40px rgba(16,185,129,.2)}}
+.s-text{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.5px}
 
 /* CARD */
-.card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:24px;padding:20px;backdrop-filter:blur(20px);position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.2),transparent)}
-.card-label{font-size:10px;color:#6b7280;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:500}
+.card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:18px;backdrop-filter:blur(20px);position:relative;overflow:hidden;animation:fadeUp .5s ease-out both}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.12),transparent)}
+.c-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
 
 /* TIMER */
-.timer-display{display:flex;align-items:center;justify-content:center;gap:20px}
-.timer-circle{width:120px;height:120px;position:relative;display:flex;justify-content:center;align-items:center}
-.timer-ring{position:absolute;inset:0;border-radius:50%}
-.timer-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.timer-ring circle{fill:none;stroke-width:4;stroke-linecap:round}
-.timer-ring .ring-bg{stroke:rgba(255,255,255,.04)}
-.timer-ring .ring-fill{stroke:#10b981;stroke-dasharray:339.292;stroke-dashoffset:0;transition:stroke-dashoffset .5s ease,stroke .3s}
-.timer-ring .ring-fill.urgent{stroke:#ef4444}
-.timer-val{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:#10b981;transition:color .3s}
-.timer-val.urgent{color:#ef4444;text-shadow:0 0 20px rgba(239,68,68,.4)}
-.timer-mode-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.12);border-radius:10px;font-size:11px;color:#10b981;font-weight:600;letter-spacing:1px}
-.timer-mode-tag svg{width:14px;height:14px;stroke:#10b981;fill:none;stroke-width:2}
+.timer-wrap{display:flex;align-items:center;justify-content:center;gap:24px}
+.timer-circle{width:130px;height:130px;position:relative;display:flex;justify-content:center;align-items:center}
+.timer-svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.timer-svg circle{fill:none;stroke-linecap:round}
+.ring-bg{stroke:rgba(255,255,255,.03);stroke-width:4}
+.ring-fill{stroke:var(--emerald);stroke-width:4;stroke-dasharray:361.283;stroke-dashoffset:0;transition:stroke-dashoffset .4s ease,stroke .3s}
+.ring-fill.urgent{stroke:#ef4444}
+.timer-val{font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;color:var(--emerald);transition:color .3s}
+.timer-val.urgent{color:#ef4444;text-shadow:0 0 25px rgba(239,68,68,.4)}
+.timer-side{display:flex;flex-direction:column;gap:8px}
+.mode-tag{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.1);border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--emerald);font-weight:600;letter-spacing:1px}
+.mode-tag svg{width:14px;height:14px;stroke:var(--emerald);fill:none;stroke-width:2}
 
 /* PERIOD */
-.period-val{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;word-break:break-all;letter-spacing:1px;padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;text-align:center;transition:all .3s}
+.period-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;word-break:break-all;letter-spacing:1px;padding:16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:16px;text-align:center;transition:all .3s}
 .period-val.flash{animation:periodFlash .6s ease-in-out}
-@keyframes periodFlash{0%,100%{color:#fff}50%{color:#10b981;text-shadow:0 0 20px rgba(16,185,129,.5)}}
+@keyframes periodFlash{0%,100%{color:var(--text);text-shadow:none}50%{color:var(--emerald);text-shadow:0 0 25px rgba(16,185,129,.4)}}
 
 /* PREDICTION */
-.prediction-box{min-height:140px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:20px;background:linear-gradient(135deg,rgba(16,185,129,.03),rgba(16,185,129,.01));border:1px solid rgba(16,185,129,.08);border-radius:20px;position:relative;overflow:hidden}
-.prediction-box::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(16,185,129,.05),transparent 70%);pointer-events:none}
-.prediction-label{font-size:10px;color:#6b7280;letter-spacing:2px;text-transform:uppercase;font-weight:500}
-.prediction-value{font-family:'Space Grotesk',sans-serif;font-size:72px;font-weight:800;color:#10b981;text-shadow:0 0 40px rgba(16,185,129,.3);transition:all .4s;line-height:1}
-.prediction-value.big{color:#10b981}
-.prediction-value.small{color:#f59e0b}
-.prediction-value.num-green{color:#10b981}
-.prediction-value.num-red{color:#ef4444}
-.prediction-value.num-violet{color:#a855f7}
-.prediction-sub{font-size:12px;color:#6b7280;letter-spacing:1px}
+.pred-box{min-height:160px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;padding:24px;background:linear-gradient(135deg,rgba(16,185,129,.02),rgba(16,185,129,.005));border:1px solid rgba(16,185,129,.06);border-radius:22px;position:relative;overflow:hidden}
+.pred-box::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(16,185,129,.04),transparent 70%);pointer-events:none}
+.pred-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.pred-val{font-family:'Space Grotesk',sans-serif;font-size:80px;font-weight:800;color:var(--emerald);text-shadow:0 0 50px rgba(16,185,129,.3);transition:all .4s cubic-bezier(.4,0,.2,1);line-height:1}
+.pred-val.big{color:var(--emerald)}
+.pred-val.small{color:#f59e0b}
+.pred-val.n-green{color:var(--emerald)}
+.pred-val.n-red{color:#ef4444}
+.pred-val.n-violet{color:#a855f7}
+.pred-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px}
 
 /* BUTTON */
-.predict-btn{width:100%;height:60px;border:none;border-radius:20px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:10px;transition:all .3s;position:relative;overflow:hidden}
-.predict-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .3s}
-.predict-btn:active{transform:scale(.97)}
-.predict-btn.ready{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 10px 40px rgba(16,185,129,.3)}
-.predict-btn.ready:hover::before{opacity:1}
-.predict-btn.locked{background:rgba(255,255,255,.04);color:#4b5563;cursor:not-allowed;box-shadow:none}
-.predict-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.btn-loader{display:none;width:22px;height:22px;border:2.5px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}
+.pred-btn{width:100%;height:62px;border:none;border-radius:22px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:10px;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.pred-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);opacity:0;transition:opacity .3s}
+.pred-btn:active{transform:scale(.96)}
+.pred-btn.ready{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;box-shadow:0 12px 40px rgba(16,185,129,.35),0 0 0 1px rgba(16,185,129,.3)}
+.pred-btn.ready:hover::before{opacity:1}
+.pred-btn.locked{background:rgba(255,255,255,.03);color:var(--dim);cursor:not-allowed;box-shadow:none;border:1px solid var(--border)}
+.pred-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-load{display:none;width:22px;height:22px;border:2.5px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* BOTTOM INFO */
-.bottom-info{display:flex;justify-content:center;gap:24px;padding:16px 0}
-.info-item{display:flex;flex-direction:column;align-items:center;gap:6px}
-.info-icon{width:40px;height:40px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.1);border-radius:12px;display:flex;justify-content:center;align-items:center}
-.info-icon svg{width:18px;height:18px;stroke:#10b981;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.info-text{font-size:10px;color:#6b7280;letter-spacing:1px;text-transform:uppercase}
+/* HISTORY */
+.history{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.h-item{width:36px;height:36px;border-radius:10px;display:flex;justify-content:center;align-items:center;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;border:1px solid rgba(255,255,255,.05)}
+.h-green{background:rgba(16,185,129,.1);color:var(--emerald);border-color:rgba(16,185,129,.15)}
+.h-red{background:rgba(239,68,68,.1);color:#ef4444;border-color:rgba(239,68,68,.15)}
+.h-violet{background:rgba(168,85,247,.1);color:#a855f7;border-color:rgba(168,85,247,.15)}
 
-/* FOOTER */
-.footer{text-align:center;padding:12px 0;font-size:10px;color:#374151;letter-spacing:2px;text-transform:uppercase}
+/* BOTTOM INFO */
+.b-info{display:flex;justify-content:center;gap:28px;padding:12px 0}
+.b-item{display:flex;flex-direction:column;align-items:center;gap:6px}
+.b-icon{width:42px;height:42px;background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.08);border-radius:14px;display:flex;justify-content:center;align-items:center}
+.b-icon svg{width:18px;height:18px;stroke:var(--emerald);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.b-text{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+
+.footer{text-align:center;padding:10px 0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:3px;text-transform:uppercase}
 
 @media(max-width:400px){
-  .timer-circle{width:100px;height:100px}
-  .timer-val{font-size:30px}
-  .prediction-value{font-size:56px}
+  .timer-circle{width:110px;height:110px}
+  .timer-val{font-size:34px}
+  .pred-val{font-size:64px}
 }
 </style>
 </head>
 <body>
 
-<div class="bg-grid"></div>
-<div class="bg-glow bg-glow-1"></div>
-<div class="bg-glow bg-glow-2"></div>
+<div class="bg"><div class="bg-grid"></div></div>
 <div class="particles" id="particles"></div>
 
 <div class="scroll">
   <div class="main">
-
-    <!-- TOP CARD -->
+    <!-- TOP -->
     <div class="top-card">
-      <div class="game-header">
-        <div class="game-logo">
-          <img src="" id="gameImage" alt="Game">
-        </div>
+      <div class="game-row">
+        <div class="game-logo"><img src="" id="gameImage" alt="Game"></div>
         <div class="game-info">
-          <div class="game-label">Connected Game</div>
+          <div class="game-lbl">Connected Game</div>
           <div class="game-name" id="gameName">OKWIN</div>
           <div class="game-tag">
             <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
@@ -137,27 +143,25 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif
           </div>
         </div>
       </div>
-      <div class="status-row">
-        <div class="status-dot"></div>
-        <div class="status-text">Quantum AI Server Connected</div>
+      <div class="s-row">
+        <div class="s-dot"></div>
+        <div class="s-text">Quantum AI Server Connected</div>
       </div>
     </div>
 
-    <!-- TIMER CARD -->
-    <div class="card">
-      <div class="card-label">Live Timer</div>
-      <div class="timer-display">
+    <!-- TIMER -->
+    <div class="card" style="animation-delay:.1s">
+      <div class="c-label">Live Timer</div>
+      <div class="timer-wrap">
         <div class="timer-circle">
-          <div class="timer-ring">
-            <svg viewBox="0 0 120 120">
-              <circle class="ring-bg" cx="60" cy="60" r="54"/>
-              <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="54"/>
-            </svg>
-          </div>
+          <svg class="timer-svg" viewBox="0 0 130 130">
+            <circle class="ring-bg" cx="65" cy="65" r="57.5"/>
+            <circle class="ring-fill" id="ringFill" cx="65" cy="65" r="57.5"/>
+          </svg>
           <div class="timer-val" id="timer">00:30</div>
         </div>
-        <div>
-          <div class="timer-mode-tag" id="timerModeTag">
+        <div class="timer-side">
+          <div class="mode-tag">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span id="timerModeText">30 SEC</span>
           </div>
@@ -165,50 +169,40 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif
       </div>
     </div>
 
-    <!-- PERIOD CARD -->
-    <div class="card">
-      <div class="card-label">Next Period</div>
+    <!-- PERIOD -->
+    <div class="card" style="animation-delay:.2s">
+      <div class="c-label">Next Period</div>
       <div class="period-val" id="nextPeriod">----</div>
     </div>
 
-    <!-- PREDICTION CARD -->
-    <div class="card">
-      <div class="prediction-box">
-        <div class="prediction-label">AI Prediction</div>
-        <div class="prediction-value" id="prediction">--</div>
-        <div class="prediction-sub" id="predSub">Tap button to predict</div>
+    <!-- PREDICTION -->
+    <div class="card" style="animation-delay:.3s">
+      <div class="pred-box">
+        <div class="pred-label">AI Prediction</div>
+        <div class="pred-val" id="prediction">--</div>
+        <div class="pred-sub" id="predSub">Tap button to predict</div>
       </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="card" style="animation-delay:.35s">
+      <div class="c-label">Recent Results</div>
+      <div class="history" id="history"></div>
     </div>
 
     <!-- BUTTON -->
-    <button class="predict-btn ready" id="predictBtn" onclick="onPredictClick()">
+    <button class="pred-btn ready" id="predBtn" onclick="onPredict()">
       <span id="btnText">GET PREDICTION</span>
-      <div class="btn-loader" id="btnLoader"></div>
+      <div class="btn-load" id="btnLoad"></div>
       <svg id="btnIcon" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
     </button>
 
-    <!-- BOTTOM INFO -->
-    <div class="bottom-info">
-      <div class="info-item">
-        <div class="info-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <div class="info-text">Secure</div>
-      </div>
-      <div class="info-item">
-        <div class="info-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-        </div>
-        <div class="info-text">AI Power</div>
-      </div>
-      <div class="info-item">
-        <div class="info-icon">
-          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </div>
-        <div class="info-text">Fast</div>
-      </div>
+    <!-- BOTTOM -->
+    <div class="b-info">
+      <div class="b-item"><div class="b-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="b-text">Secure</div></div>
+      <div class="b-item"><div class="b-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div><div class="b-text">AI Power</div></div>
+      <div class="b-item"><div class="b-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div class="b-text">Fast</div></div>
     </div>
-
     <div class="footer">Secure • Quantum • Fast</div>
   </div>
 </div>
@@ -216,243 +210,124 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif
 <script>
 (function(){
   document.addEventListener('contextmenu',e=>e.preventDefault());
-  document.onkeydown=function(e){
-    if(e.keyCode===123||(e.ctrlKey&&e.shiftKey&&e.keyCode===73)||(e.ctrlKey&&e.shiftKey&&e.keyCode===74)||(e.ctrlKey&&e.keyCode===85))return false;
-  };
-  window.addEventListener('blur',()=>{document.body.style.filter='blur(12px)'});
+  document.onkeydown=function(e){if(e.keyCode===123||(e.ctrlKey&&e.shiftKey&&e.keyCode===73)||(e.ctrlKey&&e.shiftKey&&e.keyCode===74)||(e.ctrlKey&&e.keyCode===85))return false};
+  window.addEventListener('blur',()=>{document.body.style.filter='blur(10px)'});
   window.addEventListener('focus',()=>{document.body.style.filter='none'});
 
-  const fallbackImage='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144"><rect width="144" height="144" rx="34" fill="#07130d"/><circle cx="72" cy="72" r="44" fill="#10b981" opacity=".14"/><path d="M43 86 L62 39 L78 72 L91 51 L104 86 Z" fill="#10b981"/></svg>');
+  const fb='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144"><rect width="144" height="144" rx="34" fill="#07130d"/><circle cx="72" cy="72" r="44" fill="#10b981" opacity=".14"/><path d="M43 86 L62 39 L78 72 L91 51 L104 86 Z" fill="#10b981"/></svg>');
+  const sg=JSON.parse(localStorage.getItem('selectedGame')||'null')||{name:'OKWIN',image:fb};
+  const tt=localStorage.getItem('timerType')==='1m'?'1m':'30s';
+  const pm=localStorage.getItem('predictionMode')==='NUMBER'?'NUMBER':'BIG SMALL';
 
-  const selectedGame=JSON.parse(localStorage.getItem('selectedGame')||'null')||{name:'OKWIN',image:fallbackImage};
-  const timerType=localStorage.getItem('timerType')==='1m'?'1m':'30s';
-  const predictionMode=localStorage.getItem('predictionMode')==='NUMBER'?'NUMBER':'BIG SMALL';
+  document.getElementById('gameImage').src=sg.image||fb;
+  document.getElementById('gameImage').onerror=function(){this.src=fb};
+  document.getElementById('gameName').innerHTML=sg.name||'OKWIN';
+  document.getElementById('modeTag').innerText=tt==='1m'?'1 MIN MODE':'30 SEC MODE';
+  document.getElementById('timerModeText').innerText=tt==='1m'?'1 MIN':'30 SEC';
 
-  document.getElementById('gameImage').src=selectedGame.image||fallbackImage;
-  document.getElementById('gameImage').onerror=function(){this.src=fallbackImage};
-  document.getElementById('gameName').innerHTML=selectedGame.name||'OKWIN';
-  document.getElementById('modeTag').innerText=timerType==='1m'?'1 MIN MODE':'30 SEC MODE';
-  document.getElementById('timerModeText').innerText=timerType==='1m'?'1 MIN':'30 SEC';
-
-  const API_URL=timerType==='1m'
-    ?'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageSize=10&pageNo=1'
-    :'https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?pageSize=10&pageNo=1';
+  const API=tt==='1m'?'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageSize=10&pageNo=1':'https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?pageSize=10&pageNo=1';
 
   const timerEl=document.getElementById('timer');
   const ringFill=document.getElementById('ringFill');
-  const nextPeriodEl=document.getElementById('nextPeriod');
-  const predictionEl=document.getElementById('prediction');
+  const nextPEl=document.getElementById('nextPeriod');
+  const predEl=document.getElementById('prediction');
   const predSub=document.getElementById('predSub');
-  const btn=document.getElementById('predictBtn');
+  const btn=document.getElementById('predBtn');
   const btnText=document.getElementById('btnText');
-  const btnLoader=document.getElementById('btnLoader');
+  const btnLoad=document.getElementById('btnLoad');
   const btnIcon=document.getElementById('btnIcon');
+  const histEl=document.getElementById('history');
 
-  let latestData=[];
-  let currentPeriod='';
-  let shownNextPeriod='';
-  let predictedForPeriod='';
-  let isFetching=false;
-  let predictionLocked=false;
-  const totalTime=timerType==='1m'?60:30;
-  const circumference=2*Math.PI*54;
-  let serverTimeOffset=0;
+  let latest=[],curP='',shownP='',predP='',isFetch=false,predLock=false;
+  const totT=tt==='1m'?60:30;
+  const circ=2*Math.PI*57.5;
+  let sOff=0;
 
-  function addOneToNumericString(value){
-    const digits=String(value||'').trim();
-    if(!/^\d+$/.test(digits))return'';
-    let carry=1;let result='';
-    for(let i=digits.length-1;i>=0;i--){
-      const sum=Number(digits[i])+carry;
-      result=String(sum%10)+result;
-      carry=sum>9?1:0;
-    }
-    return carry?'1'+result:result;
-  }
-
-  function incrementPeriod(period){
-    if(!period)return'----';
-    const clean=String(period).trim();
-    if(/^\d+$/.test(clean))return addOneToNumericString(clean);
-    const hyphenated=clean.match(/^(.+?)(\d+)$/);
-    if(hyphenated){
-      const prefix=hyphenated[1];const num=hyphenated[2];
-      return prefix+addOneToNumericString(num).padStart(num.length,'0');
-    }
-    return'----';
-  }
-
-  function readIssue(row){return String(row?.issueNumber||row?.issue||row?.periodNo||row?.period||'').trim()}
-  function readNumber(row){const raw=row?.number??row?.openCode??row?.result??row?.digit;const match=String(raw??'').match(/\d/);return match?Number(match[0]):NaN}
+  function addOne(v){const d=String(v||'').trim();if(!/^\d+$/.test(d))return'';let c=1,r='';for(let i=d.length-1;i>=0;i--){const s=Number(d[i])+c;r=String(s%10)+r;c=s>9?1:0}return c?'1'+r:r}
+  function incP(p){if(!p)return'----';const c=String(p).trim();if(/^\d+$/.test(c))return addOne(c);const h=c.match(/^(.+?)(\d+)$/);if(h)return h[1]+addOne(h[2]).padStart(h[2].length,'0');return'----'}
+  function rI(r){return String(r?.issueNumber||r?.issue||r?.periodNo||r?.period||'').trim()}
+  function rN(r){const raw=r?.number??r?.openCode??r?.result??r?.digit;const m=String(raw??'').match(/\d/);return m?Number(m[0]):NaN}
 
   async function fetchData(){
-    try{
-      const res=await fetch(API_URL+'&t='+Date.now(),{cache:'no-store'});
-      if(!res.ok)throw new Error('HTTP '+res.status);
-      const data=await res.json();
-      const serverDate=res.headers.get('Date');
-      if(serverDate){const st=new Date(serverDate).getTime();if(!isNaN(st))serverTimeOffset=st-Date.now()}
-      return Array.isArray(data?.data?.list)?data.data.list:[];
-    }catch(e){return[]}
+    try{const res=await fetch(API+'&t='+Date.now(),{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);
+    const d=await res.json();const sd=res.headers.get('Date');if(sd){const st=new Date(sd).getTime();if(!isNaN(st))sOff=st-Date.now()}
+    return Array.isArray(d?.data?.list)?d.data.list:[]}catch(e){return[]}
   }
 
-  function setButtonReady(){btn.className='predict-btn ready';btn.disabled=false;btnText.style.display='block';btnLoader.style.display='none';btnIcon.style.display='block'}
-  function setButtonLocked(){btn.className='predict-btn locked';btn.disabled=true;btnText.style.display='block';btnLoader.style.display='none';btnIcon.style.display='none'}
-  function setButtonLoading(){btn.className='predict-btn locked';btn.disabled=true;btnText.style.display='none';btnLoader.style.display='block';btnIcon.style.display='none'}
+  function setReady(){btn.className='pred-btn ready';btn.disabled=false;btnText.style.display='block';btnLoad.style.display='none';btnIcon.style.display='block'}
+  function setLocked(){btn.className='pred-btn locked';btn.disabled=true;btnText.style.display='block';btnLoad.style.display='none';btnIcon.style.display='none'}
+  function setLoading(){btn.className='pred-btn locked';btn.disabled=true;btnText.style.display='none';btnLoad.style.display='block';btnIcon.style.display='none'}
 
-  function resetPrediction(){predictionEl.innerText='--';predictionEl.className='prediction-value';predSub.innerText='Tap button to predict'}
+  function resetPred(){predEl.innerText='--';predEl.className='pred-val';predSub.innerText='Tap button to predict'}
 
-  function renderNextPeriod(nextPeriod){
-    if(!nextPeriod||nextPeriod===shownNextPeriod)return;
-    shownNextPeriod=nextPeriod;
-    nextPeriodEl.innerText=shownNextPeriod;
-    nextPeriodEl.classList.remove('flash');void nextPeriodEl.offsetWidth;nextPeriodEl.classList.add('flash');
-    if(predictedForPeriod!==shownNextPeriod){resetPrediction();predictionLocked=false;updateButtonStateByTimer()}
-  }
+  function renderP(np){if(!np||np===shownP)return;shownP=np;nextPEl.innerText=shownP;nextPEl.classList.remove('flash');void nextPEl.offsetWidth;nextPEl.classList.add('flash');if(predP!==shownP){resetPred();predLock=false;updateBtn()}}
 
-  function getServerNow(){return new Date(Date.now()+serverTimeOffset)}
-  function getRemainingSeconds(){
-    const now=getServerNow();const sec=now.getSeconds();const ms=now.getMilliseconds();
-    const elapsed=timerType==='30s'?sec%30:sec;
-    return Math.max(0,totalTime-elapsed-(ms>0?1:0));
-  }
-  function getElapsedSeconds(){const now=getServerNow();return timerType==='30s'?now.getSeconds()%30:now.getSeconds()}
+  function gSN(){return new Date(Date.now()+sOff)}
+  function gRem(){const n=gSN();const s=n.getSeconds();const ms=n.getMilliseconds();const el=tt==='30s'?s%30:s;return Math.max(0,totT-el-(ms>0?1:0))}
+  function gEl(){const n=gSN();return tt==='30s'?n.getSeconds()%30:n.getSeconds()}
 
-  function updateTimerUI(){
-    const rem=getRemainingSeconds();
-    const m=String(Math.floor(rem/60)).padStart(2,'0');
-    const s=String(rem%60).padStart(2,'0');
+  function updateTimer(){
+    const rem=gRem();const m=String(Math.floor(rem/60)).padStart(2,'0');const s=String(rem%60).padStart(2,'0');
     timerEl.innerText=m+':'+s;
-    const isUrgent=rem<=5&&rem>0;
-    timerEl.classList.toggle('urgent',isUrgent);
-    ringFill.classList.toggle('urgent',isUrgent);
-    const progress=rem/totalTime;
-    ringFill.style.strokeDashoffset=circumference*(1-progress);
-    updateButtonStateByTimer();
-    if(rem===0)handleTimerZero();
+    const ur=rem<=5&&rem>0;
+    timerEl.classList.toggle('urgent',ur);ringFill.classList.toggle('urgent',ur);
+    ringFill.style.strokeDashoffset=circ*(1-rem/totT);
+    updateBtn();if(rem===0)handleZero();
   }
 
-  function updateButtonStateByTimer(){
-    if(predictionLocked){setButtonLocked();return}
-    const elapsed=getElapsedSeconds();
-    if(elapsed>=0&&elapsed<=18)setButtonReady();else setButtonLocked();
+  function updateBtn(){if(predLock){setLocked();return}const el=gEl();if(el>=0&&el<=18)setReady();else setLocked()}
+
+  let lz='';
+  function handleZero(){const n=gSN();const k=n.getMinutes()+'-'+n.getSeconds();if(k===lz)return;lz=k;setTimeout(()=>updP(false),900);setTimeout(()=>updP(false),2500)}
+
+  async function updP(f=false){if(isFetch&&!f)return false;isFetch=true;const d=await fetchData();isFetch=false;if(!d.length){updateTimer();return false}latest=d;const li=rI(d[0]);if(!li){updateTimer();return false}curP=li;renderP(incP(curP));updateTimer();renderHistory();return true}
+
+  function renderHistory(){
+    histEl.innerHTML='';
+    const last8=latest.slice(0,8);
+    last8.forEach(r=>{
+      const num=rN(r);if(isNaN(num))return;
+      let cls='h-violet';
+      if(num===1||num===3||num===7||num===9)cls='h-green';
+      else if(num===2||num===4||num===6||num===8)cls='h-red';
+      histEl.innerHTML+=`<div class="h-item ${cls}">${num}</div>`;
+    });
   }
 
-  let lastZeroTrigger='';
-  function handleTimerZero(){
-    const now=getServerNow();const key=now.getMinutes()+'-'+now.getSeconds();
-    if(key===lastZeroTrigger)return;lastZeroTrigger=key;
-    setTimeout(()=>updatePeriodLive(false),900);
-    setTimeout(()=>updatePeriodLive(false),2500);
+  function firstGaps(n){const g=[];for(let i=0;i<n.length-1;i++)g.push(Math.abs(n[i]-n[i+1]));return g}
+  function makeLayers(g){let c=[...g],b=[],lo=null;while(c.length>1){const nx=[];for(let i=0;i<c.length-1;i++){const df=Math.abs(c[i]-c[i+1]);if(df<=1)nx.push(df)}lo=c.length%2!==0?c[c.length-1]:null;c=[...nx];b=[...c];if(c.length<=1)break}return{b,lo}}
+  function predBS(b){const z=b.filter(x=>x===0).length;const o=b.filter(x=>x===1).length;const l=b[b.length-1]||0;if(l===1)return o%2!==0?'BIG':'SMALL';return z%2!==0?'SMALL':'BIG'}
+  function predNum(b,lo,bs){if(lo!==null){const p=bs==='BIG'?[5,6,7,8,9]:[0,1,2,3,4];const f=p.filter(x=>x%2===lo%2);return f[Math.floor(Math.random()*f.length)]}return Math.floor(Math.random()*10)}
+  function applyColor(n){predEl.className='pred-val';if(n===1||n===3||n===7||n===9)predEl.classList.add('n-green');else if(n===2||n===4||n===6||n===8)predEl.classList.add('n-red');else if(n===0||n===5)predEl.classList.add('n-violet')}
+
+  async function onPredict(){
+    if(predLock||isFetch)return;
+    if(!shownP||shownP==='----')await updP(true);
+    setLoading();await updP(true);
+    const nums=latest.map(rN).filter(n=>Number.isInteger(n));
+    if(nums.length<2||!shownP||shownP==='----'){predEl.innerText='NO DATA';predEl.className='pred-val';predEl.style.color='#ef4444';predSub.innerText='Insufficient data';setReady();return}
+    let gaps=firstGaps(nums);let{b,lo}=makeLayers(gaps);if(!b.length)b=[0];
+    const bs=predBS(b);const num=predNum(b,lo,bs);
+    if(pm==='NUMBER'){predEl.innerText=num;predEl.style.fontSize='80px';applyColor(num);predSub.innerText='Number Prediction'}
+    else{predEl.innerText=bs;predEl.style.fontSize='56px';predEl.className='pred-val '+(bs==='BIG'?'big':'small');predSub.innerText='Big/Small Prediction'}
+    predP=shownP;predLock=true;setLocked();if(navigator.vibrate)navigator.vibrate([10,30,10]);
   }
+  window.onPredict=onPredict;
 
-  async function updatePeriodLive(force=false){
-    if(isFetching&&!force)return false;isFetching=true;
-    const data=await fetchData();isFetching=false;
-    if(data.length===0){updateTimerUI();return false}
-    latestData=data;
-    const latestIssue=readIssue(data[0]);
-    if(!latestIssue){updateTimerUI();return false}
-    currentPeriod=latestIssue;
-    renderNextPeriod(incrementPeriod(currentPeriod));
-    updateTimerUI();return true;
-  }
+  // Matrix canvas
+  const cvs=document.createElement('canvas');cvs.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.025;pointer-events:none';document.body.appendChild(cvs);
+  const ctx=cvs.getContext('2d');const lt='01';const fs=14;let cols=0;let dr=[];
+  function sz(){cvs.width=innerWidth;cvs.height=innerHeight;cols=Math.floor(cvs.width/fs);dr=Array.from({length:cols},()=>1)}
+  function dw(){ctx.fillStyle='rgba(0,0,0,0.06)';ctx.fillRect(0,0,cvs.width,cvs.height);ctx.fillStyle='#10b981';ctx.font=fs+'px monospace';for(let i=0;i<dr.length;i++){ctx.fillText(lt[Math.floor(Math.random()*lt.length)],i*fs,dr[i]*fs);if(dr[i]*fs>cvs.height&&Math.random()>.97)dr[i]=0;dr[i]++}}
+  sz();setInterval(dw,35);addEventListener('resize',sz);
 
-  function firstGaps(numbers){const g=[];for(let i=0;i<numbers.length-1;i++)g.push(Math.abs(numbers[i]-numbers[i+1]));return g}
-  function makeLayers(gaps){
-    let current=[...gaps];let binary=[];let leftover=null;
-    while(current.length>1){
-      const next=[];
-      for(let i=0;i<current.length-1;i++){const diff=Math.abs(current[i]-current[i+1]);if(diff<=1)next.push(diff)}
-      leftover=current.length%2!==0?current[current.length-1]:null;
-      current=[...next];binary=[...current];
-      if(current.length<=1)break;
-    }
-    return{binary,leftover};
-  }
+  updateTimer();updP(true);
+  setInterval(updateTimer,250);
+  setInterval(()=>updP(false),10000);
+  setInterval(()=>{if(shownP&&predP!==shownP&&predLock){predLock=false;updateBtn()}},500);
 
-  function predictBS(binary){
-    const zeros=binary.filter(x=>x===0).length;
-    const ones=binary.filter(x=>x===1).length;
-    const last=binary[binary.length-1]||0;
-    if(last===1)return ones%2!==0?'BIG':'SMALL';
-    return zeros%2!==0?'SMALL':'BIG';
-  }
-
-  function predictNumber(binary, leftover, bs){
-    if(leftover!==null){
-      const pool=bs==='BIG'?[5,6,7,8,9]:[0,1,2,3,4];
-      const filtered=pool.filter(x=>x%2===leftover%2);
-      return filtered[Math.floor(Math.random()*filtered.length)];
-    }
-    return Math.floor(Math.random()*10);
-  }
-
-  function applyNumberColor(num){
-    predictionEl.className='prediction-value';
-    if(num===1||num===3||num===7||num===9)predictionEl.classList.add('num-green');
-    else if(num===2||num===4||num===6||num===8)predictionEl.classList.add('num-red');
-    else if(num===0)predictionEl.classList.add('num-violet');
-    else if(num===5)predictionEl.classList.add('num-violet');
-  }
-
-  async function onPredictClick(){
-    if(predictionLocked||isFetching)return;
-    if(!shownNextPeriod||shownNextPeriod==='----')await updatePeriodLive(true);
-    setButtonLoading();
-    await updatePeriodLive(true);
-    const numbers=latestData.map(readNumber).filter(num=>Number.isInteger(num));
-    if(numbers.length<2||!shownNextPeriod||shownNextPeriod==='----'){
-      predictionEl.innerText='NO DATA';
-      predictionEl.className='prediction-value';
-      predictionEl.style.color='#ef4444';
-      predSub.innerText='Insufficient data';
-      setButtonReady();return;
-    }
-    let gaps=firstGaps(numbers);
-    let{binary,leftover}=makeLayers(gaps);
-    if(binary.length===0)binary=[0];
-    const bs=predictBS(binary);
-    const num=predictNumber(binary,leftover,bs);
-
-    if(predictionMode==='NUMBER'){
-      predictionEl.innerText=num;
-      predictionEl.style.fontSize='72px';
-      applyNumberColor(num);
-      predSub.innerText='Number Prediction';
-    }else{
-      predictionEl.innerText=bs;
-      predictionEl.style.fontSize='56px';
-      predictionEl.className='prediction-value '+(bs==='BIG'?'big':'small');
-      predSub.innerText='Big/Small Prediction';
-    }
-
-    predictedForPeriod=shownNextPeriod;
-    predictionLocked=true;
-    setButtonLocked();
-  }
-
-  window.onPredictClick=onPredictClick;
-
-  // Matrix
-  const canvas=document.createElement('canvas');
-  canvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.03;pointer-events:none';
-  document.body.appendChild(canvas);
-  const ctx=canvas.getContext('2d');
-  const letters='01';const fontSize=14;let columns=0;let drops=[];
-  function sizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;columns=Math.floor(canvas.width/fontSize);drops=Array.from({length:columns},()=>1)}
-  function draw(){ctx.fillStyle='rgba(0,0,0,0.06)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#10b981';ctx.font=fontSize+'px monospace';for(let i=0;i<drops.length;i++){const text=letters[Math.floor(Math.random()*letters.length)];ctx.fillText(text,i*fontSize,drops[i]*fontSize);if(drops[i]*fontSize>canvas.height&&Math.random()>.97)drops[i]=0;drops[i]++}}
-  sizeCanvas();setInterval(draw,35);window.addEventListener('resize',sizeCanvas);
-
-  // Init
-  updateTimerUI();updatePeriodLive(true);
-  setInterval(updateTimerUI,250);
-  setInterval(()=>updatePeriodLive(false),10000);
-  setInterval(()=>{if(shownNextPeriod&&predictedForPeriod!==shownNextPeriod&&predictionLocked){predictionLocked=false;updateButtonStateByTimer()}},500);
-
-  // Particles
   const pc=document.getElementById('particles');
-  for(let i=0;i<15;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*5+'s';p.style.animationDuration=(4+Math.random()*4)+'s';pc.appendChild(p)}
+  for(let i=0;i<18;i++){const p=document.createElement('div');p.className='p';const s=Math.random()*3+1;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:hsl(${150+Math.random()*30},${70+Math.random()*30}%,${60+Math.random()*30}%);animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*6}s;opacity:${.15+Math.random()*.3}`;pc.appendChild(p)}
 })();
 </script>
 </body>
