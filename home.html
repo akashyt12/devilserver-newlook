@@ -1,589 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DEVIL HOME</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent;
-}
-
-body{
-width:100%;
-height:100vh;
-overflow:hidden;
-background:#050505;
-font-family:'Inter',sans-serif;
-display:flex;
-justify-content:center;
-color:white;
-}
-
-.app{
-position:relative;
-width:100%;
-max-width:430px;
-height:100vh;
-overflow:hidden;
-background:#050505;
-}
-
-canvas{
-position:fixed;
-inset:0;
-width:100%;
-height:100%;
-z-index:0;
-opacity:.05;
-}
-
-.glow1,.glow2{
-position:absolute;
-border-radius:50%;
-filter:blur(90px);
-z-index:0;
-}
-
-.glow1{
-width:240px;
-height:240px;
-background:#00ff8840;
-top:-120px;
-left:-80px;
-}
-
-.glow2{
-width:220px;
-height:220px;
-background:#00ff6640;
-bottom:-100px;
-right:-60px;
-}
-
-.fixedTop{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-z-index:10;
-padding-bottom:18px;
-background:linear-gradient(to bottom,#050505 85%,transparent);
-backdrop-filter:blur(18px);
-}
-
-.header{
-padding:28px 22px 12px;
-}
-
-.small{
-font-size:12px;
-color:#7d7d7d;
-letter-spacing:1px;
-}
-
-.title{
-margin-top:6px;
-font-size:30px;
-font-weight:800;
-color:white;
-}
-
-.title span{
-color:#00ff88;
-text-shadow:0 0 20px rgba(0,255,136,.4);
-}
-
-.searchBox{
-padding:0 22px;
-margin-top:10px;
-}
-
-.search{
-width:100%;
-height:56px;
-border:none;
-outline:none;
-padding:0 20px;
-background:rgba(12,12,12,.7);
-border:1px solid rgba(255,255,255,.06);
-border-radius:20px;
-font-size:14px;
-color:white;
-backdrop-filter:blur(16px);
-box-shadow:
-0 0 20px rgba(0,255,136,.06),
-inset 0 0 12px rgba(255,255,255,.02);
-}
-
-.search::placeholder{
-color:#666;
-}
-
-.games{
-position:absolute;
-top:170px;
-left:0;
-width:100%;
-height:calc(100vh - 170px);
-overflow-y:auto;
-padding:22px;
-padding-top:10px;
-z-index:2;
-scroll-behavior:smooth;
-}
-
-.games::-webkit-scrollbar{
-width:0;
-}
-
-.card{
-background:rgba(12,12,12,.96);
-border:1px solid #1a1a1a;
-border-radius:28px;
-padding:20px;
-margin-bottom:18px;
-backdrop-filter:blur(14px);
-box-shadow:0 0 25px rgba(0,255,136,.05);
-transition:.2s;
-}
-
-.card:active{
-transform:scale(.98);
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.left{
-display:flex;
-align-items:center;
-gap:14px;
-}
-
-.logo{
-width:56px;
-height:56px;
-border-radius:18px;
-object-fit:cover;
-border:1px solid #1f1f1f;
-box-shadow:0 0 18px rgba(0,255,136,.08);
-}
-
-.game{
-font-size:19px;
-font-weight:700;
-color:white;
-}
-
-.badge{
-padding:7px 13px;
-border-radius:12px;
-background:#00ff8815;
-border:1px solid #00ff8830;
-color:#00ff88;
-font-size:11px;
-font-weight:700;
-letter-spacing:1px;
-}
-
-.sub{
-margin-top:14px;
-font-size:12px;
-line-height:18px;
-color:#7d7d7d;
-}
-
-.row{
-display:flex;
-gap:12px;
-margin-top:20px;
-}
-
-.btn{
-flex:1;
-height:50px;
-border:none;
-border-radius:16px;
-background:#00ff88;
-color:black;
-font-size:13px;
-font-weight:700;
-cursor:pointer;
-transition:.2s;
-box-shadow:0 0 20px rgba(0,255,136,.22);
-}
-
-.btn:active{
-transform:scale(.96);
-}
-
-.btn2{
-background:#101010;
-color:#00ff88;
-border:1px solid #1f1f1f;
-box-shadow:none;
-}
-
-.space{
-height:40px;
-}
-
-@media(max-width:360px){
-
-.title{
-font-size:25px;
-}
-
-.card{
-padding:18px;
-}
-
-.logo{
-width:50px;
-height:50px;
-}
-
-.game{
-font-size:17px;
-}
-
-.games{
-top:165px;
-height:calc(100vh - 165px);
-}
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<canvas id="matrix"></canvas>
-
-<div class="app">
-
-<div class="glow1"></div>
-<div class="glow2"></div>
-
-<div class="fixedTop">
-
-<div class="header">
-
-<div class="small">
-WELCOME BACK 👋
-</div>
-
-<div class="title">
-DEVIL <span>PREDICTOR</span>
-</div>
-
-</div>
-
-<div class="searchBox">
-
-<input type="text"
-class="search"
-id="search"
-placeholder="Search games..."
-onkeyup="searchGame()">
-
-</div>
-
-</div>
-
-<div class="games" id="gamesContainer">
-
-<script>
-
-const games = [
-
-["OKWIN","image1.png","HOT","AI Prediction Available","okwin"],
-["51 GAME","image2.png","LIVE","Smart Signal System","game51"],
-["55 CLUB","image3.png","HOT","Fast Prediction Access","club55"],
-["82 LOTTERY","image4.png","NEW","Neural AI Analyzer","lottery82"],
-["DM WIN","image5.png","HOT","Advanced Win Mode","dmwin"],
-["JAI CLUB","image6.png","VIP","Premium AI Detection","jaiclub"],
-["YAARWIN","image7.png","HOT","Real Time Signal Engine","yaarwin"],
-["BDG WIN","image8.png","LIVE","High Accuracy Prediction","bdgwin"],
-["BIG MUMBAI","image9.png","TREND","Fast Win Prediction","bigmumbai"],
-["TIRANGA","image10.png","LIVE","AI Smart Prediction","tiranga"],
-["TASHAN WIN","image11.png","BEST","Good Win Prediction","tashanwin"],
-["SIKKIM","image12.png","NEW","Sikkim AI Engine","sikkim"]
-
-];
-
-const container =
-document.getElementById('gamesContainer');
-
-games.forEach(g=>{
-
-container.innerHTML += `
-
-<div class="card gameCard">
-
-<div class="top">
-
-<div class="left">
-
-<img src="${g[1]}" class="logo">
-
-<div class="game">${g[0]}</div>
-
-</div>
-
-<div class="badge">${g[2]}</div>
-
-</div>
-
-<div class="sub">${g[3]}</div>
-
-<div class="row">
-
-<button class="btn"
-onclick="go('1m','${g[4]}')">
-1 MIN
-</button>
-
-<button class="btn btn2"
-onclick="go('30s','${g[4]}')">
-30 SEC
-</button>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-container.innerHTML += `<div class="space"></div>`;
-
-</script>
-
-</div>
-
-</div>
-
-<script>
-
-/* MATRIX */
-
-const canvas =
-document.getElementById('matrix');
-
-const ctx =
-canvas.getContext('2d');
-
-function resizeCanvas(){
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-}
-
-resizeCanvas();
-
-window.addEventListener(
-'resize',
-resizeCanvas
-);
-
-const letters='01';
-const fontSize=14;
-let columns = canvas.width/fontSize;
-let drops=[];
-
-function resetDrops(){
-
-columns = canvas.width/fontSize;
-drops=[];
-
-for(let i=0;i<columns;i++){
-
-drops[i]=1;
-
-}
-
-}
-
-resetDrops();
-
-function draw(){
-
-ctx.fillStyle='rgba(0,0,0,0.08)';
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-ctx.fillStyle='#00ff88';
-ctx.font=fontSize+'px monospace';
-
-for(let i=0;i<drops.length;i++){
-
-let text =
-letters[Math.floor(Math.random()*letters.length)];
-
-ctx.fillText(
-text,
-i*fontSize,
-drops[i]*fontSize
-);
-
-if(
-drops[i]*fontSize > canvas.height &&
-Math.random()>0.97
-){
-
-drops[i]=0;
-
-}
-
-drops[i]++;
-
-}
-
-}
-
-setInterval(draw,35);
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:#030712;color:#fff}
+
+/* BG */
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(16,185,129,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,.03) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite}
+@keyframes gridMove{to{background-position:60px 60px}}
+.bg-glow{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.12;pointer-events:none}
+.bg-glow-1{background:#10b981;top:-250px;left:50%;transform:translateX(-50%)}
+.bg-glow-2{background:#059669;bottom:-250px;right:-150px}
+
+.particles{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:3px;height:3px;background:#10b981;border-radius:50%;opacity:0;animation:particleFloat 5s ease-in-out infinite}
+@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}50%{opacity:.5}100%{opacity:0;transform:translateY(-100px) scale(1)}}
+
+/* SCROLL */
+.scroll{width:100%;height:100%;overflow-y:auto;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+
+/* FIXED TOP */
+.fixed-top{position:sticky;top:0;z-index:100;padding:20px 20px 16px;background:linear-gradient(to bottom,rgba(3,7,18,.98) 80%,transparent);backdrop-filter:blur(20px)}
+
+/* HEADER */
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.header-left{}
+.greeting{font-size:12px;color:#6b7280;letter-spacing:1px;font-weight:500}
+.title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-top:2px}
+.title .highlight{color:#10b981}
+.header-right{display:flex;gap:10px}
+.header-btn{width:42px;height:42px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:14px;display:flex;justify-content:center;align-items:center;cursor:pointer;transition:all .3s;backdrop-filter:blur(10px)}
+.header-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(16,185,129,.2)}
+.header-btn svg{width:20px;height:20px;stroke:#9ca3af;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* SEARCH */
+.search-wrap{position:relative}
+.search{width:100%;height:52px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:0 16px 0 48px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:all .3s;backdrop-filter:blur(10px)}
+.search:focus{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.02);box-shadow:0 0 0 4px rgba(16,185,129,.05)}
+.search::placeholder{color:#4b5563}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:#4b5563;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+.search:focus~.search-icon{stroke:#10b981}
 
-function searchGame(){
+/* STATS ROW */
+.stats-row{display:flex;gap:10px;padding:16px 20px 0}
+.stat-card{flex:1;padding:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:16px;text-align:center}
+.stat-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#10b981}
+.stat-label{font-size:10px;color:#6b7280;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
 
-let input =
-document.getElementById('search')
-.value
-.toLowerCase();
+/* SECTION */
+.section{padding:16px 20px 0}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.section-badge{padding:5px 12px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.12);border-radius:8px;font-size:11px;color:#10b981;font-weight:600;letter-spacing:1px}
 
-let cards =
-document.querySelectorAll('.gameCard');
+/* GAMES GRID */
+.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px 100px}
 
-cards.forEach(card=>{
+/* GAME CARD */
+.game-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:22px;padding:16px;transition:all .3s;position:relative;overflow:hidden;cursor:pointer}
+.game-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(16,185,129,.04),transparent);opacity:0;transition:opacity .3s}
+.game-card:active{transform:scale(.97)}
+.game-card:hover::before{opacity:1}
 
-let game =
-card.querySelector('.game')
-.innerText
-.toLowerCase();
+.game-card-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.game-logo{width:48px;height:48px;background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.12);border-radius:14px;display:flex;justify-content:center;align-items:center;overflow:hidden;flex-shrink:0}
+.game-logo img{width:100%;height:100%;object-fit:cover}
+.game-logo svg{width:24px;height:24px;stroke:#10b981;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.game-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;line-height:1.2}
 
-card.style.display =
-game.includes(input)
-? 'block'
-: 'none';
+.game-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:1px;margin-top:4px}
+.badge-hot{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.15)}
+.badge-live{background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.15)}
+.badge-new{background:rgba(59,130,246,.1);color:#3b82f6;border:1px solid rgba(59,130,246,.15)}
+.badge-vip{background:rgba(168,85,247,.1);color:#a855f7;border:1px solid rgba(168,85,247,.15)}
+.badge-trend{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.15)}
+.badge-best{background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.15)}
 
+.game-desc{font-size:11px;color:#6b7280;line-height:15px;margin-bottom:12px}
+
+.game-btns{display:flex;gap:8px}
+.game-btn{flex:1;height:36px;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;justify-content:center;align-items:center;gap:4px}
+.game-btn:active{transform:scale(.95)}
+.game-btn-primary{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 4px 15px rgba(16,185,129,.25)}
+.game-btn-secondary{background:rgba(255,255,255,.04);color:#10b981;border:1px solid rgba(16,185,129,.15)}
+.game-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;padding:12px 20px;padding-bottom:calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(3,7,18,.98) 70%,transparent);backdrop-filter:blur(20px);z-index:100}
+.nav-bar{display:flex;justify-content:space-around;align-items:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:10px 16px;backdrop-filter:blur(20px)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:all .3s;padding:4px 12px}
+.nav-item.active .nav-icon{color:#10b981}
+.nav-item.active .nav-label{color:#10b981}
+.nav-icon{width:22px;height:22px;stroke:#6b7280;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:color .3s}
+.nav-label{font-size:10px;color:#6b7280;letter-spacing:1px;font-weight:500;transition:color .3s}
+
+/* FOOTER SPACE */
+.footer-space{height:20px}
+
+@media(max-width:400px){
+  .title{font-size:22px}
+  .games-grid{gap:10px}
+  .game-card{padding:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="particles" id="particles"></div>
+
+<div class="scroll">
+  <div class="fixed-top">
+    <div class="header">
+      <div class="header-left">
+        <div class="greeting">WELCOME BACK</div>
+        <div class="title">DEVIL <span class="highlight">PREDICTOR</span></div>
+      </div>
+      <div class="header-right">
+        <div class="header-btn" onclick="window.open('https://t.me/','_blank')">
+          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input type="text" class="search" id="search" placeholder="Search games..." onkeyup="searchGame()">
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val">12</div>
+      <div class="stat-label">Games</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">2</div>
+      <div class="stat-label">Modes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">AI</div>
+      <div class="stat-label">Engine</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Select Game</div>
+      <div class="section-badge">ALL LIVE</div>
+    </div>
+  </div>
+
+  <div class="games-grid" id="gamesContainer"></div>
+  <div class="footer-space"></div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-bar">
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <div class="nav-label">HOME</div>
+    </div>
+    <div class="nav-item" onclick="window.open('https://t.me/','_blank')">
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+      <div class="nav-label">SUPPORT</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const games=[
+  {name:'OKWIN',img:'image1.png',badge:'HOT',badgeClass:'badge-hot',desc:'AI Prediction Available',key:'okwin'},
+  {name:'51 GAME',img:'image2.png',badge:'LIVE',badgeClass:'badge-live',desc:'Smart Signal System',key:'game51'},
+  {name:'55 CLUB',img:'image3.png',badge:'HOT',badgeClass:'badge-hot',desc:'Fast Prediction Access',key:'club55'},
+  {name:'82 LOTTERY',img:'image4.png',badge:'NEW',badgeClass:'badge-new',desc:'Neural AI Analyzer',key:'lottery82'},
+  {name:'DM WIN',img:'image5.png',badge:'HOT',badgeClass:'badge-hot',desc:'Advanced Win Mode',key:'dmwin'},
+  {name:'JAI CLUB',img:'image6.png',badge:'VIP',badgeClass:'badge-vip',desc:'Premium AI Detection',key:'jaiclub'},
+  {name:'YAARWIN',img:'image7.png',badge:'HOT',badgeClass:'badge-hot',desc:'Real Time Signal Engine',key:'yaarwin'},
+  {name:'BDG WIN',img:'image8.png',badge:'LIVE',badgeClass:'badge-live',desc:'High Accuracy Prediction',key:'bdgwin'},
+  {name:'BIG MUMBAI',img:'image9.png',badge:'TREND',badgeClass:'badge-trend',desc:'Fast Win Prediction',key:'bigmumbai'},
+  {name:'TIRANGA',img:'image10.png',badge:'LIVE',badgeClass:'badge-live',desc:'AI Smart Prediction',key:'tiranga'},
+  {name:'TASHAN WIN',img:'image11.png',badge:'BEST',badgeClass:'badge-best',desc:'Good Win Prediction',key:'tashanwin'},
+  {name:'SIKKIM',img:'image12.png',badge:'NEW',badgeClass:'badge-new',desc:'Sikkim AI Engine',key:'sikkim'}
+];
+
+const container=document.getElementById('gamesContainer');
+
+games.forEach((g,i)=>{
+  container.innerHTML+=`
+    <div class="game-card gameCard" style="animation:fadeIn .5s ease-out ${i*.05}s both">
+      <div class="game-card-top">
+        <div class="game-logo">
+          <img src="${g.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <svg style="display:none" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div>
+          <div class="game-name">${g.name}</div>
+          <div class="game-badge ${g.badgeClass}">${g.badge}</div>
+        </div>
+      </div>
+      <div class="game-desc">${g.desc}</div>
+      <div class="game-btns">
+        <button class="game-btn game-btn-primary" onclick="go('1m','${g.key}')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          1 MIN
+        </button>
+        <button class="game-btn game-btn-secondary" onclick="go('30s','${g.key}')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          30 SEC
+        </button>
+      </div>
+    </div>
+  `;
 });
 
-}
-
-/* GAME DATA */
-
-const gameData = {
-
-okwin:{
-name:'OKWIN',
-image:'image1.png'
-},
-
-game51:{
-name:'51 GAME',
-image:'image2.png'
-},
-
-club55:{
-name:'55 CLUB',
-image:'image3.png'
-},
-
-lottery82:{
-name:'82 LOTTERY',
-image:'image4.png'
-},
-
-dmwin:{
-name:'DM WIN',
-image:'image5.png'
-},
-
-jaiclub:{
-name:'JAI CLUB',
-image:'image6.png'
-},
-
-yaarwin:{
-name:'YAARWIN',
-image:'image7.png'
-},
-
-bdgwin:{
-name:'BDG WIN',
-image:'image8.png'
-},
-
-bigmumbai:{
-name:'BIG MUMBAI',
-image:'image9.png'
-},
-
-tiranga:{
-name:'TIRANGA',
-image:'image10.png'
-},
-
-tashanwin:{
-name:'TASHAN WIN',
-image:'image11.png'
-},
-
-sikkim:{
-name:'SIKKIM',
-image:'image12.png'
-}
-
+const gameData={
+  okwin:{name:'OKWIN',image:'image1.png'},
+  game51:{name:'51 GAME',image:'image2.png'},
+  club55:{name:'55 CLUB',image:'image3.png'},
+  lottery82:{name:'82 LOTTERY',image:'image4.png'},
+  dmwin:{name:'DM WIN',image:'image5.png'},
+  jaiclub:{name:'JAI CLUB',image:'image6.png'},
+  yaarwin:{name:'YAARWIN',image:'image7.png'},
+  bdgwin:{name:'BDG WIN',image:'image8.png'},
+  bigmumbai:{name:'BIG MUMBAI',image:'image9.png'},
+  tiranga:{name:'TIRANGA',image:'image10.png'},
+  tashanwin:{name:'TASHAN WIN',image:'image11.png'},
+  sikkim:{name:'SIKKIM',image:'image12.png'}
 };
-
-/* GO */
 
 function go(type,gameKey){
-
-if(!gameData[gameKey]){
-
-alert("Game not found");
-return;
-
+  if(!gameData[gameKey])return;
+  localStorage.setItem('selectedGame',JSON.stringify({name:gameData[gameKey].name,image:gameData[gameKey].image,timer:type}));
+  location.href='mode.html';
 }
 
-const selectedData = {
-
-name: gameData[gameKey].name,
-image: gameData[gameKey].image,
-timer: type
-
-};
-
-localStorage.setItem(
-'selectedGame',
-JSON.stringify(selectedData)
-);
-
-window.location.href='Mode.html';
-
+function searchGame(){
+  const input=document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('.gameCard').forEach(card=>{
+    const name=card.querySelector('.game-name').innerText.toLowerCase();
+    card.style.display=name.includes(input)?'block':'none';
+  });
 }
 
+// Particles
+const pc=document.getElementById('particles');
+for(let i=0;i<15;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*5+'s';p.style.animationDuration=(4+Math.random()*4)+'s';pc.appendChild(p)}
 </script>
-
+<style>
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
 </body>
 </html>
