@@ -1,208 +1,732 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Devil Predictor - Select Game</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#030712;--g1:#10b981;--g2:#34d399;--g3:#059669;--glass:rgba(255,255,255,.04);--glass-border:rgba(255,255,255,.06);--glass-hover:rgba(255,255,255,.08)}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:#fff;min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,rgba(16,185,129,.08),transparent 50%),radial-gradient(circle at 80% 80%,rgba(5,150,105,.06),transparent 50%),radial-gradient(circle at 50% 50%,rgba(52,211,153,.04),transparent 60%);pointer-events:none;z-index:0}
-.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-#particles{position:fixed;inset:0;pointer-events:none;z-index:0}
-.particle{position:absolute;border-radius:50%;background:var(--g1);opacity:.12;animation:float linear infinite}
-@keyframes float{0%{transform:translateY(0) translateX(0) scale(1)}50%{transform:translateY(-30vh) translateX(15px) scale(1.2)}100%{transform:translateY(-60vh) translateX(-10px) scale(.8)}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DEVIL PREDICTOR - Select Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-.topnav{position:sticky;top:0;z-index:100;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:rgba(3,7,18,.75);border-bottom:1px solid var(--glass-border);padding:10px 16px;display:flex;flex-direction:column;gap:10px}
-.topnav-row{display:flex;align-items:center;gap:10px}
-.back-btn{width:48px;height:48px;border-radius:14px;background:var(--glass);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:background .2s;text-decoration:none}
-.back-btn:active{background:var(--glass-hover);transform:scale(.95)}
-.back-btn svg{width:22px;height:22px;color:var(--g2)}
-.header-text{flex:1;display:flex;flex-direction:column}
-.header-sub{font-size:11px;color:#6b7280;letter-spacing:1.5px;font-weight:500}
-.header-main{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;line-height:1.2}
-.header-main .grad{background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.tg-btn{width:44px;height:44px;border-radius:12px;background:var(--glass);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:background .2s;text-decoration:none}
-.tg-btn:active{background:var(--glass-hover);transform:scale(.95)}
-.tg-btn svg{width:22px;height:22px;color:var(--g2)}
-.search-wrap{position:relative;height:52px}
-.search-wrap input{width:100%;height:100%;border-radius:14px;background:var(--glass);border:1px solid var(--glass-border);padding:0 48px 0 48px;font-size:14px;font-family:'Inter',sans-serif;color:#fff;outline:none;transition:border-color .3s,box-shadow .3s}
-.search-wrap input::placeholder{color:#4b5563}
-.search-wrap input:focus{border-color:var(--g1);box-shadow:0 0 0 3px rgba(16,185,129,.1)}
-.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:#4b5563;pointer-events:none}
+        :root {
+            --bg: #030712;
+            --emerald: #10b981;
+            --emerald-light: #34d399;
+            --emerald-dark: #059669;
+            --emerald-lighter: #6ee7b7;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: #6b7280;
+        }
 
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 16px 0;position:relative;z-index:1}
-.stat-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px}
-.stat-val{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.stat-label{font-size:10px;color:#6b7280;letter-spacing:1px;font-weight:600}
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 100px;
+        }
 
-.section-head{display:flex;align-items:center;justify-content:space-between;padding:20px 16px 12px;position:relative;z-index:1}
-.section-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
-.live-badge{background:var(--glass);border:1px solid rgba(16,185,129,.25);border-radius:20px;padding:5px 14px;font-size:10px;color:var(--g2);font-weight:600;letter-spacing:.5px;animation:pulse-badge 2s ease-in-out infinite}
-@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.6}}
+        /* Background Effects */
+        .bg-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 100px;position:relative;z-index:1}
-.gc{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:22px;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s;animation:cardIn .5s ease both}
-.gc:active{transform:scale(.97)}
-.gc:hover{border-color:rgba(16,185,129,.2)}
-@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+        .gradient-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+        }
 
-.gc-img{width:100%;aspect-ratio:1.2;overflow:hidden;position:relative}
-.gc-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
-.gc:hover .gc-img img{transform:scale(1.08)}
-.gc-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to top,rgba(3,7,18,.9),transparent);pointer-events:none}
-.gc-badge{position:absolute;top:10px;right:10px;z-index:2;padding:3px 10px;border-radius:8px;font-size:9px;font-weight:700;letter-spacing:.5px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.badge-hot{background:rgba(16,185,129,.2);color:var(--g1);border:1px solid rgba(16,185,129,.3)}
-.badge-live{background:rgba(16,185,129,.12);color:var(--g2);border:1px solid rgba(16,185,129,.2)}
-.badge-new{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.25)}
-.badge-vip{background:rgba(168,85,247,.15);color:#a78bfa;border:1px solid rgba(168,85,247,.25)}
-.badge-trend{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
-.badge-best{background:rgba(236,72,153,.12);color:#f472b6;border:1px solid rgba(236,72,153,.2)}
+        .blob-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--emerald-dark);
+            top: -100px;
+            left: -100px;
+            animation: float1 15s ease-in-out infinite;
+        }
 
-.gc-body{padding:14px}
-.gc-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:2px}
-.gc-desc{font-size:11px;color:#6b7280;margin-bottom:12px}
-.gc-btns{display:flex;gap:8px}
-.gc-btn1{flex:1;height:36px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--g1),var(--g3));color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:filter .2s}
-.gc-btn1:active{filter:brightness(.85)}
-.gc-btn2{flex:1;height:36px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(16,185,129,.35);color:var(--g2);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .2s}
-.gc-btn2:active{background:rgba(16,185,129,.08)}
-.gc-btn1 svg,.gc-btn2 svg{width:14px;height:14px}
+        .blob-2 {
+            width: 250px;
+            height: 250px;
+            background: var(--emerald);
+            top: 50%;
+            right: -80px;
+            animation: float2 18s ease-in-out infinite;
+        }
 
-.btm-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:rgba(3,7,18,.8);border-top:1px solid var(--glass-border);display:flex;padding:8px 16px;padding-bottom:max(8px,env(safe-area-inset-bottom))}
-.btm-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:12px;cursor:pointer;transition:background .2s;text-decoration:none}
-.btm-item:active{background:rgba(255,255,255,.04)}
-.btm-item.active .btm-icon{color:var(--g1)}
-.btm-item.active .btm-label{color:var(--g1)}
-.btm-icon{width:22px;height:22px;color:#6b7280;transition:color .2s}
-.btm-label{font-size:10px;color:#6b7280;font-weight:600;transition:color .2s}
-</style>
+        .blob-3 {
+            width: 200px;
+            height: 200px;
+            background: var(--emerald-lighter);
+            bottom: 10%;
+            left: 20%;
+            animation: float3 20s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, 50px); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-40px, -40px); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.5;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--emerald);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.5); }
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            background: rgba(3, 7, 18, 0.8);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 12px 16px;
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .back-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--emerald);
+        }
+
+        .back-btn svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--text-primary);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .header-subtitle {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .header-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .header-title span {
+            background: linear-gradient(135deg, var(--emerald), var(--emerald-lighter));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-input {
+            width: 52px;
+            height: 52px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 0 16px;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .search-input:focus {
+            width: 160px;
+            border-color: var(--emerald);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .telegram-btn {
+            width: 44px;
+            height: 44px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .telegram-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--emerald);
+        }
+
+        .telegram-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--emerald);
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--emerald), var(--emerald-lighter));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 16px 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--emerald);
+            font-weight: 600;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--emerald);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .game-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardEntry 0.6s ease forwards;
+        }
+
+        .game-card:hover {
+            border-color: var(--emerald);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+        }
+
+        @keyframes cardEntry {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .game-card:nth-child(1) { animation-delay: 0.05s; }
+        .game-card:nth-child(2) { animation-delay: 0.1s; }
+        .game-card:nth-child(3) { animation-delay: 0.15s; }
+        .game-card:nth-child(4) { animation-delay: 0.2s; }
+        .game-card:nth-child(5) { animation-delay: 0.25s; }
+        .game-card:nth-child(6) { animation-delay: 0.3s; }
+        .game-card:nth-child(7) { animation-delay: 0.35s; }
+        .game-card:nth-child(8) { animation-delay: 0.4s; }
+        .game-card:nth-child(9) { animation-delay: 0.45s; }
+        .game-card:nth-child(10) { animation-delay: 0.5s; }
+        .game-card:nth-child(11) { animation-delay: 0.55s; }
+        .game-card:nth-child(12) { animation-delay: 0.6s; }
+
+        .game-image {
+            position: relative;
+            aspect-ratio: 1.2;
+            overflow: hidden;
+        }
+
+        .game-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .game-card:hover .game-image img {
+            transform: scale(1.08);
+        }
+
+        .game-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to top, rgba(3, 7, 18, 0.9), transparent);
+            pointer-events: none;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-hot {
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+        }
+
+        .badge-live {
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+        }
+
+        .badge-new {
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+        }
+
+        .badge-vip {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: white;
+        }
+
+        .badge-trend {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+        }
+
+        .badge-best {
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            color: white;
+        }
+
+        .game-body {
+            padding: 14px;
+        }
+
+        .game-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .game-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-1min {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-1min:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-30sec {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            background: transparent;
+            color: var(--emerald);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-30sec:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--emerald);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            background: rgba(3, 7, 18, 0.9);
+            border-top: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+
+        .bottom-nav-content {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active svg {
+            stroke: var(--emerald);
+        }
+
+        .nav-item span {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active span {
+            color: var(--emerald);
+        }
+
+        .nav-item:hover svg {
+            stroke: var(--emerald);
+        }
+
+        .nav-item:hover span {
+            color: var(--emerald);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--emerald-dark);
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-<div class="grid-bg"></div>
-<div id="particles"></div>
-
-<nav class="topnav">
-  <div class="topnav-row">
-    <a href="login.html" class="back-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-    </a>
-    <div class="header-text">
-      <span class="header-sub">WELCOME BACK</span>
-      <span class="header-main">DEVIL <span class="grad">PREDICTOR</span></span>
+    <!-- Background Effects -->
+    <div class="bg-effects">
+        <div class="gradient-blob blob-1"></div>
+        <div class="gradient-blob blob-2"></div>
+        <div class="gradient-blob blob-3"></div>
+        <div class="grid-bg"></div>
+        <div id="particles"></div>
     </div>
-    <a href="https://t.me/" target="_blank" class="tg-btn">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.53 8.16l-1.8 8.48c-.14.59-.5.74-.99.46l-2.76-2.04-1.33 1.28c-.15.15-.27.27-.56.27l.2-2.82 5.1-4.61c.22-.2-.05-.31-.34-.12L8.82 13.2l-2.73-.85c-.6-.19-.61-.6.12-.88l10.69-4.12c.5-.18.94.12.77.88l-.14-.27z"/></svg>
-    </a>
-  </div>
-  <div class="search-wrap">
-    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-    <input type="text" placeholder="Search games..." oninput="searchGame(this.value)">
-  </div>
-</nav>
 
-<div class="stats">
-  <div class="stat-card"><span class="stat-val">12</span><span class="stat-label">GAMES</span></div>
-  <div class="stat-card"><span class="stat-val">2</span><span class="stat-label">MODES</span></div>
-  <div class="stat-card"><span class="stat-val">AI</span><span class="stat-label">ENGINE</span></div>
-</div>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-content">
+            <a href="login.html" class="back-btn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </a>
+            <div class="header-info">
+                <div class="header-subtitle">WELCOME BACK</div>
+                <div class="header-title">DEVIL <span>PREDICTOR</span></div>
+            </div>
+            <input type="text" class="search-input" placeholder="Search..." oninput="searchGame(this.value)">
+            <a href="https://t.me/" target="_blank" class="telegram-btn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-16.5 7.5a2.25 2.25 0 0 0 .126 4.073l4.138 1.3 1.818 5.455a2.25 2.25 0 0 0 3.935.937l2.25-2.25a2.25 2.25 0 0 0 .618-1.706l-.126-4.073 3.75-1.5a2.25 2.25 0 0 0 1.353-2.073l-.6-3a2.25 2.25 0 0 0-2.614-1.412zM10.5 16.5l-1.5-4.5 8.25-3.75-6 6z"/>
+                </svg>
+            </a>
+        </div>
+    </nav>
 
-<div class="section-head">
-  <span class="section-title">Select Game</span>
-  <span class="live-badge">ALL LIVE</span>
-</div>
+    <!-- Stats Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-value">12</div>
+            <div class="stat-label">GAMES</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">2</div>
+            <div class="stat-label">MODES</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">AI</div>
+            <div class="stat-label">ENGINE</div>
+        </div>
+    </div>
 
-<div class="games-grid" id="gamesGrid"></div>
+    <!-- Section Header -->
+    <div class="section-header">
+        <h2 class="section-title">Select Game</h2>
+        <div class="live-badge">
+            <span class="live-dot"></span>
+            ALL LIVE
+        </div>
+    </div>
 
-<nav class="btm-nav">
-  <a href="home.html" class="btm-item active">
-    <svg class="btm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    <span class="btm-label">HOME</span>
-  </a>
-  <a href="support.html" class="btm-item">
-    <svg class="btm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-    <span class="btm-label">SUPPORT</span>
-  </a>
-</nav>
+    <!-- Games Grid -->
+    <div class="games-grid" id="gamesGrid"></div>
 
-<script>
-const GAMES=[
-  {key:"okwin",name:"OKWIN",desc:"Lucky Number Game",img:"image1",badge:"hot"},
-  {key:"51game",name:"51 GAME",desc:"Color Prediction",img:"image2",badge:"live"},
-  {key:"55club",name:"55 CLUB",desc:"Quick Win Game",img:"image3",badge:"hot"},
-  {key:"82lottery",name:"82 LOTTERY",desc:"Lottery Prediction",img:"image4",badge:"new"},
-  {key:"dmwin",name:"DM WIN",desc:"Number Guessing",img:"image5",badge:"hot"},
-  {key:"jaiclub",name:"JAI CLUB",desc:"Premium Gaming",img:"image6",badge:"vip"},
-  {key:"yaarwin",name:"YAARWIN",desc:"Fast Prediction",img:"image7",badge:"hot"},
-  {key:"bdgwin",name:"BDG WIN",desc:"Bingo Game",img:"image8",badge:"live"},
-  {key:"bigmumbai",name:"BIG MUMBAI",desc:"Mumbai Special",img:"image9",badge:"trend"},
-  {key:"tiranga",name:"TIRANGA",desc:"Tricolor Game",img:"image10",badge:"live"},
-  {key:"tashanwin",name:"TASHAN WIN",desc:"Style Game",img:"image11",badge:"best"},
-  {key:"sikkim",name:"SIKKIM",desc:"Sikkim Lottery",img:"image12",badge:"new"}
-];
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-content">
+            <a href="home.html" class="nav-item active">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>HOME</span>
+            </a>
+            <a href="support.html" class="nav-item">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>SUPPORT</span>
+            </a>
+        </div>
+    </nav>
 
-const BADGE_MAP={hot:"badge-hot",live:"badge-live",new:"badge-new",vip:"badge-vip",trend:"badge-trend",best:"badge-best"};
+    <script>
+        const games = [
+            { key: 'okwin', name: 'OKWIN', desc: 'Instant Win Games', img: 'image1.png', badge: 'hot' },
+            { key: '51game', name: '51 GAME', desc: 'Color Prediction', img: 'image2.png', badge: 'live' },
+            { key: '55club', name: '55 CLUB', desc: 'Number Games', img: 'image3.png', badge: 'hot' },
+            { key: '82lottery', name: '82 LOTTERY', desc: 'Lottery Draws', img: 'image4.png', badge: 'new' },
+            { key: 'dmwin', name: 'DM WIN', desc: 'Quick Win Games', img: 'image5.png', badge: 'hot' },
+            { key: 'jaiclub', name: 'JAI CLUB', desc: 'Premium Games', img: 'image6.png', badge: 'vip' },
+            { key: 'yaarwin', name: 'YAARWIN', desc: 'Fast Win Games', img: 'image7.png', badge: 'hot' },
+            { key: 'bdgwin', name: 'BDG WIN', desc: 'Live Games', img: 'image8.png', badge: 'live' },
+            { key: 'bigmumbai', name: 'BIG MUMBAI', desc: 'Trending Games', img: 'image9.png', badge: 'trend' },
+            { key: 'tiranga', name: 'TIRANGA', desc: 'Live Prediction', img: 'image10.png', badge: 'live' },
+            { key: 'tashanwin', name: 'TASHAN WIN', desc: 'Best Win Games', img: 'image11.png', badge: 'best' },
+            { key: 'sikkim', name: 'SIKKIM', desc: 'New Win Games', img: 'image12.png', badge: 'new' }
+        ];
 
-const timerSvg60='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
-const timerSvg30='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
+        function renderGames(filter = '') {
+            const grid = document.getElementById('gamesGrid');
+            const filtered = games.filter(g => g.name.toLowerCase().includes(filter.toLowerCase()));
+            
+            grid.innerHTML = filtered.map((game, i) => `
+                <div class="game-card" style="animation-delay: ${i * 0.05}s">
+                    <div class="game-image">
+                        <img src="${game.img}" alt="${game.name}" loading="lazy">
+                        <span class="game-badge badge-${game.badge}">${game.badge.toUpperCase()}</span>
+                    </div>
+                    <div class="game-body">
+                        <div class="game-name">${game.name}</div>
+                        <div class="game-desc">${game.desc}</div>
+                        <div class="game-buttons">
+                            <button class="btn-1min" onclick="go('${game.key}', '1min')">1 MIN</button>
+                            <button class="btn-30sec" onclick="go('${game.key}', '30sec')">30 SEC</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-function renderGames(filter){
-  const grid=document.getElementById("gamesGrid");
-  grid.innerHTML="";
-  GAMES.forEach(function(g,i){
-    if(filter && g.name.toLowerCase().indexOf(filter.toLowerCase())===-1) return;
-    var delay=(grid.children.length)*.06;
-    var card=document.createElement("div");
-    card.className="gc";
-    card.style.animationDelay=delay+"s";
-    card.setAttribute("data-name",g.name);
-    card.innerHTML=
-      '<div class="gc-img">'+
-        '<img src="https://picsum.photos/seed/'+g.img+'/400/330" alt="'+g.name+'" loading="lazy">'+
-        '<span class="gc-badge '+BADGE_MAP[g.badge]+'">'+g.badge.toUpperCase()+'</span>'+
-      '</div>'+
-      '<div class="gc-body">'+
-        '<div class="gc-name">'+g.name+'</div>'+
-        '<div class="gc-desc">'+g.desc+'</div>'+
-        '<div class="gc-btns">'+
-          '<button class="gc-btn1" onclick="event.stopPropagation();go(\''+g.key+'\',60)">'+timerSvg60+' 1 MIN</button>'+
-          '<button class="gc-btn2" onclick="event.stopPropagation();go(\''+g.key+'\',30)">'+timerSvg30+' 30 SEC</button>'+
-        '</div>'+
-      '</div>';
-    grid.appendChild(card);
-  });
-}
+        function go(key, timer) {
+            localStorage.setItem('selectedGame', key);
+            localStorage.setItem('selectedTimer', timer);
+            window.location.href = 'mode.html';
+        }
 
-function go(key,timer){
-  localStorage.setItem("selectedGame",key);
-  localStorage.setItem("selectedTimer",timer);
-  window.location.href="mode.html";
-}
+        function searchGame(q) {
+            renderGames(q);
+        }
 
-function searchGame(q){
-  renderGames(q);
-}
+        // Create particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 3 + 's';
+                particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(particle);
+            }
+        }
 
-(function(){
-  var c=document.getElementById("particles");
-  for(var i=0;i<20;i++){
-    var p=document.createElement("div");
-    p.className="particle";
-    var size=Math.random()*4+2;
-    p.style.width=size+"px";
-    p.style.height=size+"px";
-    p.style.left=Math.random()*100+"%";
-    p.style.top=Math.random()*100+"%";
-    p.style.animationDuration=(Math.random()*12+8)+"s";
-    p.style.animationDelay=Math.random()*5+"s";
-    p.style.opacity=(Math.random()*.1+.04);
-    c.appendChild(p);
-  }
-})();
-
-renderGames("");
-</script>
+        createParticles();
+        renderGames();
+    </script>
 </body>
 </html>
