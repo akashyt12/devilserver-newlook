@@ -2,339 +2,131 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DEVIL PREDICTOR</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:#030712;color:#fff}
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
+.loader-screen{position:fixed;inset:0;z-index:999;background:#030712;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity .6s,visibility .6s}
+.loader-screen.hidden{opacity:0;visibility:hidden}
 
-body{
-    width:100%;
-    height:100vh;
-    overflow:hidden;
-    font-family:'Inter',sans-serif;
-    background:#050505;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
+/* ANIMATED BACKGROUND */
+.bg-grid{position:fixed;inset:0;background-image:
+  linear-gradient(rgba(16,185,129,.03) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(16,185,129,.03) 1px,transparent 1px);
+  background-size:60px 60px;animation:gridMove 20s linear infinite}
+@keyframes gridMove{to{background-position:60px 60px}}
 
-/* APP */
+.bg-glow{position:fixed;width:600px;height:600px;border-radius:50%;filter:blur(150px);opacity:.15;pointer-events:none}
+.bg-glow-1{background:#10b981;top:-300px;left:50%;transform:translateX(-50%);animation:floatGlow 8s ease-in-out infinite}
+.bg-glow-2{background:#059669;bottom:-300px;right:-200px;animation:floatGlow 10s ease-in-out infinite reverse}
+@keyframes floatGlow{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(30px)}}
 
-.app{
-    position:relative;
-    width:100%;
-    max-width:430px;
-    height:100vh;
-    overflow:hidden;
-    background:#050505;
-}
+/* PARTICLES */
+.particles{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:4px;height:4px;background:#10b981;border-radius:50%;opacity:0;animation:particleFloat 4s ease-in-out infinite}
+@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}50%{opacity:.6}100%{opacity:0;transform:translateY(-100px) scale(1)}}
 
-/* GREEN GLOW */
+/* CENTER CONTENT */
+.loader-center{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;gap:40px}
 
-.light{
-    position:absolute;
-    width:260px;
-    height:260px;
-    background:#00ff8840;
-    border-radius:50%;
-    top:-120px;
-    left:50%;
-    transform:translateX(-50%);
-    filter:blur(50px);
-    animation:float 5s ease-in-out infinite;
-}
+/* LOGO ANIMATION */
+.logo-wrap{position:relative;width:140px;height:140px}
+.logo-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:#10b981;border-right-color:#10b981;animation:ringRotate 2s linear infinite}
+.logo-ring:nth-child(2){inset:12px;border-top-color:#34d399;border-left-color:#34d399;animation-duration:3s;animation-direction:reverse}
+.logo-ring:nth-child(3){inset:24px;border-bottom-color:#6ee7b7;border-right-color:#6ee7b7;animation-duration:1.5s}
+@keyframes ringRotate{to{transform:rotate(360deg)}}
 
-/* DOTS */
+.logo-icon{position:absolute;inset:36px;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#10b981,#059669);border-radius:50%;box-shadow:0 0 60px rgba(16,185,129,.4),inset 0 0 30px rgba(255,255,255,.1);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 60px rgba(16,185,129,.4),inset 0 0 30px rgba(255,255,255,.1)}50%{box-shadow:0 0 80px rgba(16,185,129,.6),inset 0 0 40px rgba(255,255,255,.15)}}
 
-.dot1,
-.dot2,
-.dot3{
-    position:absolute;
-    border-radius:50%;
-    background:#1b1b1b;
-}
+.logo-svg{width:48px;height:48px;fill:#fff;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3))}
 
-.dot1{
-    width:8px;
-    height:8px;
-    top:120px;
-    left:40px;
-}
+/* TEXT */
+.loader-title{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;letter-spacing:4px;text-transform:uppercase;background:linear-gradient(135deg,#fff 0%,#10b981 50%,#34d399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:textGlow 3s ease-in-out infinite}
+@keyframes textGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(16,185,129,.3))}50%{filter:drop-shadow(0 0 20px rgba(16,185,129,.5))}}
 
-.dot2{
-    width:12px;
-    height:12px;
-    top:180px;
-    right:45px;
-}
+.loader-sub{font-size:13px;letter-spacing:6px;text-transform:uppercase;color:#6b7280;font-weight:500}
 
-.dot3{
-    width:6px;
-    height:6px;
-    bottom:160px;
-    left:60px;
-}
+/* PROGRESS BAR */
+.progress-wrap{width:280px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.progress-bar{width:100%;height:3px;background:rgba(255,255,255,.05);border-radius:10px;overflow:hidden;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,#10b981,#34d399,#6ee7b7);border-radius:10px;width:0%;transition:width .3s;box-shadow:0 0 15px rgba(16,185,129,.5)}
+.progress-text{font-size:12px;color:#6b7280;letter-spacing:2px;font-weight:500}
+.progress-pct{color:#10b981;font-weight:700;font-family:'Space Grotesk',sans-serif}
 
-/* MATRIX BG */
-
-.matrix{
-    position:absolute;
-    inset:0;
-    opacity:.05;
-
-    background-image:
-    linear-gradient(rgba(0,255,136,.2) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,136,.2) 1px, transparent 1px);
-
-    background-size:28px 28px;
-}
-
-/* CENTER */
-
-.center{
-    width:100%;
-    height:100%;
-
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-
-    padding:24px;
-    position:relative;
-    z-index:2;
-}
-
-/* LOGO BOX */
-
-.logoBox{
-    width:92px;
-    height:92px;
-
-    border-radius:28px;
-
-    background:#0f0f0f;
-    border:1px solid #1f1f1f;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    box-shadow:
-    0 0 30px rgba(0,255,136,.08),
-    inset 0 0 20px rgba(0,255,136,.03);
-
-    animation:updown 2.5s ease-in-out infinite;
-}
-
-/* LOGO */
-
-.logo{
-    font-size:36px;
-    color:#00ff88;
-
-    text-shadow:
-    0 0 15px rgba(0,255,136,.5);
-}
-
-/* TITLE */
-
-.title{
-    margin-top:28px;
-
-    font-size:23px;
-    font-weight:700;
-
-    color:white;
-
-    letter-spacing:.5px;
-}
-
-.title span{
-    color:#00ff88;
-}
-
-/* SUBTITLE */
-
-.sub{
-    margin-top:8px;
-
-    font-size:11px;
-    color:#7c7c7c;
-
-    letter-spacing:2px;
-    text-transform:uppercase;
-}
-
-/* LOADING */
-
-.loading{
-    margin-top:28px;
-
-    display:flex;
-    align-items:center;
-    gap:8px;
-
-    font-size:12px;
-    color:#b5b5b5;
-}
-
-.pulse{
-    width:8px;
-    height:8px;
-
-    border-radius:50%;
-
-    background:#00ff88;
-
-    box-shadow:
-    0 0 12px #00ff88;
-
-    animation:pulse 1s infinite;
-}
-
-/* LOADER */
-
-.loader{
-    margin-top:28px;
-
-    width:44px;
-    height:44px;
-
-    border-radius:50%;
-
-    border:3px solid #1d1d1d;
-    border-top:3px solid #00ff88;
-
-    animation:spin 1s linear infinite;
-}
+/* STATUS */
+.status-dots{display:flex;gap:8px;align-items:center}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#10b981;animation:statusPulse 1.5s ease-in-out infinite}
+.status-dot:nth-child(2){animation-delay:.2s}
+.status-dot:nth-child(3){animation-delay:.4s}
+@keyframes statusPulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.status-text{font-size:11px;color:#4b5563;letter-spacing:2px;margin-left:12px}
 
 /* FOOTER */
+.loader-footer{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:16px;z-index:10}
+.footer-line{width:40px;height:1px;background:linear-gradient(90deg,transparent,#10b981,transparent)}
+.footer-text{font-size:10px;color:#374151;letter-spacing:3px;text-transform:uppercase}
 
-.footer{
-    position:absolute;
-    bottom:38px;
-    left:50%;
-
-    transform:translateX(-50%);
-
-    font-size:11px;
-    color:#5f5f5f;
-
-    letter-spacing:1px;
+@media(max-width:400px){
+  .loader-title{font-size:26px;letter-spacing:3px}
+  .logo-wrap{width:120px;height:120px}
+  .logo-icon{inset:30px}
+  .logo-svg{width:40px;height:40px}
 }
-
-/* ANIMATIONS */
-
-@keyframes spin{
-    100%{
-        transform:rotate(360deg);
-    }
-}
-
-@keyframes pulse{
-    50%{
-        opacity:.3;
-        transform:scale(.8);
-    }
-}
-
-@keyframes float{
-    50%{
-        transform:translateX(-50%) scale(1.1);
-    }
-}
-
-@keyframes updown{
-    50%{
-        transform:translateY(-8px);
-    }
-}
-
-/* MOBILE */
-
-@media(max-width:360px){
-
-.title{
-    font-size:20px;
-}
-
-.logoBox{
-    width:80px;
-    height:80px;
-}
-
-.logo{
-    font-size:30px;
-}
-
-}
-
 </style>
 </head>
-
 <body>
 
-<div class="app">
+<!-- BG EFFECTS -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
 
-    <div class="matrix"></div>
+<div class="particles" id="particles"></div>
 
-    <div class="light"></div>
-
-    <div class="dot1"></div>
-    <div class="dot2"></div>
-    <div class="dot3"></div>
-
-    <div class="center">
-
-        <div class="logoBox">
-            <div class="logo">⚡</div>
-        </div>
-
-        <div class="title">
-            DEVIL <span>PREDICTOR</span>
-        </div>
-
-        <div class="sub">
-            Secure Prediction System
-        </div>
-
-        <div class="loading">
-            <div class="pulse"></div>
-            Connecting Server...
-        </div>
-
-        <div class="loader"></div>
-
+<!-- LOADER -->
+<div class="loader-screen" id="loader">
+  <div class="loader-center">
+    <div class="logo-wrap">
+      <div class="logo-ring"></div>
+      <div class="logo-ring"></div>
+      <div class="logo-ring"></div>
+      <div class="logo-icon">
+        <svg class="logo-svg" viewBox="0 0 24 24"><path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/></svg>
+      </div>
     </div>
-
-    <div class="footer">
-        Secure • Fast • Connected
+    <div class="loader-title">DEVIL PREDICTOR</div>
+    <div class="loader-sub">QUANTUM AI ENGINE</div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text">INITIALIZING <span class="progress-pct" id="progressPct">0%</span></div>
     </div>
-
+    <div class="status-dots">
+      <div class="status-dot"></div>
+      <div class="status-dot"></div>
+      <div class="status-dot"></div>
+      <div class="status-text">CONNECTING TO SERVERS</div>
+    </div>
+  </div>
+  <div class="loader-footer">
+    <div class="footer-line"></div>
+    <div class="footer-text">Secure • Quantum • Fast</div>
+  </div>
 </div>
 
 <script>
+// Particles
+const pc=document.getElementById('particles');
+for(let i=0;i<30;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*4+'s';p.style.animationDuration=(3+Math.random()*3)+'s';pc.appendChild(p)}
 
-setTimeout(()=>{
-
-window.location.href='Welcome.html';
-
-},3000);
-
+// Progress
+let pct=0;const fill=document.getElementById('progressFill');const pctEl=document.getElementById('progressPct');
+const iv=setInterval(()=>{pct+=Math.random()*15+5;if(pct>=100){pct=100;clearInterval(iv);setTimeout(()=>{document.getElementById('loader').classList.add('hidden');setTimeout(()=>window.location.href='welcome.html',600)},400)}fill.style.width=pct+'%';pctEl.textContent=Math.floor(pct)+'%'},200);
 </script>
-
 </body>
 </html>

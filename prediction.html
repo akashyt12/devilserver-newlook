@@ -1,806 +1,459 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DEVIL PREDICTOR • SYNC</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DEVIL PREDICTOR • SYNC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:#030712;color:#fff}
 
-    body {
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-      background: #050505;
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      justify-content: center;
-      color: white;
-    }
+/* BG */
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(16,185,129,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,.03) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite}
+@keyframes gridMove{to{background-position:60px 60px}}
+.bg-glow{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.12;pointer-events:none}
+.bg-glow-1{background:#10b981;top:-250px;left:50%;transform:translateX(-50%)}
+.bg-glow-2{background:#059669;bottom:-250px;right:-150px}
 
-    .app {
-      width: 100%;
-      max-width: 430px;
-      height: 100vh;
-      overflow-y: auto;
-      position: relative;
-      background: #050505;
-    }
+.particles{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:3px;height:3px;background:#10b981;border-radius:50%;opacity:0;animation:particleFloat 5s ease-in-out infinite}
+@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}50%{opacity:.5}100%{opacity:0;transform:translateY(-100px) scale(1)}}
 
-    .app::-webkit-scrollbar {
-      width: 0;
-    }
+/* SCROLL */
+.scroll{width:100%;height:100%;overflow-y:auto;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
 
-    canvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      opacity: 0.05;
-      pointer-events: none;
-    }
+/* MAIN */
+.main{position:relative;z-index:10;width:100%;min-height:100%;padding:20px;display:flex;flex-direction:column;gap:16px;animation:fadeIn .6s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-    .glow1,
-    .glow2 {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      z-index: 0;
-    }
+/* TOP CARD */
+.top-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:28px;padding:20px;backdrop-filter:blur(20px);position:relative;overflow:hidden}
+.top-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.3),transparent)}
 
-    .glow1 {
-      width: 240px;
-      height: 240px;
-      background: #00ff8840;
-      top: -120px;
-      left: -80px;
-    }
+.game-header{display:flex;align-items:center;gap:14px}
+.game-logo{width:64px;height:64px;background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.15);border-radius:18px;display:flex;justify-content:center;align-items:center;overflow:hidden;flex-shrink:0}
+.game-logo img{width:100%;height:100%;object-fit:cover}
+.game-info{flex:1;min-width:0}
+.game-label{font-size:10px;color:#6b7280;letter-spacing:2px;text-transform:uppercase;font-weight:500}
+.game-name{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;margin-top:2px}
+.game-name .highlight{color:#10b981}
+.game-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.12);border-radius:8px;margin-top:6px;font-size:10px;color:#10b981;font-weight:600;letter-spacing:1px}
+.game-tag svg{width:12px;height:12px;stroke:#10b981;fill:none;stroke-width:2}
+.status-row{display:flex;align-items:center;gap:8px;margin-top:14px;padding:10px 14px;background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.08);border-radius:12px}
+.status-dot{width:6px;height:6px;background:#10b981;border-radius:50%;animation:pulse 2s ease-in-out infinite;box-shadow:0 0 8px #10b981}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.status-text{font-size:11px;color:#9ca3af}
 
-    .glow2 {
-      width: 220px;
-      height: 220px;
-      background: #00ff6640;
-      bottom: -100px;
-      right: -60px;
-    }
+/* CARD */
+.card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:24px;padding:20px;backdrop-filter:blur(20px);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.2),transparent)}
+.card-label{font-size:10px;color:#6b7280;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:500}
 
-    .main {
-      position: relative;
-      z-index: 2;
-      padding: 20px;
-    }
+/* TIMER */
+.timer-display{display:flex;align-items:center;justify-content:center;gap:20px}
+.timer-circle{width:120px;height:120px;position:relative;display:flex;justify-content:center;align-items:center}
+.timer-ring{position:absolute;inset:0;border-radius:50%}
+.timer-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer-ring circle{fill:none;stroke-width:4;stroke-linecap:round}
+.timer-ring .ring-bg{stroke:rgba(255,255,255,.04)}
+.timer-ring .ring-fill{stroke:#10b981;stroke-dasharray:339.292;stroke-dashoffset:0;transition:stroke-dashoffset .5s ease,stroke .3s}
+.timer-ring .ring-fill.urgent{stroke:#ef4444}
+.timer-val{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:#10b981;transition:color .3s}
+.timer-val.urgent{color:#ef4444;text-shadow:0 0 20px rgba(239,68,68,.4)}
+.timer-mode-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.12);border-radius:10px;font-size:11px;color:#10b981;font-weight:600;letter-spacing:1px}
+.timer-mode-tag svg{width:14px;height:14px;stroke:#10b981;fill:none;stroke-width:2}
 
-    .topCard {
-      background: rgba(12, 12, 12, .96);
-      border: 1px solid #1a1a1a;
-      border-radius: 30px;
-      padding: 20px;
-      box-shadow: 0 0 25px rgba(0, 255, 136, .06);
-    }
+/* PERIOD */
+.period-val{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;word-break:break-all;letter-spacing:1px;padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;text-align:center;transition:all .3s}
+.period-val.flash{animation:periodFlash .6s ease-in-out}
+@keyframes periodFlash{0%,100%{color:#fff}50%{color:#10b981;text-shadow:0 0 20px rgba(16,185,129,.5)}}
 
-    .gameTop {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+/* PREDICTION */
+.prediction-box{min-height:140px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:20px;background:linear-gradient(135deg,rgba(16,185,129,.03),rgba(16,185,129,.01));border:1px solid rgba(16,185,129,.08);border-radius:20px;position:relative;overflow:hidden}
+.prediction-box::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(16,185,129,.05),transparent 70%);pointer-events:none}
+.prediction-label{font-size:10px;color:#6b7280;letter-spacing:2px;text-transform:uppercase;font-weight:500}
+.prediction-value{font-family:'Space Grotesk',sans-serif;font-size:72px;font-weight:800;color:#10b981;text-shadow:0 0 40px rgba(16,185,129,.3);transition:all .4s;line-height:1}
+.prediction-value.big{color:#10b981}
+.prediction-value.small{color:#f59e0b}
+.prediction-value.num-green{color:#10b981}
+.prediction-value.num-red{color:#ef4444}
+.prediction-value.num-violet{color:#a855f7}
+.prediction-sub{font-size:12px;color:#6b7280;letter-spacing:1px}
 
-    .gameImage {
-      width: 72px;
-      height: 72px;
-      border-radius: 22px;
-      object-fit: cover;
-      border: 1px solid #1f1f1f;
-      box-shadow: 0 0 20px rgba(0, 255, 136, .15);
-      background: #0f0f0f;
-    }
+/* BUTTON */
+.predict-btn{width:100%;height:60px;border:none;border-radius:20px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:10px;transition:all .3s;position:relative;overflow:hidden}
+.predict-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .3s}
+.predict-btn:active{transform:scale(.97)}
+.predict-btn.ready{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 10px 40px rgba(16,185,129,.3)}
+.predict-btn.ready:hover::before{opacity:1}
+.predict-btn.locked{background:rgba(255,255,255,.04);color:#4b5563;cursor:not-allowed;box-shadow:none}
+.predict-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-loader{display:none;width:22px;height:22px;border:2.5px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-    .small {
-      font-size: 11px;
-      color: #777;
-      letter-spacing: 1px;
-    }
+/* BOTTOM INFO */
+.bottom-info{display:flex;justify-content:center;gap:24px;padding:16px 0}
+.info-item{display:flex;flex-direction:column;align-items:center;gap:6px}
+.info-icon{width:40px;height:40px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.1);border-radius:12px;display:flex;justify-content:center;align-items:center}
+.info-icon svg{width:18px;height:18px;stroke:#10b981;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.info-text{font-size:10px;color:#6b7280;letter-spacing:1px;text-transform:uppercase}
 
-    .gameName {
-      margin-top: 4px;
-      font-size: 24px;
-      font-weight: 800;
-    }
+/* FOOTER */
+.footer{text-align:center;padding:12px 0;font-size:10px;color:#374151;letter-spacing:2px;text-transform:uppercase}
 
-    .gameName span {
-      color: #00ff88;
-    }
-
-    .modeBox {
-      margin-top: 10px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 14px;
-      background: #00ff8815;
-      border: 1px solid #00ff8835;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: #00ff88;
-    }
-
-    .status {
-      margin-top: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: #9a9a9a;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #00ff88;
-      box-shadow: 0 0 12px #00ff88;
-      animation: pulse 1s infinite;
-    }
-
-    .card {
-      margin-top: 18px;
-      background: rgba(12, 12, 12, .96);
-      border: 1px solid #1a1a1a;
-      border-radius: 28px;
-      padding: 22px;
-      box-shadow: 0 0 22px rgba(0, 255, 136, .04);
-    }
-
-    .label {
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: #6d6d6d;
-      margin-bottom: 12px;
-    }
-
-    .timer {
-      font-size: 42px;
-      font-weight: 800;
-      color: #00ff88;
-      transition: color 0.3s, text-shadow 0.3s;
-    }
-
-    .timer.urgent {
-      color: #ff4444;
-      text-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
-    }
-
-    .period {
-      font-size: 20px;
-      font-weight: 700;
-      word-break: break-all;
-      letter-spacing: 0.5px;
-      transition: all 0.3s;
-    }
-
-    .predict {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 120px;
-      font-size: 58px;
-      font-weight: 800;
-      color: #00ff88;
-      text-shadow: 0 0 18px rgba(0, 255, 136, .35);
-      transition: all 0.3s;
-    }
-
-    button {
-      width: 100%;
-      height: 58px;
-      margin-top: 20px;
-      border: none;
-      border-radius: 20px;
-      background: #00ff88;
-      color: black;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: .2s;
-      box-shadow: 0 0 25px rgba(0, 255, 136, .25);
-      position: relative;
-      overflow: hidden;
-    }
-
-    button:active {
-      transform: scale(.97);
-    }
-
-    button:disabled {
-      background: #1a3a2a;
-      color: #555;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-
-    .loader {
-      display: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 3px solid rgba(0, 0, 0, .25);
-      border-top: 3px solid black;
-      animation: spin 1s linear infinite;
-      position: absolute;
-    }
-
-    .footer {
-      margin-top: 22px;
-      margin-bottom: 30px;
-      text-align: center;
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: #666;
-    }
-
-    @keyframes spin {
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes pulse {
-      50% {
-        opacity: .3;
-      }
-    }
-
-    @keyframes periodFlash {
-      0%, 100% {
-        color: #00ff88;
-      }
-      50% {
-        color: #ffffff;
-        text-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
-      }
-    }
-
-    .period-updated {
-      animation: periodFlash 0.6s ease-in-out;
-    }
-
-    @media(max-width:360px) {
-      .gameImage {
-        width: 64px;
-        height: 64px;
-      }
-      .gameName {
-        font-size: 20px;
-      }
-      .timer {
-        font-size: 36px;
-      }
-      .period {
-        font-size: 17px;
-      }
-      .predict {
-        min-height: 100px;
-      }
-    }
-  </style>
+@media(max-width:400px){
+  .timer-circle{width:100px;height:100px}
+  .timer-val{font-size:30px}
+  .prediction-value{font-size:56px}
+}
+</style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
-<div class="app">
-  <div class="glow1"></div>
-  <div class="glow2"></div>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="particles" id="particles"></div>
+
+<div class="scroll">
   <div class="main">
-    <div class="topCard">
-      <div class="gameTop">
-        <img src="" id="gameImage" class="gameImage" alt="Game">
-        <div>
-          <div class="small">CONNECTED GAME</div>
-          <div class="gameName" id="gameName">OKWIN</div>
-          <div class="modeBox" id="timerMode">30 SEC MODE</div>
+
+    <!-- TOP CARD -->
+    <div class="top-card">
+      <div class="game-header">
+        <div class="game-logo">
+          <img src="" id="gameImage" alt="Game">
+        </div>
+        <div class="game-info">
+          <div class="game-label">Connected Game</div>
+          <div class="game-name" id="gameName">OKWIN</div>
+          <div class="game-tag">
+            <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span id="modeTag">30 SEC MODE</span>
+          </div>
         </div>
       </div>
-      <div class="status">
-        <div class="dot"></div>
-        AI SERVER CONNECTED
+      <div class="status-row">
+        <div class="status-dot"></div>
+        <div class="status-text">Quantum AI Server Connected</div>
       </div>
     </div>
+
+    <!-- TIMER CARD -->
     <div class="card">
-      <div class="label">LIVE TIMER</div>
-      <div class="timer" id="timer">00:30</div>
+      <div class="card-label">Live Timer</div>
+      <div class="timer-display">
+        <div class="timer-circle">
+          <div class="timer-ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="54"/>
+              <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="54"/>
+            </svg>
+          </div>
+          <div class="timer-val" id="timer">00:30</div>
+        </div>
+        <div>
+          <div class="timer-mode-tag" id="timerModeTag">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="timerModeText">30 SEC</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- PERIOD CARD -->
     <div class="card">
-      <div class="label">NEXT PERIOD</div>
-      <div class="period" id="nextPeriod">----</div>
+      <div class="card-label">Next Period</div>
+      <div class="period-val" id="nextPeriod">----</div>
     </div>
+
+    <!-- PREDICTION CARD -->
     <div class="card">
-      <div class="label">AI PREDICTION</div>
-      <div class="predict" id="prediction">--</div>
+      <div class="prediction-box">
+        <div class="prediction-label">AI Prediction</div>
+        <div class="prediction-value" id="prediction">--</div>
+        <div class="prediction-sub" id="predSub">Tap button to predict</div>
+      </div>
     </div>
-    <button id="predictBtn" type="button">
+
+    <!-- BUTTON -->
+    <button class="predict-btn ready" id="predictBtn" onclick="onPredictClick()">
       <span id="btnText">GET PREDICTION</span>
-      <div class="loader" id="loader"></div>
+      <div class="btn-loader" id="btnLoader"></div>
+      <svg id="btnIcon" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
     </button>
-    <div class="footer">Secure - AI Powered - Fast</div>
+
+    <!-- BOTTOM INFO -->
+    <div class="bottom-info">
+      <div class="info-item">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="info-text">Secure</div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </div>
+        <div class="info-text">AI Power</div>
+      </div>
+      <div class="info-item">
+        <div class="info-icon">
+          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="info-text">Fast</div>
+      </div>
+    </div>
+
+    <div class="footer">Secure • Quantum • Fast</div>
   </div>
 </div>
 
 <script>
-  (function() {
-    /* =========================
-       SECURE SETTINGS
-    ========================= */
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.onkeydown = function(e) {
-      if (
-        e.keyCode === 123 ||
-        (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
-        (e.ctrlKey && e.shiftKey && e.keyCode === 74) ||
-        (e.ctrlKey && e.keyCode === 85)
-      ) {
-        return false;
-      }
-    };
-    window.addEventListener('blur', () => { document.body.style.filter = 'blur(14px)'; });
-    window.addEventListener('focus', () => { document.body.style.filter = 'blur(0px)'; });
+(function(){
+  document.addEventListener('contextmenu',e=>e.preventDefault());
+  document.onkeydown=function(e){
+    if(e.keyCode===123||(e.ctrlKey&&e.shiftKey&&e.keyCode===73)||(e.ctrlKey&&e.shiftKey&&e.keyCode===74)||(e.ctrlKey&&e.keyCode===85))return false;
+  };
+  window.addEventListener('blur',()=>{document.body.style.filter='blur(12px)'});
+  window.addEventListener('focus',()=>{document.body.style.filter='none'});
 
-    /* =========================
-       STORAGE & DEFAULTS
-    ========================= */
-    const fallbackImage = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
-        <rect width="144" height="144" rx="34" fill="#07130d"/>
-        <circle cx="72" cy="72" r="44" fill="#00ff88" opacity=".14"/>
-        <path d="M43 86 L62 39 L78 72 L91 51 L104 86 Z" fill="#00ff88"/>
-      </svg>
-    `);
-    
-    const selectedGame = JSON.parse(localStorage.getItem('selectedGame') || 'null') || {
-      name: 'OKWIN',
-      image: fallbackImage
-    };
-    const timerType = localStorage.getItem('timerType') === '1m' ? '1m' : '30s';
-    const predictionMode = localStorage.getItem('predictionMode') === 'NUMBER' ? 'NUMBER' : 'BIG SMALL';
+  const fallbackImage='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144"><rect width="144" height="144" rx="34" fill="#07130d"/><circle cx="72" cy="72" r="44" fill="#10b981" opacity=".14"/><path d="M43 86 L62 39 L78 72 L91 51 L104 86 Z" fill="#10b981"/></svg>');
 
-    /* =========================
-       UI ELEMENTS
-    ========================= */
-    document.getElementById('gameImage').src = selectedGame.image || fallbackImage;
-    document.getElementById('gameName').innerHTML = selectedGame.name || 'OKWIN';
-    document.getElementById('timerMode').innerText = timerType === '1m' ? '1 MIN MODE' : '30 SEC MODE';
+  const selectedGame=JSON.parse(localStorage.getItem('selectedGame')||'null')||{name:'OKWIN',image:fallbackImage};
+  const timerType=localStorage.getItem('timerType')==='1m'?'1m':'30s';
+  const predictionMode=localStorage.getItem('predictionMode')==='NUMBER'?'NUMBER':'BIG SMALL';
 
-    const API_URL = timerType === '1m'
-      ? 'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageSize=10&pageNo=1'
-      : 'https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?pageSize=10&pageNo=1';
+  document.getElementById('gameImage').src=selectedGame.image||fallbackImage;
+  document.getElementById('gameImage').onerror=function(){this.src=fallbackImage};
+  document.getElementById('gameName').innerHTML=selectedGame.name||'OKWIN';
+  document.getElementById('modeTag').innerText=timerType==='1m'?'1 MIN MODE':'30 SEC MODE';
+  document.getElementById('timerModeText').innerText=timerType==='1m'?'1 MIN':'30 SEC';
 
-    const timerEl = document.getElementById('timer');
-    const nextPeriodEl = document.getElementById('nextPeriod');
-    const predictionEl = document.getElementById('prediction');
-    const btn = document.getElementById('predictBtn');
-    const btnText = document.getElementById('btnText');
-    const loader = document.getElementById('loader');
+  const API_URL=timerType==='1m'
+    ?'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageSize=10&pageNo=1'
+    :'https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?pageSize=10&pageNo=1';
 
-    /* =========================
-       STATE
-    ========================= */
-    let latestData = [];
-    let currentPeriod = '';
-    let shownNextPeriod = '';
-    let predictedForPeriod = '';
-    let isFetching = false;
-    let predictionLocked = false;       // true when prediction already given for current period
-    const totalTime = timerType === '1m' ? 60 : 30;
-    
-    // Timer sync correction: we will align with server time (no -10 sec offset)
-    let serverTimeOffset = 0; // milliseconds, will be estimated
+  const timerEl=document.getElementById('timer');
+  const ringFill=document.getElementById('ringFill');
+  const nextPeriodEl=document.getElementById('nextPeriod');
+  const predictionEl=document.getElementById('prediction');
+  const predSub=document.getElementById('predSub');
+  const btn=document.getElementById('predictBtn');
+  const btnText=document.getElementById('btnText');
+  const btnLoader=document.getElementById('btnLoader');
+  const btnIcon=document.getElementById('btnIcon');
 
-    /* =========================
-       PERIOD HELPERS
-    ========================= */
-    function addOneToNumericString(value) {
-      const digits = String(value || '').trim();
-      if (!/^\d+$/.test(digits)) return '';
-      let carry = 1;
-      let result = '';
-      for (let i = digits.length - 1; i >= 0; i--) {
-        const sum = Number(digits[i]) + carry;
-        result = String(sum % 10) + result;
-        carry = sum > 9 ? 1 : 0;
-      }
-      return carry ? '1' + result : result;
+  let latestData=[];
+  let currentPeriod='';
+  let shownNextPeriod='';
+  let predictedForPeriod='';
+  let isFetching=false;
+  let predictionLocked=false;
+  const totalTime=timerType==='1m'?60:30;
+  const circumference=2*Math.PI*54;
+  let serverTimeOffset=0;
+
+  function addOneToNumericString(value){
+    const digits=String(value||'').trim();
+    if(!/^\d+$/.test(digits))return'';
+    let carry=1;let result='';
+    for(let i=digits.length-1;i>=0;i--){
+      const sum=Number(digits[i])+carry;
+      result=String(sum%10)+result;
+      carry=sum>9?1:0;
+    }
+    return carry?'1'+result:result;
+  }
+
+  function incrementPeriod(period){
+    if(!period)return'----';
+    const clean=String(period).trim();
+    if(/^\d+$/.test(clean))return addOneToNumericString(clean);
+    const hyphenated=clean.match(/^(.+?)(\d+)$/);
+    if(hyphenated){
+      const prefix=hyphenated[1];const num=hyphenated[2];
+      return prefix+addOneToNumericString(num).padStart(num.length,'0');
+    }
+    return'----';
+  }
+
+  function readIssue(row){return String(row?.issueNumber||row?.issue||row?.periodNo||row?.period||'').trim()}
+  function readNumber(row){const raw=row?.number??row?.openCode??row?.result??row?.digit;const match=String(raw??'').match(/\d/);return match?Number(match[0]):NaN}
+
+  async function fetchData(){
+    try{
+      const res=await fetch(API_URL+'&t='+Date.now(),{cache:'no-store'});
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      const data=await res.json();
+      const serverDate=res.headers.get('Date');
+      if(serverDate){const st=new Date(serverDate).getTime();if(!isNaN(st))serverTimeOffset=st-Date.now()}
+      return Array.isArray(data?.data?.list)?data.data.list:[];
+    }catch(e){return[]}
+  }
+
+  function setButtonReady(){btn.className='predict-btn ready';btn.disabled=false;btnText.style.display='block';btnLoader.style.display='none';btnIcon.style.display='block'}
+  function setButtonLocked(){btn.className='predict-btn locked';btn.disabled=true;btnText.style.display='block';btnLoader.style.display='none';btnIcon.style.display='none'}
+  function setButtonLoading(){btn.className='predict-btn locked';btn.disabled=true;btnText.style.display='none';btnLoader.style.display='block';btnIcon.style.display='none'}
+
+  function resetPrediction(){predictionEl.innerText='--';predictionEl.className='prediction-value';predSub.innerText='Tap button to predict'}
+
+  function renderNextPeriod(nextPeriod){
+    if(!nextPeriod||nextPeriod===shownNextPeriod)return;
+    shownNextPeriod=nextPeriod;
+    nextPeriodEl.innerText=shownNextPeriod;
+    nextPeriodEl.classList.remove('flash');void nextPeriodEl.offsetWidth;nextPeriodEl.classList.add('flash');
+    if(predictedForPeriod!==shownNextPeriod){resetPrediction();predictionLocked=false;updateButtonStateByTimer()}
+  }
+
+  function getServerNow(){return new Date(Date.now()+serverTimeOffset)}
+  function getRemainingSeconds(){
+    const now=getServerNow();const sec=now.getSeconds();const ms=now.getMilliseconds();
+    const elapsed=timerType==='30s'?sec%30:sec;
+    return Math.max(0,totalTime-elapsed-(ms>0?1:0));
+  }
+  function getElapsedSeconds(){const now=getServerNow();return timerType==='30s'?now.getSeconds()%30:now.getSeconds()}
+
+  function updateTimerUI(){
+    const rem=getRemainingSeconds();
+    const m=String(Math.floor(rem/60)).padStart(2,'0');
+    const s=String(rem%60).padStart(2,'0');
+    timerEl.innerText=m+':'+s;
+    const isUrgent=rem<=5&&rem>0;
+    timerEl.classList.toggle('urgent',isUrgent);
+    ringFill.classList.toggle('urgent',isUrgent);
+    const progress=rem/totalTime;
+    ringFill.style.strokeDashoffset=circumference*(1-progress);
+    updateButtonStateByTimer();
+    if(rem===0)handleTimerZero();
+  }
+
+  function updateButtonStateByTimer(){
+    if(predictionLocked){setButtonLocked();return}
+    const elapsed=getElapsedSeconds();
+    if(elapsed>=0&&elapsed<=18)setButtonReady();else setButtonLocked();
+  }
+
+  let lastZeroTrigger='';
+  function handleTimerZero(){
+    const now=getServerNow();const key=now.getMinutes()+'-'+now.getSeconds();
+    if(key===lastZeroTrigger)return;lastZeroTrigger=key;
+    setTimeout(()=>updatePeriodLive(false),900);
+    setTimeout(()=>updatePeriodLive(false),2500);
+  }
+
+  async function updatePeriodLive(force=false){
+    if(isFetching&&!force)return false;isFetching=true;
+    const data=await fetchData();isFetching=false;
+    if(data.length===0){updateTimerUI();return false}
+    latestData=data;
+    const latestIssue=readIssue(data[0]);
+    if(!latestIssue){updateTimerUI();return false}
+    currentPeriod=latestIssue;
+    renderNextPeriod(incrementPeriod(currentPeriod));
+    updateTimerUI();return true;
+  }
+
+  function firstGaps(numbers){const g=[];for(let i=0;i<numbers.length-1;i++)g.push(Math.abs(numbers[i]-numbers[i+1]));return g}
+  function makeLayers(gaps){
+    let current=[...gaps];let binary=[];let leftover=null;
+    while(current.length>1){
+      const next=[];
+      for(let i=0;i<current.length-1;i++){const diff=Math.abs(current[i]-current[i+1]);if(diff<=1)next.push(diff)}
+      leftover=current.length%2!==0?current[current.length-1]:null;
+      current=[...next];binary=[...current];
+      if(current.length<=1)break;
+    }
+    return{binary,leftover};
+  }
+
+  function predictBS(binary){
+    const zeros=binary.filter(x=>x===0).length;
+    const ones=binary.filter(x=>x===1).length;
+    const last=binary[binary.length-1]||0;
+    if(last===1)return ones%2!==0?'BIG':'SMALL';
+    return zeros%2!==0?'SMALL':'BIG';
+  }
+
+  function predictNumber(binary, leftover, bs){
+    if(leftover!==null){
+      const pool=bs==='BIG'?[5,6,7,8,9]:[0,1,2,3,4];
+      const filtered=pool.filter(x=>x%2===leftover%2);
+      return filtered[Math.floor(Math.random()*filtered.length)];
+    }
+    return Math.floor(Math.random()*10);
+  }
+
+  function applyNumberColor(num){
+    predictionEl.className='prediction-value';
+    if(num===1||num===3||num===7||num===9)predictionEl.classList.add('num-green');
+    else if(num===2||num===4||num===6||num===8)predictionEl.classList.add('num-red');
+    else if(num===0)predictionEl.classList.add('num-violet');
+    else if(num===5)predictionEl.classList.add('num-violet');
+  }
+
+  async function onPredictClick(){
+    if(predictionLocked||isFetching)return;
+    if(!shownNextPeriod||shownNextPeriod==='----')await updatePeriodLive(true);
+    setButtonLoading();
+    await updatePeriodLive(true);
+    const numbers=latestData.map(readNumber).filter(num=>Number.isInteger(num));
+    if(numbers.length<2||!shownNextPeriod||shownNextPeriod==='----'){
+      predictionEl.innerText='NO DATA';
+      predictionEl.className='prediction-value';
+      predictionEl.style.color='#ef4444';
+      predSub.innerText='Insufficient data';
+      setButtonReady();return;
+    }
+    let gaps=firstGaps(numbers);
+    let{binary,leftover}=makeLayers(gaps);
+    if(binary.length===0)binary=[0];
+    const bs=predictBS(binary);
+    const num=predictNumber(binary,leftover,bs);
+
+    if(predictionMode==='NUMBER'){
+      predictionEl.innerText=num;
+      predictionEl.style.fontSize='72px';
+      applyNumberColor(num);
+      predSub.innerText='Number Prediction';
+    }else{
+      predictionEl.innerText=bs;
+      predictionEl.style.fontSize='56px';
+      predictionEl.className='prediction-value '+(bs==='BIG'?'big':'small');
+      predSub.innerText='Big/Small Prediction';
     }
 
-    function incrementPeriod(period) {
-      if (!period) return '----';
-      const clean = String(period).trim();
-      if (/^\d+$/.test(clean)) {
-        return addOneToNumericString(clean);
-      }
-      const hyphenated = clean.match(/^(.+?)(\d+)$/);
-      if (hyphenated) {
-        const prefix = hyphenated[1];
-        const num = hyphenated[2];
-        const next = addOneToNumericString(num).padStart(num.length, '0');
-        return prefix + next;
-      }
-      return '----';
-    }
+    predictedForPeriod=shownNextPeriod;
+    predictionLocked=true;
+    setButtonLocked();
+  }
 
-    function readIssue(row) {
-      return String(row?.issueNumber || row?.issue || row?.periodNo || row?.period || '').trim();
-    }
+  window.onPredictClick=onPredictClick;
 
-    function readNumber(row) {
-      const raw = row?.number ?? row?.openCode ?? row?.result ?? row?.digit;
-      const match = String(raw ?? '').match(/\d/);
-      return match ? Number(match[0]) : NaN;
-    }
+  // Matrix
+  const canvas=document.createElement('canvas');
+  canvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.03;pointer-events:none';
+  document.body.appendChild(canvas);
+  const ctx=canvas.getContext('2d');
+  const letters='01';const fontSize=14;let columns=0;let drops=[];
+  function sizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;columns=Math.floor(canvas.width/fontSize);drops=Array.from({length:columns},()=>1)}
+  function draw(){ctx.fillStyle='rgba(0,0,0,0.06)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#10b981';ctx.font=fontSize+'px monospace';for(let i=0;i<drops.length;i++){const text=letters[Math.floor(Math.random()*letters.length)];ctx.fillText(text,i*fontSize,drops[i]*fontSize);if(drops[i]*fontSize>canvas.height&&Math.random()>.97)drops[i]=0;drops[i]++}}
+  sizeCanvas();setInterval(draw,35);window.addEventListener('resize',sizeCanvas);
 
-    /* =========================
-       FETCH DATA & SYNC TIME
-    ========================= */
-    async function fetchData() {
-      try {
-        const res = await fetch(API_URL + '&t=' + Date.now(), { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        // Estimate server time offset from response Date header if available
-        const serverDate = res.headers.get('Date');
-        if (serverDate) {
-          const serverTime = new Date(serverDate).getTime();
-          if (!isNaN(serverTime)) {
-            serverTimeOffset = serverTime - Date.now();
-          }
-        }
-        return Array.isArray(data?.data?.list) ? data.data.list : [];
-      } catch (err) {
-        console.log('Fetch error:', err.message);
-        return [];
-      }
-    }
+  // Init
+  updateTimerUI();updatePeriodLive(true);
+  setInterval(updateTimerUI,250);
+  setInterval(()=>updatePeriodLive(false),10000);
+  setInterval(()=>{if(shownNextPeriod&&predictedForPeriod!==shownNextPeriod&&predictionLocked){predictionLocked=false;updateButtonStateByTimer()}},500);
 
-    /* =========================
-       BUTTON UI HELPERS
-    ========================= */
-    function setButtonReady() {
-      btn.disabled = false;
-      btn.style.opacity = '1';
-      btn.style.pointerEvents = 'auto';
-      btn.style.background = '#00ff88';
-      btn.style.color = 'black';
-      btn.style.boxShadow = '0 0 25px rgba(0,255,136,.25)';
-      btnText.style.display = 'block';
-      loader.style.display = 'none';
-    }
-
-    function setButtonLocked() {
-      btn.disabled = true;
-      btn.style.opacity = '0.5';
-      btn.style.pointerEvents = 'none';
-      btn.style.background = '#1a3a2a';
-      btn.style.color = '#555';
-      btn.style.boxShadow = 'none';
-      btnText.style.display = 'block';
-      loader.style.display = 'none';
-    }
-
-    function setButtonLoading() {
-      btn.disabled = true;
-      btn.style.opacity = '0.7';
-      btn.style.pointerEvents = 'none';
-      btnText.style.display = 'none';
-      loader.style.display = 'block';
-    }
-
-    function resetPrediction() {
-      predictionEl.innerText = '--';
-      predictionEl.style.color = '#00ff88';
-      predictionEl.style.fontSize = '58px';
-      predictionEl.style.textShadow = '0 0 18px rgba(0,255,136,.35)';
-    }
-
-    function renderNextPeriod(nextPeriod) {
-      if (!nextPeriod || nextPeriod === shownNextPeriod) return;
-      shownNextPeriod = nextPeriod;
-      nextPeriodEl.innerText = shownNextPeriod;
-      nextPeriodEl.classList.remove('period-updated');
-      void nextPeriodEl.offsetWidth;
-      nextPeriodEl.classList.add('period-updated');
-
-      // If period changed, reset prediction lock and UI
-      if (predictedForPeriod !== shownNextPeriod) {
-        resetPrediction();
-        predictionLocked = false;
-        // Enable button if timer is in valid range (0-30 sec elapsed)
-        updateButtonStateByTimer();
-      }
-    }
-
-    /* =========================
-       TIMER LOGIC (SYNCED, NO -10 OFFSET)
-    ========================= */
-    function getServerNow() {
-      return new Date(Date.now() + serverTimeOffset);
-    }
-
-    function getRemainingSeconds() {
-      const now = getServerNow();
-      const seconds = now.getSeconds();
-      const ms = now.getMilliseconds();
-      let elapsed;
-      if (timerType === '30s') {
-        elapsed = seconds % 30;
-      } else {
-        elapsed = seconds; // 1m mode: 0-59
-      }
-      // remaining = totalTime - elapsed - (1 if ms>0 to show correct countdown)
-      const remaining = totalTime - elapsed - (ms > 0 ? 1 : 0);
-      return Math.max(0, remaining);
-    }
-
-    function getElapsedSeconds() {
-      const now = getServerNow();
-      const seconds = now.getSeconds();
-      return timerType === '30s' ? (seconds % 30) : seconds;
-    }
-
-    function updateTimerUI() {
-      const remaining = getRemainingSeconds();
-      const m = String(Math.floor(remaining / 60)).padStart(2, '0');
-      const s = String(remaining % 60).padStart(2, '0');
-      timerEl.innerText = `${m}:${s}`;
-
-      if (remaining <= 5 && remaining > 0) {
-        timerEl.classList.add('urgent');
-      } else {
-        timerEl.classList.remove('urgent');
-      }
-
-      // Auto enable/disable button based on timer and prediction lock
-      updateButtonStateByTimer();
-
-      // When timer hits 0, trigger period update
-      if (remaining === 0) {
-        handleTimerZero();
-      }
-    }
-
-    function updateButtonStateByTimer() {
-      const elapsed = getElapsedSeconds();
-      // Enable only in first half? Actually requirement: "jab 30sec time start get prediction button enable ho jaye"
-      // So button should be enabled when timer just started (elapsed small) AND prediction not yet given.
-      // We'll enable when elapsed <= 2 seconds (start of period) and lock after prediction.
-      // But also need to disable after prediction given. We use predictionLocked flag.
-      if (predictionLocked) {
-        setButtonLocked();
-        return;
-      }
-      
-      // Enable at very beginning of period (elapsed 0-2 sec) to allow prediction
-      if (elapsed >= 0 && elapsed <= 18) {
-        setButtonReady();
-      } else {
-        // Outside the start window, keep disabled unless already ready? We'll lock.
-        setButtonLocked();
-      }
-    }
-
-    let lastZeroTrigger = '';
-    function handleTimerZero() {
-      const now = getServerNow();
-      const minute = now.getMinutes();
-      const second = now.getSeconds();
-      const key = `${minute}-${second}`;
-      if (key === lastZeroTrigger) return;
-      lastZeroTrigger = key;
-      
-      // Fetch new period data
-      setTimeout(() => updatePeriodLive(false), 900);
-      setTimeout(() => updatePeriodLive(false), 2500);
-    }
-
-    /* =========================
-       UPDATE PERIOD FROM API
-    ========================= */
-    async function updatePeriodLive(force = false) {
-      if (isFetching && !force) return false;
-      isFetching = true;
-      const data = await fetchData();
-      isFetching = false;
-
-      if (data.length === 0) {
-        updateTimerUI();
-        return false;
-      }
-
-      latestData = data;
-      const latestIssue = readIssue(data[0]);
-      if (!latestIssue) {
-        updateTimerUI();
-        return false;
-      }
-
-      currentPeriod = latestIssue;
-      renderNextPeriod(incrementPeriod(currentPeriod));
-      updateTimerUI();
-      return true;
-    }
-
-    /* =========================
-       PREDICTION ENGINE
-    ========================= */
-    function firstGaps(numbers) {
-      const gaps = [];
-      for (let i = 0; i < numbers.length - 1; i++) {
-        gaps.push(Math.abs(numbers[i] - numbers[i + 1]));
-      }
-      return gaps;
-    }
-
-    function makeLayers(gaps) {
-      let current = [...gaps];
-      let binary = [];
-      let leftover = null;
-      while (current.length > 1) {
-        const next = [];
-        for (let i = 0; i < current.length - 1; i++) {
-          const diff = Math.abs(current[i] - current[i + 1]);
-          if (diff <= 1) next.push(diff);
-        }
-        leftover = current.length % 2 !== 0 ? current[current.length - 1] : null;
-        current = [...next];
-        binary = [...current];
-        if (current.length <= 1) break;
-      }
-      return { binary, leftover };
-    }
-
-    function predictBS(binary) {
-      const zeros = binary.filter(x => x === 0).length;
-      const ones = binary.filter(x => x === 1).length;
-      const last = binary[binary.length - 1] || 0;
-      if (last === 1) {
-        return ones % 2 !== 0 ? 'BIG' : 'SMALL';
-      }
-      return zeros % 2 !== 0 ? 'SMALL' : 'BIG';
-    }
-
-    function predictNumber(binary, leftover, bs) {
-      if (leftover !== null) {
-        const pool = bs === 'BIG' ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4];
-        const filtered = pool.filter(x => x % 2 === leftover % 2);
-        return filtered[Math.floor(Math.random() * filtered.length)];
-      }
-      return Math.floor(Math.random() * 10);
-    }
-
-    function applyNumberColor(num) {
-      predictionEl.style.textShadow = '0 0 18px rgba(255,255,255,.15)';
-      if (num === 1 || num === 3 || num === 7 || num === 9) {
-        predictionEl.style.color = '#00ff88';
-      } else if (num === 2 || num === 4 || num === 6 || num === 8) {
-        predictionEl.style.color = '#ff3b3b';
-      } else if (num === 0) {
-        predictionEl.style.color = '#ff4dff';
-      } else if (num === 5) {
-        predictionEl.style.color = '#b266ff';
-      }
-    }
-
-    /* =========================
-       GET PREDICTION BUTTON ACTION
-    ========================= */
-    async function onPredictClick() {
-      if (predictionLocked || isFetching) return;
-      if (!shownNextPeriod || shownNextPeriod === '----') {
-        await updatePeriodLive(true);
-      }
-      
-      setButtonLoading();
-
-      // Ensure fresh data
-      await updatePeriodLive(true);
-
-      const numbers = latestData.map(readNumber).filter(num => Number.isInteger(num));
-      if (numbers.length < 2 || !shownNextPeriod || shownNextPeriod === '----') {
-        predictionEl.innerText = 'NO DATA';
-        predictionEl.style.color = '#ff4444';
-        predictionEl.style.fontSize = '28px';
-        predictionEl.style.textShadow = '0 0 18px rgba(255,68,68,.35)';
-        setButtonReady();
-        return;
-      }
-
-      let gaps = firstGaps(numbers);
-      let { binary, leftover } = makeLayers(gaps);
-      if (binary.length === 0) binary = [0];
-
-      const bs = predictBS(binary);
-      const num = predictNumber(binary, leftover, bs);
-
-      if (predictionMode === 'NUMBER') {
-        predictionEl.style.fontSize = '110px';
-        predictionEl.innerText = num;
-        applyNumberColor(num);
-      } else {
-        predictionEl.style.fontSize = '58px';
-        predictionEl.style.color = '#00ff88';
-        predictionEl.style.textShadow = '0 0 18px rgba(0,255,136,.35)';
-        predictionEl.innerText = bs;
-      }
-
-      predictedForPeriod = shownNextPeriod;
-      predictionLocked = true;
-      setButtonLocked();
-    }
-
-    btn.addEventListener('click', onPredictClick);
-
-    /* =========================
-       MATRIX EFFECT
-    ========================= */
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    const letters = '01';
-    const fontSize = 14;
-    let columns = 0;
-    let drops = [];
-
-    function sizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      columns = Math.floor(canvas.width / fontSize);
-      drops = Array.from({ length: columns }, () => 1);
-    }
-
-    function draw() {
-      ctx.fillStyle = 'rgba(0,0,0,0.08)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#00ff88';
-      ctx.font = fontSize + 'px monospace';
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.97) {
-          drops[i] = 0;
-        }
-        drops[i]++;
-      }
-    }
-
-    sizeCanvas();
-    setInterval(draw, 35);
-    window.addEventListener('resize', sizeCanvas);
-
-    /* =========================
-       INITIAL LOAD & INTERVALS
-    ========================= */
-    updateTimerUI();
-    updatePeriodLive(true);
-    
-    // Refresh timer every 250ms
-    setInterval(updateTimerUI, 250);
-    // Periodic data refresh
-    setInterval(() => updatePeriodLive(false), 10000);
-    
-    // Also reset prediction lock when period changes externally (extra safety)
-    setInterval(() => {
-      if (shownNextPeriod && predictedForPeriod !== shownNextPeriod && predictionLocked) {
-        predictionLocked = false;
-        updateButtonStateByTimer();
-      }
-    }, 500);
-  })();
+  // Particles
+  const pc=document.getElementById('particles');
+  for(let i=0;i<15;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*5+'s';p.style.animationDuration=(4+Math.random()*4)+'s';pc.appendChild(p)}
+})();
 </script>
 </body>
 </html>
