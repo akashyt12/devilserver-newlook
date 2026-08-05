@@ -3,436 +3,402 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Access Key Verification</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<title>Devil Predictor - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --green: #10b981;
-  --green-light: #34d399;
-  --green-dark: #059669;
-  --bg: #070b14;
-  --card-bg: #0d1420;
-  --input-bg: #111a2b;
-  --muted: #6b7a90;
-  --border: #1a2740;
-  --text: #e2e8f0;
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter',sans-serif;
+  background:#030712;
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.bg-layer{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+}
+.blob-1,.blob-2,.blob-3{
+  position:absolute;border-radius:50%;filter:blur(120px);opacity:.18;
+}
+.blob-1{
+  width:500px;height:500px;background:radial-gradient(circle,#10b981 0%,transparent 70%);
+  top:-10%;left:-8%;animation:blobDrift1 18s ease-in-out infinite;
+}
+.blob-2{
+  width:420px;height:420px;background:radial-gradient(circle,#059669 0%,transparent 70%);
+  bottom:-12%;right:-6%;animation:blobDrift2 22s ease-in-out infinite;
+}
+.blob-3{
+  width:340px;height:340px;background:radial-gradient(circle,#34d399 0%,transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);animation:blobDrift3 15s ease-in-out infinite;
+}
+@keyframes blobDrift1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+@keyframes blobDrift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-35px,-25px)}}
+@keyframes blobDrift3{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-45%,-55%) scale(1.12)}}
+
+.grid-overlay{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:60px 60px;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
+.particle{
+  position:fixed;border-radius:50%;pointer-events:none;z-index:0;
+  background:#10b981;opacity:0;animation:particleFloat linear infinite;
+}
+@keyframes particleFloat{
+  0%{opacity:0;transform:translateY(0) scale(0)}
+  10%{opacity:.35;transform:translateY(-10vh) scale(1)}
+  90%{opacity:.2}
+  100%{opacity:0;transform:translateY(-100vh) scale(.4)}
 }
 
-body::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(ellipse at 30% 20%, rgba(16,185,129,0.06) 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 80%, rgba(5,150,105,0.04) 0%, transparent 50%);
-  animation: bgPulse 8s ease-in-out infinite alternate;
+.back-btn{
+  position:fixed;top:24px;left:24px;z-index:100;
+  width:48px;height:48px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:all .25s ease;
+}
+.back-btn:hover{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(16,185,129,.2);
+}
+.back-btn:active{
+  transform:scale(.9);
+}
+.back-btn svg{
+  width:20px;height:20px;stroke:#6b7280;stroke-width:2;
+  fill:none;stroke-linecap:round;stroke-linejoin:round;
 }
 
-@keyframes bgPulse {
-  0% { opacity: 0.5; }
-  100% { opacity: 1; }
+.card{
+  position:relative;z-index:10;
+  max-width:380px;width:90%;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:32px;
+  padding:40px 28px;
+  backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+  animation:slideUp .8s ease-out;
+}
+@keyframes slideUp{
+  0%{opacity:0;transform:translateY(40px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+.card::before{
+  content:'';position:absolute;top:0;left:20%;right:20%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#10b981,transparent);
+  border-radius:1px;
 }
 
-.back-btn {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 100;
-  width: 42px;
-  height: 42px;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--muted);
+.logo-box{
+  width:80px;height:80px;margin:0 auto 24px;
+  background:rgba(16,185,129,.06);
+  border:1px solid rgba(16,185,129,.15);
+  border-radius:24px;
+  display:flex;align-items:center;justify-content:center;
+  animation:logoPulse 3s ease-in-out infinite;
+}
+@keyframes logoPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.1)}
+  50%{box-shadow:0 0 0 12px rgba(16,185,129,0)}
+}
+.logo-box svg{
+  width:38px;height:38px;stroke:#10b981;stroke-width:1.5;
+  fill:none;stroke-linecap:round;stroke-linejoin:round;
 }
 
-.back-btn:hover {
-  border-color: var(--green);
-  color: var(--green);
-  background: rgba(16,185,129,0.05);
+.card-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:28px;font-weight:700;
+  text-align:center;margin-bottom:6px;
+  letter-spacing:-.5px;
+}
+.card-title span{
+  color:#10b981;
+  text-shadow:0 0 28px rgba(16,185,129,.35);
+}
+.card-subtitle{
+  text-align:center;font-size:12px;color:#6b7280;
+  margin-bottom:32px;
 }
 
-.back-btn svg {
-  width: 18px;
-  height: 18px;
+.field-group{margin-bottom:20px}
+.field-label{
+  display:block;font-size:12px;color:#6b7280;
+  text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:8px;
 }
-
-.card {
-  position: relative;
-  z-index: 10;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  width: 100%;
-  max-width: 380px;
-  padding: 36px 32px;
-  margin: 20px;
+.input-wrap{position:relative}
+.input-wrap input{
+  width:100%;height:56px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:16px;
+  padding:0 48px 0 48px;
+  color:#fff;font-family:'Inter',sans-serif;font-size:15px;
+  outline:none;transition:all .25s ease;
 }
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 20%;
-  right: 20%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--green), transparent);
+.input-wrap input::placeholder{color:#4b5563}
+.input-wrap input:focus{
+  border-color:rgba(16,185,129,.5);
+  box-shadow:0 0 0 4px rgba(16,185,129,.06);
 }
-
-.lottie-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
+.input-icon{
+  position:absolute;left:16px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;stroke:#6b7280;stroke-width:1.5;
+  fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
 }
-
-lottie-player {
-  width: 130px;
-  height: 130px;
-  filter: drop-shadow(0 0 20px rgba(16,185,129,0.3));
+.eye-btn{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;border:none;cursor:pointer;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  transition:all .2s ease;
 }
+.eye-btn:hover{background:rgba(255,255,255,.08)}
+.eye-btn svg{width:16px;height:16px;stroke:#6b7280;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-.title {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: #fff;
-  text-align: center;
-  margin-bottom: 6px;
-  letter-spacing: 1px;
+.submit-btn{
+  width:100%;height:56px;border:none;cursor:pointer;
+  border-radius:16px;margin-top:8px;
+  background:linear-gradient(135deg,#10b981,#059669);
+  color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;
+  letter-spacing:.5px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all .3s ease;position:relative;overflow:hidden;
 }
-
-.subtitle {
-  font-size: 13px;
-  color: var(--muted);
-  text-align: center;
-  margin-bottom: 28px;
+.submit-btn:hover{
+  filter:brightness(1.1);
+  box-shadow:0 8px 32px rgba(16,185,129,.3);
+  transform:translateY(-1px);
 }
-
-.input-group {
-  position: relative;
-  margin-bottom: 16px;
+.submit-btn:active{transform:translateY(0) scale(.98)}
+.submit-btn svg{width:18px;height:18px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.submit-btn.loading .btn-text{display:none}
+.submit-btn.loading .btn-arrow{display:none}
+.submit-btn.loading .btn-spinner{display:flex}
+.btn-spinner{
+  display:none;align-items:center;justify-content:center;
+  width:20px;height:20px;
+  border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
+  border-radius:50%;animation:spin .6s linear infinite;
 }
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.input-group input {
-  width: 100%;
-  height: 48px;
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 0 46px 0 16px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  color: #fff;
-  letter-spacing: 0.5px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+.info-row{
+  display:flex;align-items:center;gap:8px;
+  margin-top:20px;font-size:11px;color:#6b7280;
+  justify-content:center;
 }
+.info-row svg{width:14px;height:14px;stroke:#6b7280;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-.input-group input::placeholder {
-  color: #3a4a60;
+.toast-container{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  z-index:9999;display:flex;flex-direction:column;gap:10px;
+  align-items:center;pointer-events:none;
 }
-
-.input-group input:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 2px rgba(16,185,129,0.12);
+.toast{
+  background:rgba(15,23,42,.92);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;padding:14px 20px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  display:flex;align-items:center;gap:12px;
+  animation:toastIn .4s ease-out forwards;
+  pointer-events:auto;min-width:260px;
 }
-
-.eye-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  transition: color 0.2s;
+.toast.hiding{animation:toastOut .35s ease-in forwards}
+@keyframes toastIn{0%{opacity:0;transform:translateY(20px) scale(.95)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastOut{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(20px) scale(.95)}}
+.toast-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
 }
+.toast.success .toast-dot{background:#10b981;box-shadow:0 0 8px #10b981}
+.toast.error .toast-dot{background:#ef4444;box-shadow:0 0 8px #ef4444}
+.toast.warning .toast-dot{background:#f59e0b;box-shadow:0 0 8px #f59e0b}
+.toast-body{display:flex;flex-direction:column;gap:2px}
+.toast-title{font-size:13px;font-weight:600;color:#f1f5f9}
+.toast-msg{font-size:11px;color:#64748b}
 
-.eye-btn:hover {
-  color: var(--green);
-}
-
-.eye-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-.verify-btn {
-  width: 100%;
-  height: 48px;
-  background: var(--green);
-  border: none;
-  border-radius: 3px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: #000;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-  position: relative;
-  overflow: hidden;
-}
-
-.verify-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-  transition: left 0.5s;
-}
-
-.verify-btn:hover {
-  background: var(--green-light);
-}
-
-.verify-btn:hover::before {
-  left: 100%;
-}
-
-.verify-btn:active {
-  transform: scale(0.98);
-}
-
-.verify-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.info-text {
-  text-align: center;
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 20px;
-  letter-spacing: 0.3px;
-}
-
-.info-text span {
-  color: var(--green-dark);
-}
-
-/* Toast */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  padding: 12px 24px;
-  border-radius: 3px;
-  font-size: 13px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  z-index: 999;
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.toast.show {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-}
-
-.toast.success {
-  background: rgba(16,185,129,0.15);
-  border: 1px solid var(--green);
-  color: var(--green-light);
-}
-
-.toast.error {
-  background: rgba(239,68,68,0.12);
-  border: 1px solid #ef4444;
-  color: #fca5a5;
-}
-
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid transparent;
-  border-top-color: #000;
-  border-radius: 3px;
-  animation: spin 0.6s linear infinite;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.card {
-  animation: fadeIn 0.5s ease-out;
+@media(max-width:420px){
+  .card{padding:32px 20px;border-radius:24px}
+  .card-title{font-size:24px}
 }
 </style>
 </head>
 <body>
 
-<button class="back-btn" onclick="window.location.href='welcome.html'">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
-    <path d="M19 12H5M12 19l-7-7 7-7"/>
-  </svg>
+<div class="bg-layer">
+  <div class="blob-1"></div>
+  <div class="blob-2"></div>
+  <div class="blob-3"></div>
+</div>
+<div class="grid-overlay" id="particles"></div>
+
+<button class="back-btn" onclick="window.location.href='welcome.html'" aria-label="Go back">
+  <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
 </button>
 
 <div class="card">
-  <div class="lottie-wrap">
-    <lottie-player
-      src="https://assets3.lottiefiles.com/packages/lf20_u4yrau.json"
-      background="transparent"
-      speed="1"
-      style="width:130px;height:130px"
-      loop
-      autoplay>
-    </lottie-player>
+  <div class="logo-box">
+    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
   </div>
 
-  <div class="title">ENTER ACCESS KEY</div>
-  <div class="subtitle">Enter your premium access key</div>
+  <h1 class="card-title">VERIFY <span>ACCESS</span></h1>
+  <p class="card-subtitle">Premium Server Login</p>
 
-  <div class="input-group">
-    <input type="password" id="keyInput" placeholder="Enter your access key" autocomplete="off" spellcheck="false">
-    <button class="eye-btn" id="eyeBtn" type="button" onclick="toggleEye()">
-      <svg id="eyeOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
-        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
-        <line x1="1" y1="1" x2="23" y2="23"/>
-      </svg>
-      <svg id="eyeOn" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-        <circle cx="12" cy="12" r="3"/>
-      </svg>
-    </button>
+  <div class="field-group">
+    <label class="field-label" for="keyInput">Access Key</label>
+    <div class="input-wrap">
+      <svg class="input-icon" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      <input type="password" id="keyInput" placeholder="Enter your access key" autocomplete="off" spellcheck="false">
+      <button class="eye-btn" id="eyeBtn" type="button" aria-label="Toggle visibility">
+        <svg id="eyeOff" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        <svg id="eyeOn" viewBox="0 0 24 24" style="display:none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
   </div>
 
-  <button class="verify-btn" id="verifyBtn" onclick="verifyKey()">VERIFY KEY</button>
+  <button class="submit-btn" id="submitBtn" onclick="handleLogin()">
+    <span class="btn-text">VALIDATE KEY</span>
+    <svg class="btn-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <div class="btn-spinner"></div>
+  </button>
 
-  <div class="info-text">Firebase Encrypted <span>&#8226;</span> Expiry Detection</div>
+  <div class="info-row">
+    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span>Firebase Encrypted Verification</span>
+  </div>
+  <div class="info-row" style="margin-top:6px">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>Expiry Detection Enabled</span>
+  </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast-container" id="toastContainer"></div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCgUHPXpBvpi0cEF2vQ2z8J-c8jI1cj1ko",
   databaseURL: "https://admin-pannel-de3f4-default-rtdb.firebaseio.com",
-  projectId: "admin-pannel-de3f4"
+  projectId: "admin-pannel-de3f4",
+  storageBucket: "admin-pannel-de3f4.firebasestorage.app",
+  messagingSenderId: "318138798074",
+  appId: "1:318138798074:web:0252256f3ddc783d815e43"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 const keyInput = document.getElementById('keyInput');
-const verifyBtn = document.getElementById('verifyBtn');
-const toast = document.getElementById('toast');
+const eyeBtn = document.getElementById('eyeBtn');
+const eyeOff = document.getElementById('eyeOff');
+const eyeOn = document.getElementById('eyeOn');
+const submitBtn = document.getElementById('submitBtn');
+const toastContainer = document.getElementById('toastContainer');
 
-function toggleEye() {
-  const isPassword = keyInput.type === 'password';
-  keyInput.type = isPassword ? 'text' : 'password';
-  document.getElementById('eyeOff').style.display = isPassword ? 'none' : 'block';
-  document.getElementById('eyeOn').style.display = isPassword ? 'block' : 'none';
+eyeBtn.addEventListener('click', () => {
+  const isPass = keyInput.type === 'password';
+  keyInput.type = isPass ? 'text' : 'password';
+  eyeOff.style.display = isPass ? 'none' : 'block';
+  eyeOn.style.display = isPass ? 'block' : 'none';
+});
+
+function showToast(type, title, msg) {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <div class="toast-dot"></div>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      <div class="toast-msg">${msg}</div>
+    </div>`;
+  toastContainer.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('hiding');
+    setTimeout(() => toast.remove(), 350);
+  }, 3500);
 }
 
-function showToast(msg, type) {
-  toast.textContent = msg;
-  toast.className = 'toast ' + type;
-  setTimeout(() => toast.classList.add('show'), 10);
-  setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-function setLoading(on) {
-  verifyBtn.disabled = on;
-  verifyBtn.innerHTML = on
-    ? '<span class="spinner"></span>VERIFYING...'
-    : 'VERIFY KEY';
-}
-
-async function verifyKey() {
+window.handleLogin = async function() {
   const key = keyInput.value.trim();
   if (!key) {
-    showToast('Please enter an access key', 'error');
+    showToast('warning', 'Warning', 'Please enter your access key');
     return;
   }
 
-  setLoading(true);
+  submitBtn.classList.add('loading');
+  submitBtn.disabled = true;
 
   try {
-    const snapshot = await db.ref('keys/' + key).once('value');
+    const keyRef = ref(db, 'keys/' + key);
+    const snapshot = await get(keyRef);
+
+    if (!snapshot.exists()) {
+      showToast('error', 'Access Denied', 'Invalid access key');
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+      return;
+    }
+
     const data = snapshot.val();
 
-    if (!data) {
-      showToast('Invalid access key', 'error');
-      setLoading(false);
-      return;
+    if (data.expiry && data.expiry > Date.now()) {
+      localStorage.setItem('premium/accessKey', key);
+      showToast('success', 'Access Granted', 'Redirecting to dashboard...');
+      setTimeout(() => {
+        window.location.href = 'home.html';
+      }, 800);
+    } else {
+      showToast('error', 'Key Expired', 'Your access key has expired');
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
     }
-
-    if (data.expiry && data.expiry < Date.now()) {
-      showToast('Key has expired', 'error');
-      setLoading(false);
-      return;
-    }
-
-    localStorage.setItem('premium', 'true');
-    localStorage.setItem('accessKey', key);
-
-    showToast('Access granted!', 'success');
-
-    setTimeout(() => {
-      window.location.href = 'home.html';
-    }, 800);
-
-  } catch (err) {
-    showToast('Connection error. Try again.', 'error');
-    setLoading(false);
+  } catch (error) {
+    showToast('error', 'Connection Error', 'Failed to verify key');
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
   }
-}
+};
 
-keyInput.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') verifyKey();
+keyInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') handleLogin();
 });
+</script>
 
-keyInput.focus();
+<script>
+(function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 3 + 1.5;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.top = Math.random() * 100 + 'vh';
+    p.style.animationDuration = (Math.random() * 12 + 8) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.opacity = Math.random() * 0.3 + 0.1;
+    container.appendChild(p);
+  }
+})();
 </script>
 </body>
 </html>

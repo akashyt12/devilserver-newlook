@@ -1,604 +1,703 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Mode - Devil Predictor</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --green: #10b981;
-            --green-light: #34d399;
-            --green-dark: #059669;
-            --bg: #070b14;
-            --text: #e5e7eb;
-            --text-muted: #9ca3af;
-            --card-bg: #0f1724;
-            --border: #1a2535;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mode Selection - Devil Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    :root {
+      --bg: #030712;
+      --emerald-400: #34d399;
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --text-disabled: #4b5563;
+      --glow: 0 0 30px rgba(16, 185, 129, 0.4);
+    }
 
-        body {
-            font-family: 'Inter', 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-        .container {
-            max-width: 420px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-        }
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        /* Back Button */
-        .back-btn {
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            width: 44px;
-            height: 44px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            transition: all 0.2s ease;
-        }
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--emerald-500);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 8s infinite ease-in-out;
+    }
 
-        .back-btn:hover {
-            background: var(--green-dark);
-            border-color: var(--green);
-        }
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.3;
+      }
+      50% {
+        transform: translateY(-30px) translateX(20px);
+        opacity: 0.6;
+      }
+    }
 
-        .back-btn:active {
-            transform: scale(0.95);
-        }
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        .back-btn svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--text);
-            fill: none;
-            stroke-width: 2;
-            stroke-linecap: square;
-            stroke-linejoin: miter;
-        }
+    .blob-1 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--emerald-500), transparent);
+      top: -100px;
+      right: -100px;
+    }
 
-        /* Header */
-        .header {
-            text-align: center;
-            padding-top: 70px;
-            margin-bottom: 24px;
-            animation: fadeUp 0.5s ease forwards;
-        }
+    .blob-2 {
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, var(--emerald-600), transparent);
+      bottom: -80px;
+      left: -80px;
+    }
 
-        .logo {
-            width: 72px;
-            height: 72px;
-            background: linear-gradient(135deg, var(--green-dark), var(--green));
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
-        }
+    .blob-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--emerald-400), transparent);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.08;
+    }
 
-        .logo svg {
-            width: 40px;
-            height: 40px;
-            fill: var(--bg);
-        }
+    .grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        .game-name {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-        }
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 48px;
+      height: 48px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      transition: all 0.3s;
+    }
 
-        .sync-tag {
-            display: inline-block;
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid var(--green-dark);
-            padding: 4px 12px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--green);
-            letter-spacing: 1px;
-            border-radius: 2px;
-        }
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--emerald-500);
+    }
 
-        /* Status Bar */
-        .status-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 32px;
-            padding: 12px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            animation: fadeUp 0.5s ease 0.1s forwards;
-            opacity: 0;
-        }
+    .back-btn svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--text-secondary);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--green);
-            border-radius: 0;
-            animation: pulse 2s infinite;
-        }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 100px 20px 120px;
+      position: relative;
+      z-index: 1;
+    }
 
-        .status-text {
-            font-size: 12px;
-            color: var(--green);
-            font-weight: 500;
-        }
+    .glass {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+    }
 
-        /* Section Title */
-        .section-title {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 1.5px;
-            margin-bottom: 12px;
-            animation: fadeUp 0.5s ease 0.2s forwards;
-            opacity: 0;
-        }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
 
-        /* Card Grid */
-        .card-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
-            animation: fadeUp 0.5s ease 0.3s forwards;
-            opacity: 0;
-        }
+    .logo-box {
+      width: 72px;
+      height: 72px;
+      background: var(--glass-bg);
+      border: 2px solid var(--emerald-500);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(20px);
+      flex-shrink: 0;
+    }
 
-        .card {
-            background: var(--card-bg);
-            border: 2px solid var(--border);
-            border-radius: 2px;
-            padding: 20px 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
+    .logo-box svg {
+      width: 36px;
+      height: 36px;
+      fill: var(--emerald-500);
+    }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: transparent;
-            transition: background 0.2s ease;
-        }
+    .header-info {
+      flex: 1;
+    }
 
-        .card:hover {
-            border-color: var(--green-dark);
-            background: rgba(16, 185, 129, 0.05);
-        }
+    .game-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
 
-        .card:active {
-            transform: scale(0.98);
-        }
+    .sync-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--emerald-400);
+      letter-spacing: 1px;
+    }
 
-        .card.selected {
-            border-color: var(--green);
-            background: rgba(16, 185, 129, 0.1);
-        }
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+    }
 
-        .card.selected::before {
-            background: var(--green);
-        }
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--emerald-500);
+      border-radius: 50%;
+      position: relative;
+    }
 
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 2px;
-        }
+    .pulse-dot::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      background: var(--emerald-500);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
 
-        .card.selected .card-icon {
-            background: var(--green);
-        }
+    @keyframes pulse {
+      0% {
+        opacity: 0.6;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(2);
+      }
+    }
 
-        .card-icon svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--green);
-            fill: none;
-            stroke-width: 2;
-        }
+    .status-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
 
-        .card.selected .card-icon svg {
-            stroke: var(--bg);
-        }
+    .status-text span {
+      color: var(--emerald-400);
+    }
 
-        .card-value {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
 
-        .card-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+    .section-title span {
+      color: var(--emerald-400);
+    }
 
-        .card.selected .card-value {
-            color: var(--green);
-        }
+    .timer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
 
-        /* Mode Cards */
-        .mode-section {
-            margin-bottom: 32px;
-            animation: fadeUp 0.5s ease 0.4s forwards;
-            opacity: 0;
-        }
+    .timer-card {
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+    }
 
-        .mode-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border);
-            border-radius: 2px;
-            padding: 24px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 12px;
-            position: relative;
-            overflow: hidden;
-        }
+    .timer-card:hover {
+      border-color: rgba(16, 185, 129, 0.3);
+    }
 
-        .mode-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: transparent;
-            transition: background 0.2s ease;
-        }
+    .timer-card.selected {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1));
+      border-color: var(--emerald-500);
+      box-shadow: var(--glow);
+    }
 
-        .mode-card:hover {
-            border-color: var(--green-dark);
-            background: rgba(16, 185, 129, 0.05);
-        }
+    .timer-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
 
-        .mode-card:active {
-            transform: scale(0.98);
-        }
+    .timer-card.selected .timer-icon {
+      border-color: var(--emerald-500);
+      background: rgba(16, 185, 129, 0.1);
+    }
 
-        .mode-card.selected {
-            border-color: var(--green);
-            background: rgba(16, 185, 129, 0.1);
-        }
+    .timer-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--text-secondary);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: all 0.3s;
+    }
 
-        .mode-card.selected::before {
-            background: var(--green);
-        }
+    .timer-card.selected .timer-icon svg {
+      stroke: var(--emerald-400);
+    }
 
-        .mode-card-content {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+    .timer-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
 
-        .mode-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+    .timer-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
 
-        .mode-card.selected .mode-icon {
-            background: var(--green);
-        }
+    .mode-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
 
-        .mode-icon svg {
-            width: 24px;
-            height: 24px;
-            stroke: var(--green);
-            fill: none;
-            stroke-width: 2;
-        }
+    .mode-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+    }
 
-        .mode-card.selected .mode-icon svg {
-            stroke: var(--bg);
-        }
+    .mode-card:hover {
+      border-color: rgba(16, 185, 129, 0.3);
+    }
 
-        .mode-info {
-            text-align: left;
-            flex: 1;
-        }
+    .mode-card.selected {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08));
+      border-color: var(--emerald-500);
+    }
 
-        .mode-title {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
+    .mode-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
 
-        .mode-card.selected .mode-title {
-            color: var(--green);
-        }
+    .mode-card.selected .mode-icon {
+      border-color: var(--emerald-500);
+      background: rgba(16, 185, 129, 0.1);
+    }
 
-        .mode-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
+    .mode-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--text-secondary);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: all 0.3s;
+    }
 
-        /* Continue Button */
-        .continue-section {
-            animation: fadeUp 0.5s ease 0.5s forwards;
-            opacity: 0;
-        }
+    .mode-card.selected .mode-icon svg {
+      stroke: var(--emerald-400);
+    }
 
-        .continue-btn {
-            width: 100%;
-            padding: 18px;
-            background: var(--border);
-            border: none;
-            border-radius: 2px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-muted);
-            cursor: not-allowed;
-            transition: all 0.2s ease;
-            letter-spacing: 0.5px;
-        }
+    .mode-info {
+      flex: 1;
+    }
 
-        .continue-btn.ready {
-            background: var(--green);
-            color: var(--bg);
-            cursor: pointer;
-        }
+    .mode-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
 
-        .continue-btn.ready:hover {
-            background: var(--green-light);
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
-        }
+    .mode-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
 
-        .continue-btn.ready:active {
-            transform: scale(0.98);
-        }
+    .check-circle {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--emerald-500);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
 
-        /* Animations */
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .mode-card.selected .check-circle {
+      background: var(--emerald-500);
+    }
 
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
+    .check-circle svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--bg);
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
 
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(16, 185, 129, 0.5);
-            }
-        }
+    .mode-card.selected .check-circle svg {
+      opacity: 1;
+    }
 
-        .card.selected .card-icon,
-        .mode-card.selected .mode-icon {
-            animation: glow 2s infinite;
-        }
+    .continue-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      z-index: 100;
+      background: linear-gradient(to top, var(--bg) 60%, transparent);
+    }
 
-        /* Selection feedback */
-        .vibrate {
-            animation: vibrate 0.1s ease;
-        }
+    .continue-btn {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 18px;
+      border: none;
+      border-radius: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: not-allowed;
+      transition: all 0.3s;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-disabled);
+    }
 
-        @keyframes vibrate {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
-        }
-    </style>
+    .continue-btn.ready {
+      background: linear-gradient(135deg, var(--emerald-500), var(--emerald-600));
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+    }
+
+    .continue-btn.ready:hover {
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .continue-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Back Button -->
-        <button class="back-btn" onclick="goBack()">
-            <svg viewBox="0 0 24 24">
-                <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="square" stroke-linejoin="miter"/>
-            </svg>
-        </button>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="grid"></div>
+  <div id="particles"></div>
 
-        <!-- Header -->
-        <div class="header">
-            <div class="logo">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-            </div>
-            <h1 class="game-name">DEVIL PREDICTOR</h1>
-            <span class="sync-tag">AI SYNCED</span>
-        </div>
+  <a href="login.html" class="back-btn">
+    <svg viewBox="0 0 24 24">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+  </a>
 
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-dot"></div>
-            <span class="status-text">Server Connected</span>
-        </div>
-
-        <!-- Timer Section -->
-        <h2 class="section-title">SELECT SPEED</h2>
-        <div class="card-grid">
-            <div class="card" onclick="selTimer(30, this)">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 6v6l4 2"/>
-                    </svg>
-                </div>
-                <div class="card-value">30 SEC</div>
-                <div class="card-label">Quick Round</div>
-            </div>
-            <div class="card" onclick="selTimer(60, this)">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 6v6l4 2"/>
-                    </svg>
-                </div>
-                <div class="card-value">1 MIN</div>
-                <div class="card-label">Standard</div>
-            </div>
-        </div>
-
-        <!-- Mode Section -->
-        <div class="mode-section">
-            <h2 class="section-title">SELECT MODE</h2>
-            <div class="mode-card" onclick="selMode('bigsmall', this)">
-                <div class="mode-card-content">
-                    <div class="mode-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>
-                        </svg>
-                    </div>
-                    <div class="mode-info">
-                        <div class="mode-title">BIG / SMALL</div>
-                        <div class="mode-desc">Predict the size outcome</div>
-                    </div>
-                </div>
-            </div>
-            <div class="mode-card" onclick="selMode('number', this)">
-                <div class="mode-card-content">
-                    <div class="mode-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M4 7h16M4 12h16M4 17h16"/>
-                            <circle cx="8" cy="7" r="2"/>
-                            <circle cx="16" cy="12" r="2"/>
-                            <circle cx="10" cy="17" r="2"/>
-                        </svg>
-                    </div>
-                    <div class="mode-info">
-                        <div class="mode-title">NUMBER</div>
-                        <div class="mode-desc">Predict exact number</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Continue Button -->
-        <div class="continue-section">
-            <button class="continue-btn" id="continueBtn" onclick="cont()">SELECT OPTIONS TO CONTINUE</button>
-        </div>
+  <div class="container">
+    <div class="header">
+      <div class="logo-box">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div class="header-info">
+        <div class="game-name" id="gameName">Loading...</div>
+        <span class="sync-tag">AI SYNCED</span>
+      </div>
     </div>
 
-    <script>
-        let timer = null;
-        let mode = null;
+    <div class="status-bar glass">
+      <div class="pulse-dot"></div>
+      <div class="status-text">Quantum AI Server <span>Connected</span></div>
+    </div>
 
-        function selTimer(t, el) {
-            if (navigator.vibrate) navigator.vibrate(10);
-            
-            el.classList.add('vibrate');
-            setTimeout(() => el.classList.remove('vibrate'), 100);
-            
-            document.querySelectorAll('.card-grid .card').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-            
-            timer = t;
-            checkReady();
-        }
+    <div class="section-title">SELECT <span>TIMER</span></div>
+    <div class="timer-grid">
+      <div class="timer-card" data-timer="30" onclick="selTimer(this)">
+        <div class="timer-icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="timer-label">30 SEC</div>
+        <div class="timer-desc">Fast Mode</div>
+      </div>
+      <div class="timer-card" data-timer="60" onclick="selTimer(this)">
+        <div class="timer-icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="timer-label">1 MIN</div>
+        <div class="timer-desc">Stable Mode</div>
+      </div>
+    </div>
 
-        function selMode(m, el) {
-            if (navigator.vibrate) navigator.vibrate(10);
-            
-            el.classList.add('vibrate');
-            setTimeout(() => el.classList.remove('vibrate'), 100);
-            
-            document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-            
-            mode = m;
-            checkReady();
-        }
+    <div class="section-title">SELECT <span>MODE</span></div>
+    <div class="mode-stack">
+      <div class="mode-card" data-mode="bigsmall" onclick="selMode(this)">
+        <div class="mode-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <div class="mode-info">
+          <div class="mode-name">BIG / SMALL</div>
+          <div class="mode-desc">Predict 0-4 or 5-9</div>
+        </div>
+        <div class="check-circle">
+          <svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+      </div>
+      <div class="mode-card" data-mode="number" onclick="selMode(this)">
+        <div class="mode-icon">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <div class="mode-info">
+          <div class="mode-name">NUMBER MODE</div>
+          <div class="mode-desc">Predict exact 0-9</div>
+        </div>
+        <div class="check-circle">
+          <svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        function checkReady() {
-            const btn = document.getElementById('continueBtn');
-            if (timer && mode) {
-                btn.classList.add('ready');
-                btn.textContent = 'CONTINUE';
-            } else {
-                btn.classList.remove('ready');
-                btn.textContent = 'SELECT OPTIONS TO CONTINUE';
-            }
-        }
+  <div class="continue-bar">
+    <button class="continue-btn" id="continueBtn" onclick="cont()">
+      <span>CONTINUE</span>
+      <svg viewBox="0 0 24 24">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
+  </div>
 
-        function cont() {
-            if (!timer || !mode) return;
-            
-            if (navigator.vibrate) navigator.vibrate(20);
-            
-            localStorage.setItem('selectedTimer', timer);
-            localStorage.setItem('selectedMode', mode);
-            
-            const btn = document.getElementById('continueBtn');
-            btn.style.transform = 'scale(0.98)';
-            setTimeout(() => {
-                window.location.href = 'prediction.html';
-            }, 150);
-        }
+  <script>
+    const games = {
+      'wingo': { name: 'WINGO', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+      'k3': { name: 'K3 LOTTERY', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+      '5d': { name: '5D LOTTERY', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+      'trx': { name: 'TRX WIN', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' }
+    };
 
-        function goBack() {
-            if (navigator.vibrate) navigator.vibrate(10);
-            window.location.href = 'login.html';
-        }
-    </script>
+    let selectedGame = localStorage.getItem('selectedGame') || 'wingo';
+    let timerSelected = null;
+    let modeSelected = null;
+
+    function init() {
+      const game = games[selectedGame] || games['wingo'];
+      document.getElementById('gameName').textContent = game.name;
+      const logoSvg = document.querySelector('.logo-box svg');
+      logoSvg.innerHTML = `<path d="${game.icon}"/>`;
+    }
+
+    function selTimer(el) {
+      if (timerSelected) {
+        timerSelected.classList.remove('selected');
+      }
+      if (timerSelected === el) {
+        timerSelected = null;
+      } else {
+        el.classList.add('selected');
+        timerSelected = el;
+        navigator.vibrate(10);
+      }
+      chk();
+    }
+
+    function selMode(el) {
+      if (modeSelected) {
+        modeSelected.classList.remove('selected');
+      }
+      if (modeSelected === el) {
+        modeSelected = null;
+      } else {
+        el.classList.add('selected');
+        modeSelected = el;
+        navigator.vibrate(10);
+      }
+      chk();
+    }
+
+    function chk() {
+      const btn = document.getElementById('continueBtn');
+      if (timerSelected && modeSelected) {
+        btn.classList.add('ready');
+      } else {
+        btn.classList.remove('ready');
+      }
+    }
+
+    function cont() {
+      if (!timerSelected || !modeSelected) return;
+      
+      localStorage.setItem('timerType', timerSelected.dataset.timer);
+      localStorage.setItem('predictionMode', modeSelected.dataset.mode);
+      localStorage.setItem('selectedGame', selectedGame);
+      
+      window.location.href = 'prediction.html';
+    }
+
+    function createParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 15; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        particle.style.animationDuration = (6 + Math.random() * 6) + 's';
+        container.appendChild(particle);
+      }
+    }
+
+    init();
+    createParticles();
+  </script>
 </body>
 </html>

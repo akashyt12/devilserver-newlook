@@ -2,265 +2,376 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>Devil Predictor</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Devil Predictor - Prediction Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--green:#10b981;--green-light:#34d399;--green-dark:#059669;--bg:#070b14;--card:rgba(16,185,129,.04);--border:rgba(16,185,129,.12);--text:#f0fdf4;--text-dim:rgba(16,185,129,.45)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;user-select:none;-webkit-user-select:none}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(16,185,129,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(5,150,105,.06) 0%,transparent 50%);pointer-events:none;z-index:0}
-.blur-overlay{position:fixed;inset:0;background:rgba(7,11,20,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
-.blur-overlay.active{opacity:1;visibility:visible}
-.blur-overlay .msg{text-align:center;color:var(--green);font-weight:600;font-size:.95rem;line-height:1.8}
-.blur-overlay .msg svg{display:block;margin:0 auto 14px;width:48px;height:48px;stroke:var(--green);fill:none;stroke-width:1.5}
-.container{position:relative;z-index:1;max-width:420px;margin:0 auto;padding:20px 14px 120px}
-.back-btn{position:fixed;top:14px;left:14px;z-index:200;width:44px;height:44px;background:var(--card);border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,border-color .2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.back-btn:hover{background:rgba(16,185,129,.1);border-color:var(--green)}
-.back-btn:active{transform:scale(.95)}
-.back-btn svg{width:20px;height:20px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter}
-.card{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;animation:fadeUp .4s ease both}
-.card:nth-child(2){animation-delay:.04s}.card:nth-child(3){animation-delay:.08s}.card:nth-child(4){animation-delay:.12s}.card:nth-child(5){animation-delay:.16s}.card:nth-child(6){animation-delay:.2s}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:.25}
-.card-label{display:block;font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);font-family:'DM Sans',sans-serif;margin-bottom:12px}
-.game-info{display:flex;align-items:center;gap:12px}
-.game-icon{width:44px;height:44px;min-width:44px;background:linear-gradient(135deg,var(--green-dark),var(--green));border-radius:2px;display:flex;align-items:center;justify-content:center}
-.game-icon svg{width:22px;height:22px;fill:#fff}
-.game-name{font-size:.95rem;font-weight:700;color:var(--text);font-family:'DM Sans',sans-serif}
-.game-tags{display:flex;gap:6px;margin-top:5px}
-.tag{font-size:.55rem;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:2px;text-transform:uppercase}
-.tag-mode{background:rgba(16,185,129,.14);color:var(--green-light)}
-.tag-status{background:rgba(52,211,153,.14);color:var(--green)}
-.dot-live{display:inline-block;width:5px;height:5px;background:var(--green);border-radius:1px;margin-right:4px;animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-.timer-row{display:flex;align-items:center;justify-content:space-between}
-.timer-svg-wrap{position:relative;width:76px;height:76px}
-.timer-svg-wrap svg{width:76px;height:76px;transform:rotate(-90deg)}
-.ring-bg{fill:none;stroke:rgba(16,185,129,.1);stroke-width:5}
-.ring-fg{fill:none;stroke:var(--green);stroke-width:5;stroke-linecap:square;transition:stroke-dashoffset 1s linear}
-.timer-svg-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;color:var(--green-light);font-family:'DM Sans',sans-serif}
-.timer-right{text-align:right}
-.timer-right .sub{font-size:.65rem;color:var(--text-dim);margin-bottom:2px}
-.timer-right .big{font-size:2rem;font-weight:800;color:var(--green-light);font-family:'DM Sans',sans-serif;line-height:1}
-.timer-right .big span{font-size:.85rem;font-weight:500;color:var(--text-dim);margin-left:2px}
-.period-row{display:flex;align-items:center;justify-content:space-between}
-.period-num{font-size:1.2rem;font-weight:800;color:var(--green);font-family:'DM Sans',sans-serif;letter-spacing:.06em}
-.period-right{text-align:right}
-.period-right .cd-val{font-size:1.6rem;font-weight:800;color:var(--green-light);font-family:'DM Sans',sans-serif;line-height:1}
-.period-right .cd-lbl{font-size:.6rem;color:var(--text-dim);margin-top:2px}
-.pred-card{text-align:center;padding:28px 16px}
-.pred-value{font-size:4rem;font-weight:800;line-height:1;margin:8px 0;font-family:'DM Sans',sans-serif;transition:transform .3s cubic-bezier(.34,1.56,.64,1),color .3s}
-.pred-value.pop{transform:scale(1.12)}
-.pred-value.c-green{color:var(--green)}
-.pred-value.c-red{color:#ef4444}
-.pred-value.c-violet{color:#a78bfa}
-.pred-type{font-size:.8rem;font-weight:700;color:var(--green-light);letter-spacing:.12em;text-transform:uppercase}
-.hist-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
-.hist-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;border-radius:2px;transition:transform .15s}
-.hist-cell:active{transform:scale(.9)}
-.hist-cell.c-green{background:rgba(16,185,129,.18);color:var(--green-light);border:1px solid rgba(16,185,129,.25)}
-.hist-cell.c-red{background:rgba(239,68,68,.18);color:#fca5a5;border:1px solid rgba(239,68,68,.25)}
-.hist-cell.c-violet{background:rgba(167,139,250,.18);color:#c4b5fd;border:1px solid rgba(167,139,250,.25)}
-.pred-btn{width:100%;padding:17px;background:linear-gradient(135deg,var(--green-dark),var(--green));border:none;border-radius:2px;font-size:.85rem;font-weight:700;color:#fff;cursor:pointer;text-transform:uppercase;letter-spacing:.12em;font-family:'DM Sans',sans-serif;position:relative;overflow:hidden;transition:transform .15s,box-shadow .2s;box-shadow:0 0 0 0 rgba(16,185,129,0)}
-.pred-btn:hover{background:linear-gradient(135deg,var(--green),var(--green-light));box-shadow:0 4px 24px rgba(16,185,129,.25)}
-.pred-btn:active{transform:scale(.98)}
-.pred-btn:disabled{opacity:.5;cursor:not-allowed}
-.pred-btn .shimmer{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transition:left .6s}
-.pred-btn:hover .shimmer{left:100%}
-.lottie-wrap{display:flex;justify-content:center;margin:20px 0 16px}
-.lottie-wrap lottie-player{width:170px;height:170px}
-.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.feat-item{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:14px 8px;text-align:center}
-.feat-icon{width:36px;height:36px;margin:0 auto 8px;background:rgba(16,185,129,.1);border-radius:2px;display:flex;align-items:center;justify-content:center}
-.feat-icon svg{width:18px;height:18px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:square}
-.feat-title{font-size:.68rem;font-weight:700;color:var(--text);font-family:'DM Sans',sans-serif}
-.feat-desc{font-size:.55rem;color:var(--text-dim);margin-top:2px}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#030712;--green1:#10b981;--green2:#34d399;--green3:#059669;--red:#ef4444;--violet:#8b5cf6;--glass:rgba(255,255,255,0.03);--glass-border:rgba(255,255,255,0.06);--glass-border2:rgba(16,185,129,0.15)}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:#fff;min-height:100vh;overflow-x:hidden;position:relative}
+body.filter-blur #content-wrap{filter:blur(12px);pointer-events:none}
+
+.blob{position:fixed;border-radius:50%;filter:blur(120px);opacity:.18;pointer-events:none;z-index:0}
+.blob1{width:500px;height:500px;background:var(--green1);top:-10%;left:-10%;animation:blobMove1 18s ease-in-out infinite alternate}
+.blob2{width:400px;height:400px;background:var(--green3);bottom:-10%;right:-10%;animation:blobMove2 22s ease-in-out infinite alternate}
+.blob3{width:350px;height:350px;background:var(--green2);top:40%;left:50%;animation:blobMove3 20s ease-in-out infinite alternate}
+@keyframes blobMove1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(80px,60px) scale(1.15)}}
+@keyframes blobMove2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-60px,-80px) scale(1.1)}}
+@keyframes blobMove3{0%{transform:translate(0,0) scale(1)}100%{transform:translate(50px,-50px) scale(.9)}}
+
+#grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(16,185,129,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.04) 1px,transparent 1px);background-size:60px 60px}
+
+#particles-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+#content-wrap{position:relative;z-index:1;min-height:100vh}
+.page{max-width:420px;margin:0 auto;padding:20px 16px 40px;display:flex;flex-direction:column;gap:16px}
+
+.glass{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:20px;padding:20px;position:relative;overflow:hidden}
+.glass::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(16,185,129,0.04) 0%,transparent 50%);pointer-events:none;border-radius:inherit}
+
+.fade-up{opacity:0;transform:translateY(30px);animation:fadeUp .6s ease forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+/* 1. Top Card */
+.top-card{display:flex;align-items:center;gap:14px}
+.game-logo{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--green1),var(--green3));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.game-info{flex:1}
+.game-name{font-size:16px;font-weight:700;margin-bottom:4px}
+.mode-tag{display:inline-block;padding:4px 10px;border-radius:8px;background:rgba(16,185,129,0.15);color:var(--green1);font-size:11px;font-weight:600;letter-spacing:.5px}
+.status-row{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:rgba(255,255,255,0.5)}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--green1);animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.5)}50%{box-shadow:0 0 0 8px rgba(16,185,129,0)}}
+
+/* 2. Timer Card */
+.timer-card{display:flex;flex-direction:column;align-items:center;gap:12px}
+.timer-label{font-size:11px;font-weight:600;letter-spacing:2px;color:rgba(255,255,255,0.4)}
+.timer-ring-wrap{position:relative;width:130px;height:130px}
+.timer-ring-wrap svg{width:130px;height:130px;transform:rotate(-90deg)}
+.timer-ring-bg{fill:none;stroke:rgba(255,255,255,0.03);stroke-width:6}
+.timer-ring-fill{fill:none;stroke:var(--green1);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .5s linear,stroke .3s}
+.timer-value{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;color:var(--green1);transition:color .3s}
+.timer-value.danger{color:var(--red)}
+.timer-mode{position:absolute;right:-10px;top:50%;transform:translateY(-50%)}
+
+/* 3. Period Card */
+.period-card{display:flex;flex-direction:column;gap:8px}
+.period-label{font-size:11px;font-weight:600;letter-spacing:2px;color:rgba(255,255,255,0.4)}
+.period-value{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;word-break:break-all;color:rgba(255,255,255,0.9)}
+
+/* 4. Prediction Card */
+.prediction-card{display:flex;flex-direction:column;align-items:center;gap:10px}
+.prediction-inner{width:100%;background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.04));border:1px solid var(--glass-border2);border-radius:16px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.prediction-label{font-size:11px;font-weight:600;letter-spacing:2px;color:var(--green1)}
+.prediction-value{font-family:'Space Grotesk',sans-serif;font-size:80px;font-weight:700;color:var(--green1);line-height:1;transition:color .3s}
+.prediction-value.color-red{color:var(--red)}
+.prediction-value.color-violet{color:var(--violet)}
+.prediction-sub{font-size:13px;color:rgba(255,255,255,0.4)}
+
+/* 5. History Card */
+.history-card{display:flex;flex-direction:column;gap:12px}
+.history-label{font-size:11px;font-weight:600;letter-spacing:2px;color:rgba(255,255,255,0.4)}
+.history-grid{display:flex;gap:8px;flex-wrap:wrap}
+.history-dot{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;font-family:'Space Grotesk',sans-serif}
+.history-dot.bg-green{background:var(--green1)}
+.history-dot.bg-red{background:var(--red)}
+.history-dot.bg-violet{background:var(--violet)}
+
+/* 6. Predict Button */
+.predict-btn{width:100%;padding:16px;border:none;border-radius:16px;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .3s}
+.predict-btn.ready{background:linear-gradient(135deg,var(--green1),var(--green3));color:#fff;box-shadow:0 0 30px rgba(16,185,129,0.3)}
+.predict-btn.ready:active{transform:scale(.97)}
+.predict-btn.locked{background:rgba(255,255,255,0.03);color:#4b5563;cursor:not-allowed}
+.predict-btn.loading{background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.3);cursor:wait}
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,0.1);border-top-color:var(--green1);border-radius:50%;animation:spin .8s linear infinite;display:none}
+.predict-btn.loading .spinner{display:block}
+.predict-btn.loading .btn-text{display:none}
+.predict-btn.loading .btn-arrow{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-arrow{display:inline-block;transition:transform .2s}
+
+/* 7. Bottom Info */
+.bottom-info{display:flex;justify-content:center;gap:24px;padding:8px 0}
+.info-item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.35);font-weight:500}
+.info-icon{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center}
+.info-icon svg{width:18px;height:18px;stroke:var(--green1);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 </style>
 </head>
 <body>
-<div class="blur-overlay" id="blurOverlay">
-<div class="msg">
-<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-Tab Lost Focus<br>Prediction Paused
-</div>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+<div id="grid-bg"></div>
+<canvas id="particles-canvas"></canvas>
+
+<div id="content-wrap">
+<div class="page">
+
+<!-- 1. Top Card -->
+<div class="glass top-card fade-up" style="animation-delay:.05s">
+  <div class="game-logo">🎯</div>
+  <div class="game-info">
+    <div class="game-name">Win Go</div>
+    <div><span class="mode-tag" id="modeTag">30 SEC MODE</span></div>
+    <div class="status-row">
+      <span class="pulse-dot"></span>
+      <span>Live Server</span>
+    </div>
+  </div>
 </div>
 
-<div class="back-btn" onclick="history.back()">
-<svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+<!-- 2. Timer Card -->
+<div class="glass timer-card fade-up" style="animation-delay:.12s">
+  <div class="timer-label">LIVE TIMER</div>
+  <div class="timer-ring-wrap">
+    <svg viewBox="0 0 130 130">
+      <circle class="timer-ring-bg" cx="65" cy="65" r="58"/>
+      <circle class="timer-ring-fill" id="timerRing" cx="65" cy="65" r="58" stroke-dasharray="364.42" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-value" id="timerValue">30</div>
+  </div>
+  <div class="timer-mode"><span class="mode-tag" id="timerModeTag">30S</span></div>
 </div>
 
-<div class="container">
-<div class="card">
-<span class="card-label">Game Information</span>
-<div class="game-info">
-<div class="game-icon">
-<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="square"/></svg>
-</div>
-<div>
-<div class="game-name">Win Go</div>
-<div class="game-tags">
-<span class="tag tag-mode" id="modeTag">BIG/SMALL</span>
-<span class="tag tag-status"><span class="dot-live"></span>ACTIVE</span>
-</div>
-</div>
-</div>
+<!-- 3. Period Card -->
+<div class="glass period-card fade-up" style="animation-delay:.19s">
+  <div class="period-label">NEXT PERIOD</div>
+  <div class="period-value" id="periodValue">Loading...</div>
 </div>
 
-<div class="card">
-<span class="card-label">Countdown Timer</span>
-<div class="timer-row">
-<div class="timer-svg-wrap">
-<svg viewBox="0 0 76 76">
-<circle class="ring-bg" cx="38" cy="38" r="34"/>
-<circle class="ring-fg" id="ringFg" cx="38" cy="38" r="34" stroke-dasharray="213.6" stroke-dashoffset="0"/>
-</svg>
-<div class="timer-svg-num" id="timerSvgNum">60</div>
-</div>
-<div class="timer-right">
-<div class="sub">Seconds Left</div>
-<div class="big" id="timerBig">60<span>sec</span></div>
-</div>
-</div>
+<!-- 4. Prediction Card -->
+<div class="glass prediction-card fade-up" style="animation-delay:.26s">
+  <div class="prediction-inner">
+    <div class="prediction-label">AI PREDICTION</div>
+    <div class="prediction-value" id="predictionValue">--</div>
+    <div class="prediction-sub" id="predictionSub">Tap to generate prediction</div>
+  </div>
 </div>
 
-<div class="card">
-<span class="card-label">Period Information</span>
-<div class="period-row">
-<div>
-<div class="sub" style="font-size:.65rem;color:var(--text-dim);margin-bottom:2px">Next Period</div>
-<div class="period-num" id="periodNum">---</div>
-</div>
-<div class="period-right">
-<div class="cd-val" id="cdVal">00:00</div>
-<div class="cd-lbl">Time Remaining</div>
-</div>
-</div>
+<!-- 5. History Card -->
+<div class="glass history-card fade-up" style="animation-delay:.33s">
+  <div class="history-label">RECENT RESULTS</div>
+  <div class="history-grid" id="historyGrid"></div>
 </div>
 
-<div class="card pred-card">
-<div class="card-label">Next Prediction</div>
-<div class="pred-value c-green" id="predValue">--</div>
-<div class="pred-type" id="predType">PREDICTING...</div>
-</div>
-
-<div class="card">
-<span class="card-label">History (Last 8)</span>
-<div class="hist-grid" id="histGrid"></div>
-</div>
-
-<button class="pred-btn" id="predBtn" onclick="getPrediction()">
-<span class="shimmer"></span>&#9889; GET PREDICTION
+<!-- 6. Button -->
+<button class="predict-btn ready" id="predictBtn" onclick="handlePredict()">
+  <span class="btn-text">GET PREDICTION</span>
+  <span class="btn-arrow">&#10132;</span>
+  <span class="spinner"></span>
 </button>
 
-<div class="lottie-wrap">
-<lottie-player id="lottieAnim" src="https://assets3.lottiefiles.com/packages/lf20_u4yrau.json" background="transparent" speed="1" style="width:170px;height:170px" loop autoplay></lottie-player>
+<!-- 7. Bottom Info -->
+<div class="glass bottom-info fade-up" style="animation-delay:.47s">
+  <div class="info-item">
+    <div class="info-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <span>Secure</span>
+  </div>
+  <div class="info-item">
+    <div class="info-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+    <span>AI Power</span>
+  </div>
+  <div class="info-item">
+    <div class="info-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+    <span>Fast</span>
+  </div>
 </div>
 
-<div class="feat-grid">
-<div class="feat-item">
-<div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-<div class="feat-title">Anti-Devil</div>
-<div class="feat-desc">Protected</div>
-</div>
-<div class="feat-item">
-<div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-<div class="feat-title">Real-Time</div>
-<div class="feat-desc">Live Data</div>
-</div>
-<div class="feat-item">
-<div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-<div class="feat-title">Accurate</div>
-<div class="feat-desc">Algorithm</div>
-</div>
 </div>
 </div>
 
 <script>
+// Anti-devil
 document.addEventListener('contextmenu',e=>e.preventDefault());
-document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='C'))||(e.ctrlKey&&e.key==='u'))e.preventDefault()});
-window.addEventListener('blur',()=>document.getElementById('blurOverlay').classList.add('active'));
-window.addEventListener('focus',()=>document.getElementById('blurOverlay').classList.remove('active'));
+document.addEventListener('keydown',e=>{if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&e.key==='I'))e.preventDefault()});
+window.addEventListener('blur',()=>document.body.classList.add('filter-blur'));
+window.addEventListener('focus',()=>document.body.classList.remove('filter-blur'));
 
-const CIRC=2*Math.PI*34;
-let timer=60;
+// Particles
+const canvas=document.getElementById('particles-canvas');
+const ctx=canvas.getContext('2d');
+let particles=[];
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+function createParticles(){
+  particles=[];
+  for(let i=0;i<15;i++){
+    particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+0.5,dx:(Math.random()-.5)*.3,dy:(Math.random()-.5)*.3,o:Math.random()*.4+.1});
+  }
+}
+createParticles();
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    p.x+=p.dx;p.y+=p.dy;
+    if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(16,185,129,${p.o})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// Timer logic
+const TOTAL_TIME=30;
+let timerType='30s';
+let currentTime=TOTAL_TIME;
+let timerInterval=null;
+const timerRing=document.getElementById('timerRing');
+const timerValueEl=document.getElementById('timerValue');
+const circumference=2*Math.PI*58;
+timerRing.style.strokeDasharray=circumference;
+timerRing.style.strokeDashoffset=0;
 
 function updateTimer(){
-const off=((60-timer)/60)*CIRC;
-document.getElementById('ringFg').style.strokeDashoffset=off;
-document.getElementById('timerSvgNum').textContent=timer;
-document.getElementById('timerBig').innerHTML=timer+'<span>sec</span>';
-const m=Math.floor(timer/60),s=timer%60;
-document.getElementById('cdVal').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const pct=currentTime/TOTAL_TIME;
+  timerRing.style.strokeDashoffset=circumference*(1-pct);
+  timerValueEl.textContent=currentTime;
+  if(currentTime<=5){timerValueEl.classList.add('danger');timerRing.style.stroke='#ef4444'}
+  else{timerValueEl.classList.remove('danger');timerRing.style.stroke='#10b981'}
+  if(currentTime<=0){
+    currentTime=TOTAL_TIME;
+    updatePeriod();
+  }
+}
+function startTimer(){
+  if(timerInterval)clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{currentTime--;updateTimer()},1000);
 }
 
-setInterval(()=>{timer=timer>0?timer-1:60;updateTimer()},1000);
+// Period
+function updatePeriod(){
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  const period=`${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(30-Math.floor(currentTime/30)*30)}`;
+  document.getElementById('periodValue').textContent=period;
+}
+updatePeriod();
 
-function numColor(n){
-if(n===0)return{c:'c-violet',t:'VIOLET'};
-if(n%2===0)return{c:'c-red',t:'RED'};
-return{c:'c-green',t:'GREEN'};
+// History
+function getHistoryColor(n){
+  if([1,3,7,9].includes(n))return'bg-green';
+  if([2,4,6,8].includes(n))return'bg-red';
+  return'bg-violet';
+}
+const historyGrid=document.getElementById('historyGrid');
+let recentNumbers=[];
+function renderHistory(){
+  historyGrid.innerHTML='';
+  recentNumbers.forEach(n=>{
+    const d=document.createElement('div');
+    d.className='history-dot '+getHistoryColor(n);
+    d.textContent=n;
+    historyGrid.appendChild(d);
+  });
+  if(recentNumbers.length===0){
+    for(let i=0;i<8;i++){
+      const n=Math.floor(Math.random()*10);
+      const d=document.createElement('div');
+      d.className='history-dot '+getHistoryColor(n);
+      d.textContent=n;
+      historyGrid.appendChild(d);
+      recentNumbers.push(n);
+    }
+  }
+}
+renderHistory();
+
+// Prediction Algorithm
+function firstGaps(numbers){
+  const gaps=[];
+  for(let i=0;i<numbers.length-1;i++){gaps.push(Math.abs(numbers[i]-numbers[i+1]))}
+  return gaps;
+}
+function makeLayers(gaps){
+  let current=[...gaps];let binary=[];let leftover=null;
+  while(current.length>1){
+    const next=[];
+    for(let i=0;i<current.length-1;i++){
+      const diff=Math.abs(current[i]-current[i+1]);
+      if(diff<=1)next.push(diff);
+    }
+    leftover=current.length%2!==0?current[current.length-1]:null;
+    current=[...next];binary=[...current];
+    if(current.length<=1)break;
+  }
+  return{binary,leftover};
+}
+function predictBS(binary){
+  const zeros=binary.filter(x=>x===0).length;
+  const ones=binary.filter(x=>x===1).length;
+  const last=binary[binary.length-1]||0;
+  if(last===1)return ones%2!==0?'BIG':'SMALL';
+  return zeros%2!==0?'SMALL':'BIG';
+}
+function predictNumber(binary,leftover,bs){
+  if(leftover!==null){
+    const pool=bs==='BIG'?[5,6,7,8,9]:[0,1,2,3,4];
+    const filtered=pool.filter(x=>x%2===leftover%2);
+    return filtered[Math.floor(Math.random()*filtered.length)];
+  }
+  return Math.floor(Math.random()*10);
 }
 
-function firstGaps(d){const g=[];for(let i=1;i<d.length;i++)g.push(Math.abs(d[i]-d[i-1]));return g}
-function makeLayers(g){const l=[];for(let i=0;i<g.length;i+=3)l.push(g.slice(i,i+3));return l}
-function predBS(l){let s=0;l.forEach(a=>a.forEach(b=>s+=b));return s%2===0?'BIG':'SMALL'}
-function predNum(l,bs){let n=0;l.forEach(a=>a.forEach(b=>n+=b));n%=10;return bs==='BIG'?(n<5?n+5:n):(n>=5?n-5:n)}
-
-function renderHist(arr){
-document.getElementById('histGrid').innerHTML=arr.map(n=>{const{c}=numColor(n);return'<div class="hist-cell '+c+'">'+n+'</div>'}).join('');
+// Fetch API
+let latestData=null;
+async function fetchHistory(){
+  const url=timerType==='1m'
+    ?'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageSize=10&pageNo=1'
+    :'https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?pageSize=10&pageNo=1';
+  try{
+    const res=await fetch(url);
+    const data=await res.json();
+    latestData=data;
+    if(data&&data.data&&data.data.list){
+      recentNumbers=data.data.list.slice(0,8).map(item=>parseInt(item.number));
+      renderHistory();
+    }
+  }catch(e){console.error('Fetch error',e)}
 }
 
-function rndHistory(){const a=[];for(let i=0;i<8;i++)a.push(Math.floor(Math.random()*10));return a}
+// Button
+const btn=document.getElementById('predictBtn');
+const predValue=document.getElementById('predictionValue');
+const predSub=document.getElementById('predictionSub');
+let isPredicting=false;
 
-async function fetchData(){
-try{
-const r=await fetch('https://draw.ar-lottery01.com/api/lobby/basicLottery/trend/hisNo4987498?lotteryId=4987498&pageNo=1&pageSize=30');
-const j=await r.json();
-if(j&&j.data&&j.data.list)return j.data.list.map(x=>parseInt(x.no));
-}catch(e){}
-return rndHistory();
+btn.addEventListener('click',e=>{
+  if(isPredicting)return;
+  navigator.vibrate([10,30,10]);
+});
+
+async function handlePredict(){
+  if(isPredicting)return;
+  isPredicting=true;
+  btn.className='predict-btn loading';
+  await fetchHistory();
+  const nums=recentNumbers.length?recentNumbers.slice(0,8):Array.from({length:8},()=>Math.floor(Math.random()*10));
+  const gaps=firstGaps(nums);
+  const{binary,leftover}=makeLayers(gaps);
+  const bs=predictBS(binary);
+  const num=predictNumber(binary,leftover,bs);
+  predValue.textContent=num;
+  predValue.className='prediction-value';
+  if([0,5].includes(num))predValue.classList.add('color-violet');
+  else if([2,4,6,8].includes(num))predValue.classList.add('color-red');
+  predSub.textContent=`${bs} | Period #${document.getElementById('periodValue').textContent.slice(-4)}`;
+  recentNumbers.unshift(num);
+  if(recentNumbers.length>8)recentNumbers.pop();
+  renderHistory();
+  btn.className='predict-btn locked';
+  setTimeout(()=>{
+    btn.className='predict-btn ready';
+    isPredicting=false;
+  },3000);
 }
 
-async function getPrediction(){
-const btn=document.getElementById('predBtn');
-const pv=document.getElementById('predValue');
-const pt=document.getElementById('predType');
-btn.disabled=true;btn.textContent='ANALYZING...';pt.textContent='PROCESSING...';
-
-const data=await fetchData();
-const hist=data.slice(-8);
-renderHist(hist);
-const gaps=firstGaps(data);
-const layers=makeLayers(gaps);
-const bs=predBS(layers);
-const num=predNum(layers,bs);
-const{c,t}=numColor(num);
-
-pv.className='pred-value '+c;
-pv.textContent=num;
-pv.classList.add('pop');
-setTimeout(()=>pv.classList.remove('pop'),350);
-pt.textContent=t+' \u2014 '+bs;
-
-document.getElementById('modeTag').textContent='NUMBER MODE';
-
-const now=new Date();now.setMinutes(now.getMinutes()+1);
-document.getElementById('periodNum').textContent=now.getHours()+''+String(now.getMinutes()).padStart(2,'0');
-
-document.getElementById('lottieAnim').play();
-
-btn.disabled=false;btn.innerHTML='<span class="shimmer"></span>&#9889; GET PREDICTION';
-}
-
-renderHist([3,8,1,7,0,4,6,2]);
-updateTimer();
-
-setInterval(()=>{
-const n=new Date(),nx=new Date(n);nx.setMinutes(nx.getMinutes()+1);nx.setSeconds(0);
-timer=Math.floor((nx-n)/1000);updateTimer();
-},1000);
+startTimer();
 </script>
 </body>
 </html>
