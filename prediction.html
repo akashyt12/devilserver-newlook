@@ -113,7 +113,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   background:var(--primary);filter:blur(40px);border-radius:50%;opacity:.3;
   animation:glowPulse 2s ease-in-out infinite}
 @keyframes glowPulse{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.4;transform:scale(1.1)}}
-#resultImg{width:100%;height:100%;object-fit:contain;z-index:2;transition:all .3s}
+#resultImg{width:100%;height:100%;object-fit:contain;z-index:2;transition:all .4s ease}
 .result-status{font-family:'Orbitron';font-size:14px;font-weight:700;color:var(--green);position:relative;z-index:1}
 
 /* SHUFFLE */
@@ -306,6 +306,28 @@ const assets={
   ]
 };
 
+// PRELOAD ALL IMAGES
+const preloaded={};
+function preloadAll(){
+  const allUrls=[assets.def,assets.big,assets.small,...assets.nums];
+  allUrls.forEach(url=>{
+    const img=new Image();
+    img.src=url;
+    preloaded[url]=img;
+  });
+}
+preloadAll();
+
+function preloadImage(url){
+  return new Promise(resolve=>{
+    if(preloaded[url]&&preloaded[url].complete){resolve();return}
+    const img=new Image();
+    img.onload=()=>{preloaded[url]=img;resolve()};
+    img.onerror=()=>resolve();
+    img.src=url;
+  });
+}
+
 // DOM
 const ball=document.getElementById('resultImg');
 const btn=document.getElementById('predictBtn');
@@ -461,14 +483,20 @@ async function handlePredict(){
   const{bs,leftover}=analyze(nums);
   const pred=generate(bs,leftover);
 
+  // Preload final prediction image before showing
+  await preloadImage(pred.img);
+
   let elapsed=0;
-  const dur=2000,interval=100;
+  const dur=2000,interval=120;
 
   const anim=setInterval(()=>{
     elapsed+=interval;
     if(elapsed>=dur){
       clearInterval(anim);
       ball.classList.remove('shuffle');
+
+      // Set final image with transition
+      ball.style.transition='all .4s ease';
       ball.src=pred.img;
       ball.classList.add('reveal');
       setTimeout(()=>ball.classList.remove('reveal'),500);
