@@ -372,8 +372,16 @@ async function runTimer(){
       const res=await fetch('https://indialotteryapi.com/wp-json/wingo/v1/next?market=1&t='+Date.now());
       const data=await res.json();
       
-      const remain=data.remain||0;
-      const newPeriod=data.period||'';
+      let remain=data.remain||0;
+      let newPeriod=data.period||'';
+      
+      // For 30sec mode: treat each 30 sec as new period
+      if(selectedTimer==='30sec'){
+        const half=Math.floor(remain/30);
+        const subRemain=remain%30;
+        remain=subRemain;
+        newPeriod=newPeriod+'-'+(half===0?'B':'A');
+      }
       
       // Update countdown display
       const mins=Math.floor(remain/60);
@@ -387,9 +395,10 @@ async function runTimer(){
       if(newPeriod&&newPeriod!==lastPeriod){
         lastPeriod=newPeriod;
         currentPeriod=newPeriod;
-        periodDisplay.innerText=newPeriod;
+        periodDisplay.innerText=data.period||newPeriod;
         hasPredicted=false;
         checkSaved(newPeriod);
+        fetchRecentResults();
       }
       
       // Auto-disable when timer low (last 5 sec)
@@ -411,7 +420,7 @@ async function runTimer(){
       // Fallback: local countdown
       const now=new Date();
       const s=now.getSeconds();
-      const rem=30-s%30;
+      const rem=selectedTimer==='30sec'?(30-s%30):(60-s);
       const r=rem.toString().padStart(2,'0');
       document.getElementById('t-m1').innerText='0';
       document.getElementById('t-m2').innerText='0';
@@ -422,6 +431,19 @@ async function runTimer(){
   
   await fetchTimer();
   clockInterval=setInterval(fetchTimer,1000);
+}
+
+// Fetch real history from WinGo API
+async function fetchRecentResults(){
+  const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
+  try{
+    const res=await fetch('https://draw.ar-lottery01.com/WinGo/'+apiPath+'/GetHistoryIssuePage.json?pageSize=10&pageNo=1&t='+Date.now());
+    const data=await res.json();
+    if(data&&data.data&&data.data.list){
+      recentNumbers=data.data.list.slice(0,8).map(i=>parseInt(i.number));
+      renderHistory();
+    }
+  }catch(e){}
 }
 
 function checkSaved(period){
@@ -528,6 +550,7 @@ async function handlePredict(){
 }
 
 runTimer();
+fetchRecentResults();
 </script>
 </body>
 </html>

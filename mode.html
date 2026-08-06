@@ -30,7 +30,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   background-image:linear-gradient(rgba(16,185,129,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.03) 1px,transparent 1px);
   background-size:40px 40px}
 
-.content{position:relative;z-index:1;max-width:440px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.content{position:relative;z-index:1;max-width:440px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 
 /* BACK BTN */
 .back-btn{
@@ -45,103 +45,102 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 /* GAME BANNER */
 .game-banner{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:20px;overflow:hidden;position:relative;height:180px}
+  border-radius:16px;overflow:hidden;position:relative;height:140px}
 .game-banner img{width:100%;height:100%;object-fit:cover}
 .game-banner::after{
   content:'';position:absolute;bottom:0;left:0;right:0;height:50%;
   background:linear-gradient(to top,var(--card),transparent)}
 .game-banner-name{
-  position:absolute;bottom:16px;left:16px;z-index:2;
-  font-family:'Orbitron';font-size:20px;font-weight:800;color:#fff;
+  position:absolute;bottom:12px;left:12px;z-index:2;
+  font-family:'Orbitron';font-size:18px;font-weight:800;color:#fff;
   text-shadow:0 2px 10px rgba(0,0,0,0.5)}
 
 /* GAME INFO */
 .game-info{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px}
-.game-logo-sm{width:50px;height:50px;border-radius:14px;overflow:hidden;flex-shrink:0}
+  border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px}
+.game-logo-sm{width:44px;height:44px;border-radius:12px;overflow:hidden;flex-shrink:0}
 .game-logo-sm img{width:100%;height:100%;object-fit:cover}
 .game-details{flex:1}
-.game-title{font-family:'Orbitron';font-size:16px;font-weight:700;color:var(--text)}
+.game-title{font-family:'Orbitron';font-size:14px;font-weight:700;color:var(--text)}
 .game-tag{
-  display:inline-block;margin-top:4px;
+  display:inline-block;margin-top:3px;
   background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);
-  padding:3px 10px;border-radius:8px;font-size:9px;color:var(--primary-light);
+  padding:2px 8px;border-radius:6px;font-size:8px;color:var(--primary-light);
   font-weight:600;letter-spacing:1px}
-.status-row{display:flex;align-items:center;gap:6px;margin-top:6px}
-.status-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 1.5s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.status-text{font-size:10px;color:var(--text-dim)}
+.status-row{display:flex;align-items:center;gap:5px;margin-top:4px}
+.status-dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:blink 1.5s infinite}
+.status-text{font-size:9px;color:var(--text-dim)}
 .status-text span{color:var(--green);font-weight:600}
 
 /* SECTION */
-.section-title{font-family:'Orbitron';font-size:13px;font-weight:700;color:var(--text);letter-spacing:2px;padding:8px 0}
+.section-title{font-family:'Orbitron';font-size:11px;font-weight:700;color:var(--text);letter-spacing:2px;padding:6px 0}
 
 /* TIMER CARDS */
-.timer-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.timer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .timer-card{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:16px;padding:20px 12px;text-align:center;cursor:pointer;
+  border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;
   transition:all .3s}
 .timer-card:active{transform:scale(.96)}
 .timer-card.selected{
   background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(34,211,238,0.1));
   border-color:var(--primary);
-  box-shadow:0 0 20px rgba(16,185,129,0.2)}
+  box-shadow:0 0 16px rgba(16,185,129,0.2)}
 .timer-icon{
-  width:56px;height:56px;margin:0 auto 12px;
+  width:46px;height:46px;margin:0 auto 8px;
   background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);
-  border-radius:14px;display:flex;align-items:center;justify-content:center;
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
   transition:all .3s}
 .timer-card.selected .timer-icon{background:rgba(16,185,129,0.2);border-color:var(--primary)}
-.timer-icon svg{width:26px;height:26px;stroke:var(--text-dim);fill:none;stroke-width:2;transition:all .3s}
+.timer-icon svg{width:22px;height:22px;stroke:var(--text-dim);fill:none;stroke-width:2;transition:all .3s}
 .timer-card.selected .timer-icon svg{stroke:var(--primary-light)}
-.timer-val{font-family:'Orbitron';font-size:16px;font-weight:700;color:var(--text);margin-bottom:2px}
-.timer-desc{font-size:10px;color:var(--text-dim)}
+.timer-val{font-family:'Orbitron';font-size:14px;font-weight:700;color:var(--text);margin-bottom:1px}
+.timer-desc{font-size:9px;color:var(--text-dim)}
 
 /* MODE CARDS */
-.mode-stack{display:flex;flex-direction:column;gap:12px}
+.mode-stack{display:flex;flex-direction:column;gap:10px}
 .mode-card{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:16px;padding:18px;display:flex;align-items:center;gap:14px;
+  border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;
   cursor:pointer;transition:all .3s}
 .mode-card:active{transform:scale(.98)}
 .mode-card.selected{
   background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(34,211,238,0.08));
   border-color:var(--primary)}
 .mode-icon{
-  width:56px;height:56px;background:rgba(16,185,129,0.1);
-  border:1px solid rgba(16,185,129,0.2);border-radius:14px;
+  width:46px;height:46px;background:rgba(16,185,129,0.1);
+  border:1px solid rgba(16,185,129,0.2);border-radius:12px;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
   transition:all .3s}
 .mode-card.selected .mode-icon{background:rgba(16,185,129,0.2);border-color:var(--primary)}
-.mode-icon svg{width:26px;height:26px;stroke:var(--text-dim);fill:none;stroke-width:2;transition:all .3s}
+.mode-icon svg{width:22px;height:22px;stroke:var(--text-dim);fill:none;stroke-width:2;transition:all .3s}
 .mode-card.selected .mode-icon svg{stroke:var(--primary-light)}
 .mode-info{flex:1}
-.mode-name{font-family:'Orbitron';font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
-.mode-desc{font-size:10px;color:var(--text-dim)}
+.mode-name{font-family:'Orbitron';font-size:13px;font-weight:700;color:var(--text);margin-bottom:1px}
+.mode-desc{font-size:9px;color:var(--text-dim)}
 .check-circle{
-  width:26px;height:26px;border:2px solid var(--card-border);border-radius:50%;
+  width:22px;height:22px;border:2px solid var(--card-border);border-radius:50%;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s}
 .mode-card.selected .check-circle{background:var(--primary);border-color:var(--primary)}
-.check-circle svg{width:12px;height:12px;stroke:var(--bg);fill:none;stroke-width:3;opacity:0;transition:opacity .3s}
+.check-circle svg{width:10px;height:10px;stroke:var(--bg);fill:none;stroke-width:3;opacity:0;transition:opacity .3s}
 .mode-card.selected .check-circle svg{opacity:1}
 
 /* CONTINUE BAR */
 .continue-bar{
-  position:fixed;bottom:0;left:0;right:0;padding:16px;z-index:100;
+  position:fixed;bottom:0;left:0;right:0;padding:12px;z-index:100;
   background:linear-gradient(to top,var(--bg) 70%,transparent)}
 .continue-btn{
   width:100%;max-width:420px;margin:0 auto;display:flex;align-items:center;
-  justify-content:center;gap:10px;padding:16px;border:none;border-radius:14px;
-  font-family:'Orbitron';font-size:14px;font-weight:700;cursor:not-allowed;
+  justify-content:center;gap:8px;padding:14px;border:none;border-radius:12px;
+  font-family:'Orbitron';font-size:13px;font-weight:700;cursor:not-allowed;
   transition:all .3s;background:rgba(255,255,255,0.03);color:var(--text-dim);
   letter-spacing:1px}
 .continue-btn.ready{
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.4)}
+  color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(16,185,129,0.4)}
 .continue-btn.ready:active{transform:scale(.97)}
-.continue-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+.continue-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
 </style>
 </head>
 <body>
