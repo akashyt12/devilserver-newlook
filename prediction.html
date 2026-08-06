@@ -34,7 +34,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   background-image:linear-gradient(rgba(16,185,129,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.03) 1px,transparent 1px);
   background-size:40px 40px}
 
-.content{position:relative;z-index:1;max-width:440px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.content{position:relative;z-index:1;max-width:440px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 
 /* BACK BTN */
 .back-btn{
@@ -49,19 +49,19 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 /* HEADER CARD */
 .header-card{
   background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(34,211,238,0.08));
-  border:1px solid var(--card-border);border-radius:20px;padding:18px;
-  display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
+  border:1px solid var(--card-border);border-radius:16px;padding:14px;
+  display:flex;align-items:center;gap:12px;position:relative;overflow:hidden}
 .header-card::before{
   content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
   background:conic-gradient(from 0deg,transparent,rgba(16,185,129,0.08),transparent,rgba(34,211,238,0.08),transparent);
   animation:headerSpin 10s linear infinite}
 @keyframes headerSpin{to{transform:rotate(360deg)}}
 .header-card>*{position:relative;z-index:1}
-.header-logo{width:50px;height:50px;border-radius:14px;overflow:hidden;flex-shrink:0;
+.header-logo{width:44px;height:44px;border-radius:12px;overflow:hidden;flex-shrink:0;
   border:2px solid var(--primary);padding:2px;background:var(--bg)}
-.header-logo img{width:100%;height:100%;object-fit:cover;border-radius:12px}
+.header-logo img{width:100%;height:100%;object-fit:cover;border-radius:10px}
 .header-info{flex:1}
-.header-game{font-family:'Orbitron';font-size:16px;font-weight:700;color:var(--text)}
+.header-game{font-family:'Orbitron';font-size:14px;font-weight:700;color:var(--text)}
 .header-mode{display:flex;align-items:center;gap:8px;margin-top:4px}
 .mode-tag{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);
   padding:3px 10px;border-radius:8px;font-size:9px;color:var(--primary-light);font-weight:600;letter-spacing:1px}
@@ -77,29 +77,29 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 /* TIMER CARD */
 .timer-card{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:20px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px}
-.timer-label{font-family:'Orbitron';font-size:10px;color:var(--text-dim);letter-spacing:2px;font-weight:600}
-.timer-display{display:flex;align-items:center;gap:6px}
+  border-radius:16px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.timer-label{font-family:'Orbitron';font-size:9px;color:var(--text-dim);letter-spacing:2px;font-weight:600}
+.timer-display{display:flex;align-items:center;gap:5px}
 .timer-box{
   background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);
-  width:52px;height:64px;display:flex;align-items:center;justify-content:center;
-  font-family:'Orbitron';font-size:36px;font-weight:900;color:var(--primary-light);
-  border-radius:12px;text-shadow:0 0 15px rgba(16,185,129,0.5)}
-.timer-sep{font-family:'Orbitron';font-size:32px;font-weight:900;color:var(--primary-light)}
+  width:44px;height:54px;display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron';font-size:30px;font-weight:900;color:var(--primary-light);
+  border-radius:10px;text-shadow:0 0 15px rgba(16,185,129,0.5)}
+.timer-sep{font-family:'Orbitron';font-size:28px;font-weight:900;color:var(--primary-light)}
 
 /* PERIOD CARD */
 .period-card{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:16px;padding:16px}
-.period-label{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.period-icon{font-size:14px}
-.period-title{font-family:'Orbitron';font-size:11px;color:var(--text-dim);letter-spacing:1px;font-weight:600}
-.period-value{font-family:'Orbitron';font-size:20px;font-weight:800;color:var(--text);word-break:break-all}
+  border-radius:14px;padding:12px 14px}
+.period-label{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.period-icon{font-size:12px}
+.period-title{font-family:'Orbitron';font-size:10px;color:var(--text-dim);letter-spacing:1px;font-weight:600}
+.period-value{font-family:'Orbitron';font-size:17px;font-weight:800;color:var(--text);word-break:break-all}
 
 /* RESULT CARD */
 .result-card{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:20px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;
+  border-radius:16px;padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;
   position:relative;overflow:hidden}
 .result-card::before{
   content:'';position:absolute;inset:0;
@@ -107,10 +107,10 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   background-size:20px 20px;pointer-events:none}
 .result-label{font-family:'Orbitron';font-size:10px;color:var(--primary-light);letter-spacing:3px;font-weight:700;position:relative;z-index:1}
 .result-ball{
-  width:140px;height:140px;position:relative;display:flex;align-items:center;justify-content:center;z-index:1}
+  width:120px;height:120px;position:relative;display:flex;align-items:center;justify-content:center;z-index:1}
 .result-glow{
-  position:absolute;width:100px;height:100px;
-  background:var(--primary);filter:blur(40px);border-radius:50%;opacity:.3;
+  position:absolute;width:80px;height:80px;
+  background:var(--primary);filter:blur(35px);border-radius:50%;opacity:.3;
   animation:glowPulse 2s ease-in-out infinite}
 @keyframes glowPulse{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.4;transform:scale(1.1)}}
 #resultImg{width:100%;height:100%;object-fit:contain;z-index:2;transition:all .4s ease}
@@ -124,8 +124,8 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 
 /* PREDICT BTN */
 .predict-btn{
-  width:100%;padding:18px;border:none;border-radius:14px;
-  font-family:'Orbitron';font-size:15px;font-weight:700;letter-spacing:2px;
+  width:100%;padding:14px;border:none;border-radius:12px;
+  font-family:'Orbitron';font-size:13px;font-weight:700;letter-spacing:2px;
   cursor:pointer;transition:all .3s;position:relative;z-index:1}
 .predict-btn.ready{
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
@@ -139,12 +139,12 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 /* HISTORY CARD */
 .history-card{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:16px;padding:16px}
-.history-label{font-family:'Orbitron';font-size:10px;color:var(--primary-light);letter-spacing:2px;font-weight:700;margin-bottom:12px;text-align:center}
-.history-grid{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  border-radius:14px;padding:12px}
+.history-label{font-family:'Orbitron';font-size:9px;color:var(--primary-light);letter-spacing:2px;font-weight:700;margin-bottom:10px;text-align:center}
+.history-grid{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
 .history-dot{
-  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;color:#fff;font-family:'Orbitron';
+  width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;font-family:'Orbitron';
   border:1px solid rgba(255,255,255,0.1)}
 .history-dot.bg-green{background:rgba(16,185,129,0.8);border-color:var(--green)}
 .history-dot.bg-red{background:rgba(239,68,68,0.8);border-color:var(--red)}
@@ -153,13 +153,13 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 /* INFO BAR */
 .info-bar{
   background:var(--card);border:1px solid var(--card-border);
-  border-radius:16px;padding:14px;display:flex;justify-content:center;gap:24px}
-.info-item{display:flex;flex-direction:column;align-items:center;gap:4px}
+  border-radius:14px;padding:10px;display:flex;justify-content:center;gap:20px}
+.info-item{display:flex;flex-direction:column;align-items:center;gap:3px}
 .info-icon{
-  width:34px;height:34px;border-radius:10px;
+  width:30px;height:30px;border-radius:8px;
   background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);
-  display:flex;align-items:center;justify-content:center;font-size:14px}
-.info-text{font-size:9px;color:var(--text-dim);font-weight:600;letter-spacing:.5px}
+  display:flex;align-items:center;justify-content:center;font-size:12px}
+.info-text{font-size:8px;color:var(--text-dim);font-weight:600;letter-spacing:.5px}
 </style>
 </head>
 <body>
@@ -363,39 +363,65 @@ function renderHistory(){
 }
 renderHistory();
 
-// Particles
-const pC=document.getElementById('shell');
-
-// Timer
+// NEW TIMER - Uses indialotteryapi.com
 async function runTimer(){
-  const apiPath=timerType==='1m'?'WinGo_1M':'WinGo_30S';
   if(clockInterval)clearInterval(clockInterval);
-  clockInterval=setInterval(async()=>{
-    const now=new Date();
-    const s=now.getSeconds();
-    const rem=timerType==='1m'?(60-s):(s<30?30-s:60-s);
-    const r=rem.toString().padStart(2,'0');
-    document.getElementById('t-m1').innerText='0';
-    document.getElementById('t-m2').innerText='0';
-    document.getElementById('t-s1').innerText=r[0];
-    document.getElementById('t-s2').innerText=r[1];
-
-    if(s%2===0){
-      try{
-        const res=await fetch('https://draw.ar-lottery01.com/WinGo/'+apiPath+'/GetHistoryIssuePage.json?t='+Date.now());
-        const data=await res.json();
-        const nextP=(BigInt(data.data.list[0].issueNumber)+1n).toString();
-        if(nextP!==lastPeriod){
-          lastPeriod=nextP;currentPeriod=nextP;
-          periodDisplay.innerText=nextP;
-          hasPredicted=false;
-          checkSaved(nextP);
-          recentNumbers=data.data.list.slice(0,8).map(i=>parseInt(i.number));
-          renderHistory();
-        }
-      }catch(e){}
+  
+  async function fetchTimer(){
+    try{
+      const res=await fetch('https://indialotteryapi.com/wp-json/wingo/v1/next?market=1&t='+Date.now());
+      const data=await res.json();
+      
+      const remain=data.remain||0;
+      const newPeriod=data.period||'';
+      
+      // Update countdown display
+      const mins=Math.floor(remain/60);
+      const secs=remain%60;
+      document.getElementById('t-m1').innerText=String(mins).padStart(2,'0')[0];
+      document.getElementById('t-m2').innerText=String(mins).padStart(2,'0')[1];
+      document.getElementById('t-s1').innerText=String(secs).padStart(2,'0')[0];
+      document.getElementById('t-s2').innerText=String(secs).padStart(2,'0')[1];
+      
+      // New period detected
+      if(newPeriod&&newPeriod!==lastPeriod){
+        lastPeriod=newPeriod;
+        currentPeriod=newPeriod;
+        periodDisplay.innerText=newPeriod;
+        hasPredicted=false;
+        checkSaved(newPeriod);
+      }
+      
+      // Auto-disable when timer low (last 5 sec)
+      if(remain<=5&&!hasPredicted){
+        btn.className='predict-btn locked';
+        btn.innerText='TOO LATE - WAIT';
+      }
+      
+      // Button logic
+      if(hasPredicted){
+        btn.className='predict-btn locked';
+        btn.innerText='WAIT FOR NEXT RESULTS';
+      }else if(remain>5){
+        btn.className='predict-btn ready';
+        btn.innerText='GET PREDICTION';
+      }
+      
+    }catch(e){
+      // Fallback: local countdown
+      const now=new Date();
+      const s=now.getSeconds();
+      const rem=30-s%30;
+      const r=rem.toString().padStart(2,'0');
+      document.getElementById('t-m1').innerText='0';
+      document.getElementById('t-m2').innerText='0';
+      document.getElementById('t-s1').innerText=r[0];
+      document.getElementById('t-s2').innerText=r[1];
     }
-  },1000);
+  }
+  
+  await fetchTimer();
+  clockInterval=setInterval(fetchTimer,1000);
 }
 
 function checkSaved(period){
@@ -451,21 +477,6 @@ function generate(bs,leftover){
   }
 }
 
-// Fetch
-async function fetchHistory(){
-  const url=timerType==='1m'
-    ?'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageSize=10&pageNo=1'
-    :'https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?pageSize=10&pageNo=1';
-  try{
-    const res=await fetch(url);
-    const data=await res.json();
-    if(data&&data.data&&data.data.list){
-      recentNumbers=data.data.list.slice(0,8).map(i=>parseInt(i.number));
-      renderHistory();
-    }
-  }catch(e){}
-}
-
 // Predict - ONE click per period
 async function handlePredict(){
   if(hasPredicted||btn.classList.contains('locked'))return;
@@ -477,13 +488,11 @@ async function handlePredict(){
   ball.style.transition='none';
   ball.classList.add('shuffle');
 
-  await fetchHistory();
-
   const nums=recentNumbers.length?recentNumbers.slice(0,8):Array.from({length:8},()=>Math.floor(Math.random()*10));
   const{bs,leftover}=analyze(nums);
   const pred=generate(bs,leftover);
 
-  // Preload final prediction image before showing
+  // Preload final prediction image
   await preloadImage(pred.img);
 
   let elapsed=0;
@@ -494,8 +503,6 @@ async function handlePredict(){
     if(elapsed>=dur){
       clearInterval(anim);
       ball.classList.remove('shuffle');
-
-      // Set final image with transition
       ball.style.transition='all .4s ease';
       ball.src=pred.img;
       ball.classList.add('reveal');
