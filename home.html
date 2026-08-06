@@ -8,15 +8,15 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --primary:#a855f7;
-  --primary-light:#c084fc;
-  --primary-dark:#7c3aed;
-  --cyan:#06b6d4;
-  --cyan-light:#22d3ee;
-  --pink:#ec4899;
-  --bg:#0a0a1a;
-  --card:#111128;
-  --card-border:rgba(168,85,247,0.15);
+  --primary:#10b981;
+  --primary-light:#34d399;
+  --primary-dark:#059669;
+  --cyan:#22d3ee;
+  --cyan-light:#67e8f9;
+  --lime:#84cc16;
+  --bg:#0a0f0a;
+  --card:#0d1a0d;
+  --card-border:rgba(16,185,129,0.15);
   --text:#f1f5f9;
   --text-dim:#64748b;
 }
@@ -33,15 +33,15 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.25}
 .orb1{width:350px;height:350px;background:var(--primary-dark);top:-80px;left:-80px;animation:orbFloat1 20s ease-in-out infinite}
 .orb2{width:280px;height:280px;background:var(--cyan);bottom:-60px;right:-60px;animation:orbFloat2 24s ease-in-out infinite}
-.orb3{width:200px;height:200px;background:var(--pink);top:40%;left:60%;animation:orbFloat3 18s ease-in-out infinite}
+.orb3{width:200px;height:200px;background:var(--lime);top:40%;left:60%;animation:orbFloat3 18s ease-in-out infinite}
 @keyframes orbFloat1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,40px) scale(1.1)}}
 @keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-50px,-60px) scale(1.05)}}
 @keyframes orbFloat3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,30px) scale(.9)}}
 
 .grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:
-    linear-gradient(rgba(168,85,247,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(168,85,247,0.03) 1px,transparent 1px);
+    linear-gradient(rgba(16,185,129,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(16,185,129,0.03) 1px,transparent 1px);
   background-size:40px 40px}
 
 /* PARTICLES */
@@ -54,7 +54,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 
 /* HEADER CARD */
 .header-card{
-  background:linear-gradient(135deg,rgba(168,85,247,0.12),rgba(6,182,212,0.08));
+  background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(34,211,238,0.08));
   border:1px solid var(--card-border);
   border-radius:24px;
   padding:24px 20px;
@@ -64,7 +64,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 }
 .header-card::before{
   content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
-  background:conic-gradient(from 0deg,transparent,rgba(168,85,247,0.1),transparent,rgba(6,182,212,0.1),transparent);
+  background:conic-gradient(from 0deg,transparent,rgba(16,185,129,0.1),transparent,rgba(34,211,238,0.1),transparent);
   animation:headerSpin 8s linear infinite}
 @keyframes headerSpin{to{transform:rotate(360deg)}}
 .header-card>*{position:relative;z-index:1}
@@ -72,13 +72,17 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 .logo-ring{
   width:90px;height:90px;margin:0 auto 16px;
   border-radius:50%;padding:3px;
-  background:conic-gradient(var(--primary),var(--cyan),var(--pink),var(--primary));
+  background:conic-gradient(var(--primary),var(--cyan),var(--lime),var(--primary));
   animation:logoPulse 3s ease-in-out infinite}
-@keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(168,85,247,0.4)}50%{box-shadow:0 0 40px rgba(168,85,247,0.7)}}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.4)}50%{box-shadow:0 0 40px rgba(16,185,129,0.7)}}
 .logo-inner{
   width:100%;height:100%;border-radius:50%;background:var(--bg);
   display:flex;align-items:center;justify-content:center;overflow:hidden}
 .logo-inner img{width:70px;height:70px;object-fit:cover;border-radius:50%}
+.devil-logo-text{
+  font-family:'Orbitron';font-size:18px;font-weight:900;
+  color:var(--primary-light);text-shadow:0 0 20px rgba(16,185,129,0.6);
+  letter-spacing:2px}
 
 .app-title{
   font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;
@@ -165,12 +169,12 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   transition:all .3s;letter-spacing:.5px}
 .btn-1m{
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;
-  box-shadow:0 4px 15px rgba(168,85,247,0.3)}
-.btn-1m:active{transform:scale(.96);box-shadow:0 2px 8px rgba(168,85,247,0.4)}
+  box-shadow:0 4px 15px rgba(16,185,129,0.3)}
+.btn-1m:active{transform:scale(.96);box-shadow:0 2px 8px rgba(16,185,129,0.4)}
 .btn-30s{
   background:transparent;color:var(--cyan);
-  border:1px solid rgba(6,182,212,0.3)}
-.btn-30s:active{background:rgba(6,182,212,0.1);border-color:var(--cyan)}
+  border:1px solid rgba(34,211,238,0.3)}
+.btn-30s:active{background:rgba(34,211,238,0.1);border-color:var(--cyan)}
 
 /* BOTTOM NAV */
 .bottom-nav{
@@ -182,7 +186,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 .nav-item{
   display:flex;flex-direction:column;align-items:center;gap:4px;
   padding:8px 20px;border-radius:12px;cursor:pointer;transition:all .3s;text-decoration:none}
-.nav-item.active{background:rgba(168,85,247,0.1)}
+.nav-item.active{background:rgba(16,185,129,0.1)}
 .nav-item svg{width:22px;height:22px;stroke:var(--text-dim);fill:none;stroke-width:2;transition:all .3s}
 .nav-item.active svg{stroke:var(--primary-light)}
 .nav-item span{font-size:9px;color:var(--text-dim);font-weight:600;letter-spacing:.5px;transition:all .3s}
@@ -207,7 +211,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 <div class="header-card">
   <div class="logo-ring">
     <div class="logo-inner">
-      <img id="mainLogo" src="image1.png" alt="Logo">
+      <div class="devil-logo-text">DEVIL</div>
     </div>
   </div>
   <div class="app-title">DEVIL PREDICTOR</div>
