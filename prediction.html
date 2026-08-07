@@ -372,6 +372,16 @@ function digits(sec){
   return String(Math.max(0,Math.floor(sec))).padStart(2,'0');
 }
 
+function deviceNowSec(){
+  return Date.now()/1000;
+}
+
+function getRemaining(){
+  const sec=Math.floor(deviceNowSec());
+  const r=TOTAL_TIME-(sec%TOTAL_TIME);
+  return r===TOTAL_TIME?TOTAL_TIME:r;
+}
+
 async function runTimer(){
   if(clockInterval)clearInterval(clockInterval);
 
@@ -382,20 +392,11 @@ async function runTimer(){
       const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
       const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
       const data=await res.json();
-      const cur=data.current||{};
-      const nxt=data.next||{};
-      const now=Date.now();
-
-      // Choose whichever period is live right now
-      let chosen=cur;
-      if(!chosen.endTime||chosen.endTime<=now) chosen=nxt;
-
-      apiPeriod=chosen.issueNumber||cur.issueNumber||'';
-      apiEndTime=chosen.endTime||cur.endTime||0;
+      const apiPeriod=(data.current&&data.current.issueNumber)||'';
 
       // Show real period from server
-      if(data.current&&data.current.issueNumber){
-        document.getElementById('periodDisplay').innerText=data.current.issueNumber;
+      if(apiPeriod){
+        document.getElementById('periodDisplay').innerText=apiPeriod;
       }
 
       // New period detected -> show fast
@@ -413,14 +414,8 @@ async function runTimer(){
   }
 
   function render(){
-    // Live countdown: endTime - device clock (matches phone/watch exactly)
-    let remain=0;
-    if(apiEndTime){
-      remain=Math.floor((apiEndTime-Date.now())/1000);
-      remain=Math.min(Math.max(remain,0),TOTAL_TIME);
-    }else{
-      remain=0;
-    }
+    // Pure device-clock countdown - never freezes, matches phone watch exactly
+    const remain=getRemaining();
     const mins=Math.floor(remain/60);
     const secs=remain%60;
     document.getElementById('t-m1').innerText=digits(mins)[0];
@@ -432,7 +427,6 @@ async function runTimer(){
 
   await poll();
   render();
-  poll();
   clockInterval=setInterval(()=>{
     render();
     poll();
