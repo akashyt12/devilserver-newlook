@@ -368,64 +368,38 @@ const DRAW_BASE='https://draw.ar-lottery06.com';
 
 let apiEndTime=0,apiPeriod='';
 
-function digits(sec){
-  return String(Math.max(0,Math.floor(sec))).padStart(2,'0');
-}
-
-function deviceNowSec(){
-  return Date.now()/1000;
-}
-
-function getRemaining(){
-  const sec=Math.floor(deviceNowSec());
-  const r=TOTAL_TIME-(sec%TOTAL_TIME);
-  return r===TOTAL_TIME?TOTAL_TIME:r;
-}
-
 async function runTimer(){
   if(clockInterval)clearInterval(clockInterval);
 
-  let loadedPeriod='';
+  const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
+  const is30S=selectedTimer!=='1min';
 
-  async function poll(){
+  clockInterval=setInterval(async ()=>{
+    // TIMER: device clock seconds (matches real India time exactly)
+    const now=new Date();
+    const s=now.getSeconds();
+    const remaining=is30S?(s<30?30-s:60-s):(60-s);
+    const remStr=remaining.toString().padStart(2,'0');
+    document.getElementById('t-m1').innerText='0';
+    document.getElementById('t-m2').innerText='0';
+    document.getElementById('t-s1').innerText=remStr[0];
+    document.getElementById('t-s2').innerText=remStr[1];
+    updateButtons(remaining);
+
+    // PERIOD: fetch from history API every 1s -> next period (list[0]+1)
     try{
-      const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
-      const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
+      const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'/GetHistoryIssuePage.json?t='+Date.now()+'&r='+Math.random());
       const data=await res.json();
-      const apiPeriod=(data.current&&data.current.issueNumber)||'';
-      if(apiPeriod){
-        document.getElementById('periodDisplay').innerText=apiPeriod;
-        if(apiPeriod!==loadedPeriod){
-          loadedPeriod=apiPeriod;
-          if(apiPeriod!==lastPeriod){
-            lastPeriod=apiPeriod;
-            currentPeriod=apiPeriod;
-            hasPredicted=false;
-            checkSaved(apiPeriod);
-            fetchRecentResults();
-          }
-        }
+      const nextP=(BigInt(data.data.list[0].issueNumber)+1n).toString();
+      if(nextP!==lastPeriod){
+        lastPeriod=nextP;
+        currentPeriod=nextP;
+        hasPredicted=false;
+        document.getElementById('periodDisplay').innerText=nextP;
+        checkSaved(nextP);
+        fetchRecentResults();
       }
     }catch(e){}
-  }
-
-  function render(){
-    // Timer = India real time (device clock) - matches watch seconds exactly
-    const remain=getRemaining();
-    const mins=Math.floor(remain/60);
-    const secs=remain%60;
-    document.getElementById('t-m1').innerText=digits(mins)[0];
-    document.getElementById('t-m2').innerText=digits(mins)[1];
-    document.getElementById('t-s1').innerText=digits(secs)[0];
-    document.getElementById('t-s2').innerText=digits(secs)[1];
-    updateButtons(secs);
-  }
-
-  await poll();
-  render();
-  clockInterval=setInterval(()=>{
-    render();
-    poll();
   },1000);
 }
 
