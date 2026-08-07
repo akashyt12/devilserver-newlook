@@ -381,25 +381,29 @@ async function runTimer(){
       const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
       const data=await res.json();
       const cur=data.current||{};
+      if(cur&&cur.endTime)apiEndTime=cur.endTime;
       if(cur&&cur.issueNumber){
-        const nextP=cur.issueNumber;
-        if(nextP!==lastPeriod){
-          lastPeriod=nextP;
-          currentPeriod=nextP;
+        const raw=apiEndTime-Date.now();
+        const pre=raw>TOTAL_TIME*1000;
+        const running=(pre?BigInt(cur.issueNumber)-1n:BigInt(cur.issueNumber)).toString();
+        if(running!==lastPeriod){
+          lastPeriod=running;
+          currentPeriod=running;
           hasPredicted=false;
-          document.getElementById('periodDisplay').innerText=nextP;
-          checkSaved(nextP);
+          document.getElementById('periodDisplay').innerText=running;
+          checkSaved(running);
           fetchRecentResults();
         }
       }
-      if(cur&&cur.endTime)apiEndTime=cur.endTime;
     }catch(e){}
 
-    // 2) TIMER = endTime - device now (device epoch verified aligned with server endTime)
+    // 2) TIMER - countdown on the fixed period grid, never freezes:
+    //    API may pre-publish the next period up to ~18s before the draw,
+    //    so endTime-now can exceed TOTAL_TIME; modulo keeps it exact.
     let remaining;
     if(apiEndTime){
-      remaining=Math.floor((apiEndTime-Date.now())/1000);
-      remaining=Math.min(Math.max(remaining,0),TOTAL_TIME);
+      const msLeft=(apiEndTime-Date.now())% (TOTAL_TIME*1000);
+      remaining=msLeft===0?TOTAL_TIME:Math.ceil(msLeft/1000);
     }else{
       // fallback: device clock watch grid
       const s=new Date().getSeconds();
