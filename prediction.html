@@ -200,7 +200,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 
 <!-- TIMER -->
 <div class="timer-card">
-  <div class="timer-label">SERVER TIME REMAINING</div>
+  <div class="timer-label">REAL TIME - NEXT DRAW IN</div>
   <div class="timer-display">
     <div class="timer-box" id="t-m1">0</div>
     <div class="timer-box" id="t-m2">0</div>
@@ -214,9 +214,17 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 <div class="period-card">
   <div class="period-label">
     <span class="period-icon">&#128202;</span>
-    <span class="period-title">ACTIVE PERIOD</span>
+    <span class="period-title">CURRENT PERIOD</span>
   </div>
   <div class="period-value" id="periodDisplay">SYNCING...</div>
+</div>
+
+<div class="period-card" style="border-color:rgba(34,211,238,0.3)">
+  <div class="period-label">
+    <span class="period-icon">&#128329;&#65039;</span>
+    <span class="period-title" style="color:var(--cyan-light)">NEXT PERIOD</span>
+  </div>
+  <div class="period-value" id="nextPeriodDisplay" style="color:var(--cyan-light)">SYNCING...</div>
 </div>
 
 <!-- RESULT -->
@@ -363,81 +371,103 @@ function renderHistory(){
 }
 renderHistory();
 
-// NEW TIMER - Uses indialotteryapi.com
-async function runTimer(){
-  if(clockInterval)clearInterval(clockInterval);
-  
-  async function fetchTimer(){
-    try{
-      const res=await fetch('https://indialotteryapi.com/wp-json/wingo/v1/next?market=1&t='+Date.now());
-      const data=await res.json();
-      
-      let remain=data.remain||0;
-      let newPeriod=data.period||'';
-      
-      // For 30sec mode: treat each 30 sec as new period
-      if(selectedTimer==='30sec'){
-        const half=Math.floor(remain/30);
-        const subRemain=remain%30;
-        remain=subRemain;
-        newPeriod=newPeriod+'-'+(half===0?'B':'A');
-      }
-      
-      // Update countdown display
-      const mins=Math.floor(remain/60);
-      const secs=remain%60;
-      document.getElementById('t-m1').innerText=String(mins).padStart(2,'0')[0];
-      document.getElementById('t-m2').innerText=String(mins).padStart(2,'0')[1];
-      document.getElementById('t-s1').innerText=String(secs).padStart(2,'0')[0];
-      document.getElementById('t-s2').innerText=String(secs).padStart(2,'0')[1];
-      
-      // New period detected
-      if(newPeriod&&newPeriod!==lastPeriod){
-        lastPeriod=newPeriod;
-        currentPeriod=newPeriod;
-        periodDisplay.innerText=data.period||newPeriod;
-        hasPredicted=false;
-        checkSaved(newPeriod);
-        fetchRecentResults();
-      }
-      
-      // Auto-disable when timer low (last 5 sec)
-      if(remain<=5&&!hasPredicted){
-        btn.className='predict-btn locked';
-        btn.innerText='TOO LATE - WAIT';
-      }
-      
-      // Button logic
-      if(hasPredicted){
-        btn.className='predict-btn locked';
-        btn.innerText='WAIT FOR NEXT RESULTS';
-      }else if(remain>5){
-        btn.className='predict-btn ready';
-        btn.innerText='GET PREDICTION';
-      }
-      
-    }catch(e){
-      // Fallback: local countdown
-      const now=new Date();
-      const s=now.getSeconds();
-      const rem=selectedTimer==='30sec'?(30-s%30):(60-s);
-      const r=rem.toString().padStart(2,'0');
-      document.getElementById('t-m1').innerText='0';
-      document.getElementById('t-m2').innerText='0';
-      document.getElementById('t-s1').innerText=r[0];
-      document.getElementById('t-s2').innerText=r[1];
-    }
-  }
-  
-  await fetchTimer();
-  clockInterval=setInterval(fetchTimer,1000);
+// REAL TIMER - fetch real period from API every 1s, countdown from device clock
+const DRAW_BASE='https://draw.ar-lottery06.com';
+
+let apiEndTime=0,apiPeriod='';
+
+function digits(sec){
+  return String(Math.max(0,Math.floor(sec))).padStart(2,'0');
 }
 
-// Fetch real history from WinGo API
+async function runTimer(){
+  if(clockInterval)clearInterval(clockInterval);
+
+  let loadedPeriod='';
+
+  async function poll(){
+    try{
+      const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
+      const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
+      const data=await res.json();
+      const cur=data.current||{};
+      const nxt=data.next||{};
+      const now=Date.now();
+
+      // Choose whichever period is live right now
+      let chosen=cur;
+      if(!chosen.endTime||chosen.endTime<=now) chosen=nxt;
+
+      apiPeriod=chosen.issueNumber||cur.issueNumber||'';
+      apiEndTime=chosen.endTime||cur.endTime||0;
+
+      // Show real periods from server (current + next)
+      if(data.current&&data.current.issueNumber){
+        document.getElementById('periodDisplay').innerText=data.current.issueNumber;
+        document.getElementById('nextPeriodDisplay').innerText=(data.next&&data.next.issueNumber)||'';
+      }
+
+      // New period detected -> show fast
+      if(apiPeriod&&apiPeriod!==loadedPeriod){
+        loadedPeriod=apiPeriod;
+        if(apiPeriod!==lastPeriod){
+          lastPeriod=apiPeriod;
+          currentPeriod=apiPeriod;
+          hasPredicted=false;
+          checkSaved(apiPeriod);
+          fetchRecentResults();
+        }
+      }
+    }catch(e){}
+  }
+
+  function render(){
+    // Live countdown: endTime - device clock (matches phone/watch exactly)
+    let remain=0;
+    if(apiEndTime){
+      remain=Math.floor((apiEndTime-Date.now())/1000);
+      remain=Math.min(Math.max(remain,0),TOTAL_TIME);
+    }else{
+      remain=0;
+    }
+    const mins=Math.floor(remain/60);
+    const secs=remain%60;
+    document.getElementById('t-m1').innerText=digits(mins)[0];
+    document.getElementById('t-m2').innerText=digits(mins)[1];
+    document.getElementById('t-s1').innerText=digits(secs)[0];
+    document.getElementById('t-s2').innerText=digits(secs)[1];
+    updateButtons(secs);
+  }
+
+  await poll();
+  render();
+  poll();
+  clockInterval=setInterval(()=>{
+    render();
+    poll();
+  },1000);
+}
+
+function updateButtons(secs){
+  if(!hasPredicted&&secs<=5){
+    btn.className='predict-btn locked';
+    btn.innerText='TOO LATE - WAIT';
+  }else if(hasPredicted){
+    btn.className='predict-btn locked';
+    btn.innerText='WAIT FOR NEXT RESULTS';
+    statusText.innerText='PREDICTION LOCKED';
+  }else if(secs>5){
+    btn.className='predict-btn ready';
+    btn.innerText='GET PREDICTION';
+    statusText.innerText='READY';
+  }
+}
+
+// Fetch real history from WinGo API (results only; timer uses device clock)
 async function fetchRecentResults(){
   const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
   try{
-    const res=await fetch('https://draw.ar-lottery01.com/WinGo/'+apiPath+'/GetHistoryIssuePage.json?pageSize=10&pageNo=1&t='+Date.now());
+    const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'/GetHistoryIssuePage.json?pageSize=10&pageNo=1&t='+Date.now());
     const data=await res.json();
     if(data&&data.data&&data.data.list){
       recentNumbers=data.data.list.slice(0,8).map(i=>parseInt(i.number));
