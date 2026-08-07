@@ -285,6 +285,7 @@ const timerType=selectedTimer==='1min'?'1m':'30s';
 const TOTAL_TIME=selectedTimer==='1min'?60:30;
 let currentMode=predictionMode==='number'?'NUMBERS':'BIG/SMALL';
 let clockInterval=null,lastPeriod='',currentPeriod='',hasPredicted=false;
+let apiRemain=null,apiRemainAt=0;
 
 // Header
 document.getElementById('headerImg').src=gameData.img;
@@ -386,36 +387,68 @@ async function runTimer(){
   if(clockInterval)clearInterval(clockInterval);
 
   let loadedPeriod='';
+  const is1Min=selectedTimer==='1min';
 
   async function poll(){
     try{
-      const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
-      const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
-      const data=await res.json();
-      const apiPeriod=(data.current&&data.current.issueNumber)||'';
-
-      // Show real period from server
-      if(apiPeriod){
-        document.getElementById('periodDisplay').innerText=apiPeriod;
-      }
-
-      // New period detected -> show fast
-      if(apiPeriod&&apiPeriod!==loadedPeriod){
-        loadedPeriod=apiPeriod;
-        if(apiPeriod!==lastPeriod){
-          lastPeriod=apiPeriod;
-          currentPeriod=apiPeriod;
-          hasPredicted=false;
-          checkSaved(apiPeriod);
-          fetchRecentResults();
+      if(is1Min){
+        // 1MIN: indialotteryapi.com - game server timer (remain) + real period
+        const res=await fetch('https://indialotteryapi.com/wp-json/wingo/v1/next?market=1&t='+Date.now());
+        const data=await res.json();
+        apiRemain=data.remain;
+        apiRemainAt=Date.now();
+        const apiPeriod=data.period||'';
+        if(apiPeriod){
+          document.getElementById('periodDisplay').innerText=apiPeriod;
+          if(apiPeriod!==loadedPeriod){
+            loadedPeriod=apiPeriod;
+            if(apiPeriod!==lastPeriod){
+              lastPeriod=apiPeriod;
+              currentPeriod=apiPeriod;
+              hasPredicted=false;
+              checkSaved(apiPeriod);
+              fetchRecentResults();
+            }
+          }
+        }
+      }else{
+        // 30S: period from draw API, timer from device clock
+        const apiPath='WinGo_30S';
+        const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
+        const data=await res.json();
+        const apiPeriod=(data.current&&data.current.issueNumber)||'';
+        if(apiPeriod){
+          document.getElementById('periodDisplay').innerText=apiPeriod;
+          if(apiPeriod!==loadedPeriod){
+            loadedPeriod=apiPeriod;
+            if(apiPeriod!==lastPeriod){
+              lastPeriod=apiPeriod;
+              currentPeriod=apiPeriod;
+              hasPredicted=false;
+              checkSaved(apiPeriod);
+              fetchRecentResults();
+            }
+          }
         }
       }
     }catch(e){}
   }
 
   function render(){
-    // Pure device-clock countdown - never freezes, matches phone watch exactly
-    const remain=getRemaining();
+    let remain;
+    if(is1Min){
+      // 1MIN: interpolate server remain with device clock - never freezes
+      if(typeof apiRemain==='number'&&apiRemainAt){
+        const elapsed=Math.floor((Date.now()-apiRemainAt)/1000);
+        remain=apiRemain-elapsed;
+      }else{
+        remain=getRemaining();
+      }
+      remain=Math.min(Math.max(remain,0),TOTAL_TIME);
+    }else{
+      // 30S: pure device clock - never freezes
+      remain=getRemaining();
+    }
     const mins=Math.floor(remain/60);
     const secs=remain%60;
     document.getElementById('t-m1').innerText=digits(mins)[0];
