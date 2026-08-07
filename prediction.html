@@ -372,34 +372,45 @@ async function runTimer(){
   if(clockInterval)clearInterval(clockInterval);
 
   const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
-  const is30S=selectedTimer!=='1min';
+
+  let apiEndTime=0;
 
   clockInterval=setInterval(async ()=>{
-    // TIMER: device clock seconds (matches real India time exactly)
-    const now=new Date();
-    const s=now.getSeconds();
-    const remaining=is30S?(s<30?30-s:60-s):(60-s);
+    // 1) Fetch real period + endTime from the same server
+    try{
+      const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
+      const data=await res.json();
+      const cur=data.current||{};
+      if(cur&&cur.issueNumber){
+        const nextP=cur.issueNumber;
+        if(nextP!==lastPeriod){
+          lastPeriod=nextP;
+          currentPeriod=nextP;
+          hasPredicted=false;
+          document.getElementById('periodDisplay').innerText=nextP;
+          checkSaved(nextP);
+          fetchRecentResults();
+        }
+      }
+      if(cur&&cur.endTime)apiEndTime=cur.endTime;
+    }catch(e){}
+
+    // 2) TIMER = endTime - device now (device epoch verified aligned with server endTime)
+    let remaining;
+    if(apiEndTime){
+      remaining=Math.floor((apiEndTime-Date.now())/1000);
+      remaining=Math.min(Math.max(remaining,0),TOTAL_TIME);
+    }else{
+      // fallback: device clock watch grid
+      const s=new Date().getSeconds();
+      remaining=selectedTimer==='1min'?(60-s):(s<30?30-s:60-s);
+    }
     const remStr=remaining.toString().padStart(2,'0');
     document.getElementById('t-m1').innerText='0';
     document.getElementById('t-m2').innerText='0';
     document.getElementById('t-s1').innerText=remStr[0];
     document.getElementById('t-s2').innerText=remStr[1];
     updateButtons(remaining);
-
-    // PERIOD: fetch from history API every 1s -> next period (list[0]+1)
-    try{
-      const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'/GetHistoryIssuePage.json?t='+Date.now()+'&r='+Math.random());
-      const data=await res.json();
-      const nextP=(BigInt(data.data.list[0].issueNumber)+1n).toString();
-      if(nextP!==lastPeriod){
-        lastPeriod=nextP;
-        currentPeriod=nextP;
-        hasPredicted=false;
-        document.getElementById('periodDisplay').innerText=nextP;
-        checkSaved(nextP);
-        fetchRecentResults();
-      }
-    }catch(e){}
   },1000);
 }
 
