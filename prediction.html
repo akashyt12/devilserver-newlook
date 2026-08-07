@@ -363,29 +363,39 @@ function renderHistory(){
 }
 renderHistory();
 
-// REAL TIMER - fetch real period from API every 1s, countdown from device clock
+// TIMER - Device clock based countdown (always accurate on fixed 30s/60s grid)
+// API only used for period detection, NOT for timer
 const DRAW_BASE='https://draw.ar-lottery06.com';
 
-let apiEndTime=0,apiPeriod='';
+function getRemaining(){
+  const s=new Date().getSeconds();
+  if(selectedTimer==='1min')return 60-s;
+  return s<30?(30-s):(60-s);
+}
 
 async function runTimer(){
   if(clockInterval)clearInterval(clockInterval);
-
   const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
 
-  let apiEndTime=0;
-
+  // Fetch period from API, countdown from device clock
   clockInterval=setInterval(async ()=>{
-    // 1) Fetch real period + endTime from the same server
+    // Timer from device clock - always accurate
+    const remaining=getRemaining();
+    const remStr=remaining.toString().padStart(2,'0');
+    document.getElementById('t-m1').innerText='0';
+    document.getElementById('t-m2').innerText='0';
+    document.getElementById('t-s1').innerText=remStr[0];
+    document.getElementById('t-s2').innerText=remStr[1];
+    updateButtons(remaining);
+
+    // Fetch period from API (independent of timer)
     try{
       const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
       const data=await res.json();
       const cur=data.current||{};
-      if(cur&&cur.endTime)apiEndTime=cur.endTime;
       if(cur&&cur.issueNumber){
-        const raw=apiEndTime-Date.now();
-        const pre=raw>TOTAL_TIME*1000;
-        const running=(pre?BigInt(cur.issueNumber)-1n:BigInt(cur.issueNumber)).toString();
+        // Period detected - check if new
+        const running=cur.issueNumber.toString();
         if(running!==lastPeriod){
           lastPeriod=running;
           currentPeriod=running;
@@ -396,25 +406,6 @@ async function runTimer(){
         }
       }
     }catch(e){}
-
-    // 2) TIMER - countdown on the fixed period grid, never freezes:
-    //    API may pre-publish the next period up to ~18s before the draw,
-    //    so endTime-now can exceed TOTAL_TIME; modulo keeps it exact.
-    let remaining;
-    if(apiEndTime){
-      const msLeft=(apiEndTime-Date.now())% (TOTAL_TIME*1000);
-      remaining=msLeft===0?TOTAL_TIME:Math.ceil(msLeft/1000);
-    }else{
-      // fallback: device clock watch grid
-      const s=new Date().getSeconds();
-      remaining=selectedTimer==='1min'?(60-s):(s<30?30-s:60-s);
-    }
-    const remStr=remaining.toString().padStart(2,'0');
-    document.getElementById('t-m1').innerText='0';
-    document.getElementById('t-m2').innerText='0';
-    document.getElementById('t-s1').innerText=remStr[0];
-    document.getElementById('t-s2').innerText=remStr[1];
-    updateButtons(remaining);
   },1000);
 }
 
