@@ -214,17 +214,9 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 <div class="period-card">
   <div class="period-label">
     <span class="period-icon">&#128202;</span>
-    <span class="period-title">CURRENT PERIOD</span>
+    <span class="period-title">ACTIVE PERIOD</span>
   </div>
   <div class="period-value" id="periodDisplay">SYNCING...</div>
-</div>
-
-<div class="period-card" style="border-color:rgba(34,211,238,0.3)">
-  <div class="period-label">
-    <span class="period-icon">&#128329;&#65039;</span>
-    <span class="period-title" style="color:var(--cyan-light)">NEXT PERIOD</span>
-  </div>
-  <div class="period-value" id="nextPeriodDisplay" style="color:var(--cyan-light)">SYNCING...</div>
 </div>
 
 <!-- RESULT -->
@@ -401,10 +393,9 @@ async function runTimer(){
       apiPeriod=chosen.issueNumber||cur.issueNumber||'';
       apiEndTime=chosen.endTime||cur.endTime||0;
 
-      // Show real periods from server (current + next)
+      // Show real period from server
       if(data.current&&data.current.issueNumber){
         document.getElementById('periodDisplay').innerText=data.current.issueNumber;
-        document.getElementById('nextPeriodDisplay').innerText=(data.next&&data.next.issueNumber)||'';
       }
 
       // New period detected -> show fast
