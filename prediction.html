@@ -160,6 +160,14 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);
   display:flex;align-items:center;justify-content:center;font-size:12px}
 .info-text{font-size:8px;color:var(--text-dim);font-weight:600;letter-spacing:.5px}
+
+/* PARTICLES */
+.ptcl{position:fixed;width:2px;height:2px;background:var(--primary-light);border-radius:50%;pointer-events:none;z-index:1;opacity:0}
+@keyframes drift{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
+
+/* FADE UP */
+.fd{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.fd.vis{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -170,6 +178,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   <div class="orb orb3"></div>
 </div>
 <div class="grid-bg"></div>
+<div id="particles"></div>
 
 <div id="shell">
 <div class="screen">
@@ -181,7 +190,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 </a>
 
 <!-- HEADER -->
-<div class="header-card">
+<div class="header-card fd">
   <div class="header-logo">
     <img id="headerImg" src="image1.png">
   </div>
@@ -199,7 +208,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 </div>
 
 <!-- TIMER -->
-<div class="timer-card">
+<div class="timer-card fd" style="transition-delay:.05s">
   <div class="timer-label">REAL TIME - NEXT DRAW IN</div>
   <div class="timer-display">
     <div class="timer-box" id="t-m1">0</div>
@@ -211,7 +220,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 </div>
 
 <!-- PERIOD -->
-<div class="period-card">
+<div class="period-card fd" style="transition-delay:.1s">
   <div class="period-label">
     <span class="period-icon">&#128202;</span>
     <span class="period-title">ACTIVE PERIOD</span>
@@ -220,7 +229,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 </div>
 
 <!-- RESULT -->
-<div class="result-card">
+<div class="result-card fd" style="transition-delay:.15s">
   <div class="result-label">AI PREDICTION</div>
   <div class="result-ball">
     <div class="result-glow"></div>
@@ -230,16 +239,16 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 </div>
 
 <!-- PREDICT BTN -->
-<button class="predict-btn ready" id="predictBtn" onclick="handlePredict()">GET PREDICTION</button>
+<button class="predict-btn ready fd" style="transition-delay:.2s" id="predictBtn" onclick="handlePredict()">GET PREDICTION</button>
 
 <!-- HISTORY -->
-<div class="history-card">
+<div class="history-card fd" style="transition-delay:.25s">
   <div class="history-label">RECENT RESULTS</div>
   <div class="history-grid" id="historyGrid"></div>
 </div>
 
 <!-- INFO -->
-<div class="info-bar">
+<div class="info-bar fd" style="transition-delay:.3s">
   <div class="info-item">
     <div class="info-icon">&#128737;&#65039;</div>
     <div class="info-text">Secure</div>
@@ -542,6 +551,35 @@ async function handlePredict(){
 
 runTimer();
 fetchRecentResults();
+
+// Particles
+(function(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');
+    p.className='ptcl';
+    const s=Math.random()*2.5+1;
+    const d=Math.random()*16+10;
+    const dl=Math.random()*18;
+    const l=Math.random()*100;
+    const dr=(Math.random()-.5)*100;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${l}%;animation:drift ${d}s ${dl}s linear infinite`;
+    p.animate([
+      {opacity:0,transform:`translateY(100vh) translateX(0) scale(0)`},
+      {opacity:.6,offset:.15},{opacity:.6,offset:.85},
+      {opacity:0,transform:`translateY(-10vh) translateX(${dr}px) scale(1)`}
+    ],{duration:d*1000,delay:dl*1000,iterations:Infinity,easing:'linear'});
+    c.appendChild(p);
+  }
+})();
+
+// Fade-up
+(function(){
+  const obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target)}});
+  },{threshold:.15});
+  document.querySelectorAll('.fd').forEach(el=>obs.observe(el));
+})();
 </script>
 </body>
 </html>

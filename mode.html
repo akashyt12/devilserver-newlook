@@ -141,6 +141,14 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(16,185,129,0.4)}
 .continue-btn.ready:active{transform:scale(.97)}
 .continue-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* PARTICLES */
+.ptcl{position:fixed;width:2px;height:2px;background:var(--primary-light);border-radius:50%;pointer-events:none;z-index:1;opacity:0}
+@keyframes drift{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
+
+/* FADE UP */
+.fd{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.fd.vis{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -150,6 +158,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   <div class="orb orb2"></div>
 </div>
 <div class="grid-bg"></div>
+<div id="particles"></div>
 
 <div id="shell">
 <div class="screen">
@@ -161,13 +170,13 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 </a>
 
 <!-- GAME BANNER -->
-<div class="game-banner">
+<div class="game-banner fd">
   <img id="bannerImg" src="image1.png">
   <div class="game-name-display" id="bannerName">LOADING...</div>
 </div>
 
 <!-- GAME INFO -->
-<div class="game-info">
+<div class="game-info fd" style="transition-delay:.1s">
   <div class="game-logo-sm">
     <img id="logoImg" src="image1.png">
   </div>
@@ -182,8 +191,8 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 </div>
 
 <!-- TIMER -->
-<div class="section-title">SELECT TIMER</div>
-<div class="timer-grid">
+<div class="section-title fd" style="transition-delay:.15s">SELECT TIMER</div>
+<div class="timer-grid fd" style="transition-delay:.2s">
   <div class="timer-card" data-timer="30sec" onclick="selTimer(this)">
     <div class="timer-icon">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -201,8 +210,8 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 </div>
 
 <!-- MODE -->
-<div class="section-title">SELECT MODE</div>
-<div class="mode-stack">
+<div class="section-title fd" style="transition-delay:.25s">SELECT MODE</div>
+<div class="mode-stack fd" style="transition-delay:.3s">
   <div class="mode-card" data-mode="bigsmall" onclick="selMode(this)">
     <div class="mode-icon">
       <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
@@ -297,6 +306,35 @@ function cont(){
 }
 
 init();
+
+// Particles
+(function(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');
+    p.className='ptcl';
+    const s=Math.random()*2.5+1;
+    const d=Math.random()*16+10;
+    const dl=Math.random()*18;
+    const l=Math.random()*100;
+    const dr=(Math.random()-.5)*100;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${l}%;animation:drift ${d}s ${dl}s linear infinite`;
+    p.animate([
+      {opacity:0,transform:`translateY(100vh) translateX(0) scale(0)`},
+      {opacity:.6,offset:.15},{opacity:.6,offset:.85},
+      {opacity:0,transform:`translateY(-10vh) translateX(${dr}px) scale(1)`}
+    ],{duration:d*1000,delay:dl*1000,iterations:Infinity,easing:'linear'});
+    c.appendChild(p);
+  }
+})();
+
+// Fade-up
+(function(){
+  const obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target)}});
+  },{threshold:.15});
+  document.querySelectorAll('.fd').forEach(el=>obs.observe(el));
+})();
 </script>
 </body>
 </html>

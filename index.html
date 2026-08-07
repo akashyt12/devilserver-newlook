@@ -327,6 +327,10 @@ body {
 .btn:active {
   transform: scale(0.96);
 }
+
+/* PARTICLES */
+.ptcl{position:fixed;width:2px;height:2px;background:#10b981;border-radius:50%;pointer-events:none;z-index:1;opacity:0}
+@keyframes drift{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
 </style>
 </head>
 <body>
@@ -377,17 +381,20 @@ body {
 // ── Create Particles ──
 (function createParticles() {
   const container = document.getElementById('particles');
-  const count = 24;
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < 25; i++) {
     const p = document.createElement('div');
-    p.className = 'particle';
-    const size = 1 + Math.random() * 3;
-    p.style.width = size + 'px';
-    p.style.height = size + 'px';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDelay = (Math.random() * 12) + 's';
-    p.style.animationDuration = (8 + Math.random() * 10) + 's';
-    p.style.opacity = 0.15 + Math.random() * 0.35;
+    p.className = 'ptcl';
+    const s = Math.random() * 2.5 + 1;
+    const d = Math.random() * 16 + 10;
+    const dl = Math.random() * 18;
+    const l = Math.random() * 100;
+    const dr = (Math.random() - .5) * 100;
+    p.style.cssText = `width:${s}px;height:${s}px;left:${l}%;animation:drift ${d}s ${dl}s linear infinite`;
+    p.animate([
+      {opacity:0,transform:`translateY(100vh) translateX(0) scale(0)`},
+      {opacity:.6,offset:.15},{opacity:.6,offset:.85},
+      {opacity:0,transform:`translateY(-10vh) translateX(${dr}px) scale(1)`}
+    ],{duration:d*1000,delay:dl*1000,iterations:Infinity,easing:'linear'});
     container.appendChild(p);
   }
 })();
