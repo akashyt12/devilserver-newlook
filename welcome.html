@@ -134,29 +134,6 @@ body::before{
 }
 .stat-lbl{font-family:'Exo 2';font-size:10px;font-weight:600;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
 
-/* HOW IT WORKS */
-.how{width:100%;max-width:400px;margin-bottom:48px}
-.how-title{
-  font-family:'Orbitron';font-size:11px;font-weight:700;color:var(--muted);
-  letter-spacing:4px;text-transform:uppercase;text-align:center;margin-bottom:20px;
-}
-.steps{display:flex;flex-direction:column;gap:12px}
-.step{
-  display:flex;align-items:center;gap:14px;
-  padding:14px 16px;border-radius:14px;
-  background:var(--card);border:1px solid var(--border);
-  backdrop-filter:blur(20px);transition:all .3s ease;
-}
-.step:hover{border-color:rgba(16,185,129,.25)}
-.step-num{
-  width:36px;height:36px;border-radius:10px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--g1),var(--g3));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Orbitron';font-size:14px;font-weight:900;color:#fff;
-  box-shadow:0 4px 16px rgba(16,185,129,.3);
-}
-.step-txt{font-family:'Exo 2';font-size:12px;font-weight:600;color:var(--dim);letter-spacing:.5px}
-
 /* BUTTONS */
 .btns{display:flex;gap:14px;margin-bottom:50px;flex-wrap:wrap;justify-content:center}
 .btn{
@@ -270,10 +247,6 @@ body::before{
 <!-- STATS -->
 <div class="stats fd" style="transition-delay:.25s">
   <div class="stat">
-    <div class="stat-val">12+</div>
-    <div class="stat-lbl">Games</div>
-  </div>
-  <div class="stat">
     <div class="stat-val">99%</div>
     <div class="stat-lbl">Accuracy</div>
   </div>
@@ -283,31 +256,8 @@ body::before{
   </div>
 </div>
 
-<!-- HOW IT WORKS -->
-<div class="how fd" style="transition-delay:.3s">
-  <div class="how-title">HOW IT WORKS</div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-txt">Choose your game & mode</div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-txt">Wait for the timer to sync</div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-txt">Tap GET PREDICTION</div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-txt">Place your bet before draw</div>
-    </div>
-  </div>
-</div>
-
 <!-- BUTTONS -->
-<div class="btns fd" style="transition-delay:.35s">
+<div class="btns fd" style="transition-delay:.3s">
   <a href="login.html" class="btn btn-p">
     GET STARTED
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
