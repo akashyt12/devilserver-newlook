@@ -353,7 +353,7 @@ function getHistoryColor(n){
 }
 function renderHistory(){
   historyGrid.innerHTML='';
-  recentNumbers.forEach(n=>{
+  recentNumbers.slice(0,8).forEach(n=>{
     const d=document.createElement('div');
     d.className='history-dot '+getHistoryColor(n);
     d.textContent=n;
@@ -440,7 +440,7 @@ async function fetchRecentResults(){
     const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'/GetHistoryIssuePage.json?pageSize=10&pageNo=1&t='+Date.now());
     const data=await res.json();
     if(data&&data.data&&data.data.list){
-      recentNumbers=data.data.list.slice(0,8).map(i=>parseInt(i.number));
+      recentNumbers=data.data.list.slice(0,20).map(i=>parseInt(i.number));
       renderHistory();
     }
   }catch(e){}
@@ -466,37 +466,27 @@ function checkSaved(period){
   }
 }
 
-// Prediction algorithm
-function analyze(numbers){
-  const gaps=[];
-  for(let i=0;i<numbers.length-1;i++)gaps.push(Math.abs(numbers[i]-numbers[i+1]));
-  let current=[...gaps],binary=[],leftover=null;
-  while(current.length>1){
-    const next=[];
-    for(let i=0;i<current.length-1;i++){
-      const d=Math.abs(current[i]-current[i+1]);
-      if(d<=1)next.push(d);
-    }
-    leftover=current.length%2!==0?current[current.length-1]:null;
-    current=[...next];binary=[...current];
-    if(current.length<=1)break;
-  }
-  const zeros=binary.filter(x=>x===0).length;
-  const ones=binary.filter(x=>x===1).length;
-  const last=binary[binary.length-1]||0;
-  const bs=last===1?(ones%2!==0?'BIG':'SMALL'):(zeros%2!==0?'SMALL':'BIG');
-  return{bs,leftover};
+// Prediction engine — same logic as Panel 4.0 Turbo (tushar predictor.js)
+function digitSize(n){return n>=5?'Big':'Small'}
+function digitColor(n){
+  if(n===0)return'Red,Violet';
+  if(n===5)return'Green,Violet';
+  return n%2?'Green':'Red';
 }
-
-function generate(bs,leftover){
-  if(currentMode==='BIG/SMALL'){
-    return{type:'bs',result:bs,img:bs==='BIG'?assets.big:assets.small};
-  }else{
-    let pool=bs==='BIG'?[5,6,7,8,9]:[0,1,2,3,4];
-    if(leftover!==null){const f=pool.filter(x=>x%2===leftover%2);if(f.length>0)pool=f}
-    const num=pool[Math.floor(Math.random()*pool.length)];
-    return{type:'num',result:num,img:assets.nums[num]};
-  }
+function predictDigit(nums){
+  const scores={};for(let d=0;d<10;d++)scores[d]=0;
+  for(let i=0;i<Math.min(20,nums.length);i++)scores[nums[i]]+=1.0-i*0.035;
+  const top=Math.max.apply(null,Object.values(scores))||1.0;
+  const cand=[];for(let d2=0;d2<10;d2++)if(scores[d2]>=top-1e-9)cand.push(d2);
+  let best=cand[0];
+  if(cand.length>1){for(let j=0;j<Math.min(20,nums.length);j++){if(cand.indexOf(nums[j])>=0){best=nums[j];break}}}
+  let total=0;for(let k=0;k<10;k++)total+=scores[k];total=total||1.0;
+  let conf=Math.floor(62+(scores[best]/total)*90);
+  let streak=1;
+  for(let s=1;s<nums.length;s++){if(digitSize(nums[s])===digitSize(nums[0]))streak++;else break}
+  if(streak>=3)conf+=4;
+  conf=Math.max(62,Math.min(96,conf));
+  return{digit:best,bigSmall:digitSize(best),color:digitColor(best),conf:conf};
 }
 
 // Predict - ONE click per period
@@ -510,9 +500,11 @@ async function handlePredict(){
   ball.style.transition='none';
   ball.classList.add('shuffle');
 
-  const nums=recentNumbers.length?recentNumbers.slice(0,8):Array.from({length:8},()=>Math.floor(Math.random()*10));
-  const{bs,leftover}=analyze(nums);
-  const pred=generate(bs,leftover);
+  const nums=recentNumbers.length?recentNumbers.slice(0,20):Array.from({length:10},()=>Math.floor(Math.random()*10));
+  const p=predictDigit(nums);
+  const pred=currentMode==='BIG/SMALL'
+    ?{type:'bs',result:p.bigSmall,img:p.bigSmall==='BIG'?assets.big:assets.small}
+    :{type:'num',result:p.digit,img:assets.nums[p.digit]};
 
   // Preload final prediction image
   await preloadImage(pred.img);
