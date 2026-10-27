@@ -293,7 +293,7 @@ const predictionMode=localStorage.getItem('predictionMode')||'bigsmall';
 const timerType=selectedTimer==='1min'?'1m':'30s';
 const TOTAL_TIME=selectedTimer==='1min'?60:30;
 let currentMode=predictionMode==='number'?'NUMBERS':'BIG/SMALL';
-let clockInterval=null,lastPeriod='',currentPeriod='',hasPredicted=false;
+let clockInterval=null,lastPeriod='',currentPeriod='',hasPredicted=false, historyList=[], lastSeenIssue2='', remainSec=29, timerIv=null;
 
 // Header
 document.getElementById('headerImg').src=gameData.img;
@@ -351,15 +351,17 @@ function getHistoryColor(n){
   if([2,4,6,8].includes(n))return'bg-red';
   return'bg-violet';
 }
+
 function renderHistory(){
   historyGrid.innerHTML='';
-  recentNumbers.slice(0,8).forEach(n=>{
+  (historyList.length?historyList:recentNumbers.map((n,i)=>({number:n,issue:i}))).slice(0,8).forEach(r=>{
+    const n=typeof r==='object'?r.number:r;
     const d=document.createElement('div');
     d.className='history-dot '+getHistoryColor(n);
     d.textContent=n;
     historyGrid.appendChild(d);
   });
-  if(recentNumbers.length===0){
+  if(recentNumbers.length===0 && historyList.length===0){
     for(let i=0;i<8;i++){
       const n=Math.floor(Math.random()*10);
       const d=document.createElement('div');
@@ -372,49 +374,44 @@ function renderHistory(){
 }
 renderHistory();
 
-// TIMER - Device clock based countdown (always accurate on fixed 30s/60s grid)
-// API only used for period detection, NOT for timer
+// TIMER - Issue driven like Turbo predictor
 const DRAW_BASE='https://draw.ar-lottery06.com';
 
-function getRemaining(){
-  const s=new Date().getSeconds();
-  if(selectedTimer==='1min')return 60-s;
-  return s<30?(30-s):(60-s);
-}
+function getBase2(){return selectedTimer==='1min'?60:30}
+function fmtT(s){s=Math.max(0,Math.floor(s));var m=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');return m+':'+ss}
+function paintT(){var t=fmtT(remainSec);document.getElementById('t-m1').innerText=t[0];document.getElementById('t-m2').innerText=t[1];document.getElementById('t-s1').innerText=t[3];document.getElementById('t-s2').innerText=t[4]}
 
 async function runTimer(){
   if(clockInterval)clearInterval(clockInterval);
+  if(timerIv)clearInterval(timerIv);
   const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
-
-  // Fetch period from API, countdown from device clock
-  clockInterval=setInterval(async ()=>{
-    // Timer from device clock - always accurate
-    const remaining=getRemaining();
-    const remStr=remaining.toString().padStart(2,'0');
-    document.getElementById('t-m1').innerText='0';
-    document.getElementById('t-m2').innerText='0';
-    document.getElementById('t-s1').innerText=remStr[0];
-    document.getElementById('t-s2').innerText=remStr[1];
-    updateButtons(remaining);
-
-    // Fetch period from API (independent of timer)
+  remainSec=getBase2()-1;
+  paintT();
+  async function sync(){
     try{
       const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
       const data=await res.json();
       const cur=data.current||{};
       if(cur&&cur.issueNumber){
-        // Period detected - check if new
-        const running=cur.issueNumber.toString();
+        const running=String(cur.issueNumber);
         if(running!==lastPeriod){
-          lastPeriod=running;
-          currentPeriod=running;
-          hasPredicted=false;
+          lastPeriod=running; currentPeriod=running; hasPredicted=false;
           document.getElementById('periodDisplay').innerText=running;
-          checkSaved(running);
-          fetchRecentResults();
+          checkSaved(running); fetchRecentResults();
+        }
+        if(running!==lastSeenIssue2){
+          lastSeenIssue2=running;
+          remainSec=getBase2()-1;
+          paintT();
         }
       }
     }catch(e){}
+  }
+  await sync(); setInterval(sync,2000);
+  timerIv=setInterval(()=>{
+    if(remainSec>0){remainSec--;paintT()}
+    updateButtons(remainSec);
+    if(remainSec<=3){sync()}
   },1000);
 }
 
@@ -433,15 +430,19 @@ function updateButtons(secs){
   }
 }
 
-// Fetch real history from WinGo API (results only; timer uses device clock)
+// Fetch real history from WinGo API
 async function fetchRecentResults(){
   const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
   try{
-    const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'/GetHistoryIssuePage.json?pageSize=10&pageNo=1&t='+Date.now());
+    const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'/GetHistoryIssuePage.json?pageSize=20&pageNo=1&t='+Date.now());
     const data=await res.json();
     if(data&&data.data&&data.data.list){
-      recentNumbers=data.data.list.slice(0,20).map(i=>parseInt(i.number));
+      historyList = data.data.list.slice(0,20).map(i=>({issue:String(i.issueNumber||''),number:parseInt(i.number),color:String(i.color||''),size:(parseInt(i.number)>=5?'Big':'Small')}));
+      recentNumbers=historyList.map(x=>x.number);
       renderHistory();
+      if(historyList[0] && document.getElementById('periodDisplay').innerText==='SYNCING...'){
+        document.getElementById('periodDisplay').innerText=historyList[0].issue;
+      }
     }
   }catch(e){}
 }
