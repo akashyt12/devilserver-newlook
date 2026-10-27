@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -8,11 +8,11 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --primary:#10b981;--primary-light:#34d399;--primary-dark:#059669;
-  --cyan:#22d3ee;--cyan-light:#67e8f9;
-  --lime:#84cc16;
-  --bg:#0a0f0a;--card:#0d1a0d;--card-border:rgba(16,185,129,0.15);
-  --text:#f1f5f9;--text-dim:#64748b;--green:#10b981;--red:#ef4444}
+  --primary:#ff3b5c;--primary-light:#ff7a94;--primary-dark:#c41e42;
+  --cyan:#8b5cf6;--cyan-light:#a78bfa;
+  --lime:#ff2d78;
+  --bg:#0a0509;--card:#150a10;--card-border:rgba(255,59,92,0.15);
+  --text:#f1f5f9;--text-dim:#64748b;--green:#22c55e;--red:#ef4444}
 html,body{height:100%;width:100%;margin:0;padding:0;overflow:hidden;position:fixed;background:var(--bg)}
 body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',sans-serif}
 #shell{width:100%;height:100vh;position:relative;overflow-y:auto;overflow-x:hidden;background:var(--bg);scrollbar-width:none}
@@ -27,7 +27,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 @keyframes orbFloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,-60px)}}
 
 .grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(16,185,129,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,0.03) 1px,transparent 1px);
+  background-image:linear-gradient(rgba(255,59,92,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,59,92,0.03) 1px,transparent 1px);
   background-size:40px 40px}
 
 .content{position:relative;z-index:1;max-width:440px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:14px}
@@ -65,7 +65,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 .game-title{font-family:'Orbitron';font-size:14px;font-weight:700;color:var(--text)}
 .game-tag{
   display:inline-block;margin-top:3px;
-  background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);
+  background:rgba(255,59,92,0.15);border:1px solid rgba(255,59,92,0.3);
   padding:2px 8px;border-radius:6px;font-size:8px;color:var(--primary-light);
   font-weight:600;letter-spacing:1px}
 .status-row{display:flex;align-items:center;gap:5px;margin-top:4px}
@@ -74,7 +74,11 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 .status-text span{color:var(--green);font-weight:600}
 
 /* SECTION */
-.section-title{font-family:'Orbitron';font-size:11px;font-weight:700;color:var(--text);letter-spacing:2px;padding:6px 0}
+.section-title{font-family:'Orbitron';font-size:11px;font-weight:700;color:var(--text);letter-spacing:2px;padding:6px 0 6px 12px;position:relative}
+.section-title::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:12px;border-radius:2px;
+  background:linear-gradient(var(--primary),var(--cyan));box-shadow:0 0 8px rgba(255,59,92,.6)}
 
 /* TIMER CARDS */
 .timer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -84,15 +88,15 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   transition:all .3s}
 .timer-card:active{transform:scale(.96)}
 .timer-card.selected{
-  background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(34,211,238,0.1));
+  background:linear-gradient(135deg,rgba(255,59,92,0.15),rgba(139,92,246,0.1));
   border-color:var(--primary);
-  box-shadow:0 0 16px rgba(16,185,129,0.2)}
+  box-shadow:0 0 16px rgba(255,59,92,0.2)}
 .timer-icon{
   width:46px;height:46px;margin:0 auto 8px;
-  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);
+  background:rgba(255,59,92,0.1);border:1px solid rgba(255,59,92,0.2);
   border-radius:12px;display:flex;align-items:center;justify-content:center;
   transition:all .3s}
-.timer-card.selected .timer-icon{background:rgba(16,185,129,0.2);border-color:var(--primary)}
+.timer-card.selected .timer-icon{background:rgba(255,59,92,0.2);border-color:var(--primary)}
 .timer-icon svg{width:22px;height:22px;stroke:var(--text-dim);fill:none;stroke-width:2;transition:all .3s}
 .timer-card.selected .timer-icon svg{stroke:var(--primary-light)}
 .timer-val{font-family:'Orbitron';font-size:14px;font-weight:700;color:var(--text);margin-bottom:1px}
@@ -106,14 +110,14 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   cursor:pointer;transition:all .3s}
 .mode-card:active{transform:scale(.98)}
 .mode-card.selected{
-  background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(34,211,238,0.08));
+  background:linear-gradient(135deg,rgba(255,59,92,0.12),rgba(139,92,246,0.08));
   border-color:var(--primary)}
 .mode-icon{
-  width:46px;height:46px;background:rgba(16,185,129,0.1);
-  border:1px solid rgba(16,185,129,0.2);border-radius:12px;
+  width:46px;height:46px;background:rgba(255,59,92,0.1);
+  border:1px solid rgba(255,59,92,0.2);border-radius:12px;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
   transition:all .3s}
-.mode-card.selected .mode-icon{background:rgba(16,185,129,0.2);border-color:var(--primary)}
+.mode-card.selected .mode-icon{background:rgba(255,59,92,0.2);border-color:var(--primary)}
 .mode-icon svg{width:22px;height:22px;stroke:var(--text-dim);fill:none;stroke-width:2;transition:all .3s}
 .mode-card.selected .mode-icon svg{stroke:var(--primary-light)}
 .mode-info{flex:1}
@@ -137,8 +141,14 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   transition:all .3s;background:rgba(255,255,255,0.03);color:var(--text-dim);
   letter-spacing:1px}
 .continue-btn.ready{
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-  color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(16,185,129,0.4)}
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--primary),#ff2d78 55%,var(--cyan));
+  color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(255,59,92,0.45)}
+.continue-btn.ready::after{
+  content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.4),transparent);
+  transform:skewX(-20deg);animation:btnShine 3s ease-in-out infinite}
+@keyframes btnShine{0%{left:-80%}55%,100%{left:130%}}
 .continue-btn.ready:active{transform:scale(.97)}
 .continue-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
 
@@ -172,7 +182,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 <!-- GAME BANNER -->
 <div class="game-banner fd">
   <img id="bannerImg" src="image1.png">
-  <div class="game-name-display" id="bannerName">LOADING...</div>
+  <div class="game-banner-name" id="bannerName">LOADING...</div>
 </div>
 
 <!-- GAME INFO -->
@@ -338,3 +348,4 @@ init();
 </script>
 </body>
 </html>
+

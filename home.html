@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -8,15 +8,15 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --primary:#10b981;
-  --primary-light:#34d399;
-  --primary-dark:#059669;
-  --cyan:#22d3ee;
-  --cyan-light:#67e8f9;
-  --lime:#84cc16;
-  --bg:#0a0f0a;
-  --card:#0d1a0d;
-  --card-border:rgba(16,185,129,0.15);
+  --primary:#ff3b5c;
+  --primary-light:#ff7a94;
+  --primary-dark:#c41e42;
+  --cyan:#8b5cf6;
+  --cyan-light:#a78bfa;
+  --lime:#ff2d78;
+  --bg:#0a0509;
+  --card:#150a10;
+  --card-border:rgba(255,59,92,0.15);
   --text:#f1f5f9;
   --text-dim:#64748b;
 }
@@ -40,8 +40,8 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 
 .grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:
-    linear-gradient(rgba(16,185,129,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(16,185,129,0.03) 1px,transparent 1px);
+    linear-gradient(rgba(255,59,92,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,59,92,0.03) 1px,transparent 1px);
   background-size:40px 40px}
 
 /* PARTICLES */
@@ -53,7 +53,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 
 /* HEADER CARD */
 .header-card{
-  background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(34,211,238,0.08));
+  background:linear-gradient(135deg,rgba(255,59,92,0.12),rgba(139,92,246,0.08));
   border:1px solid var(--card-border);
   border-radius:16px;
   padding:16px 16px;
@@ -63,7 +63,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 }
 .header-card::before{
   content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
-  background:conic-gradient(from 0deg,transparent,rgba(16,185,129,0.1),transparent,rgba(34,211,238,0.1),transparent);
+  background:conic-gradient(from 0deg,transparent,rgba(255,59,92,0.1),transparent,rgba(139,92,246,0.1),transparent);
   animation:headerSpin 8s linear infinite}
 @keyframes headerSpin{to{transform:rotate(360deg)}}
 .header-card>*{position:relative;z-index:1}
@@ -73,29 +73,32 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   border-radius:50%;padding:3px;
   background:conic-gradient(var(--primary),var(--cyan),var(--lime),var(--primary));
   animation:logoPulse 3s ease-in-out infinite}
-@keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.4)}50%{box-shadow:0 0 40px rgba(16,185,129,0.7)}}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(255,59,92,0.4)}50%{box-shadow:0 0 40px rgba(255,59,92,0.7)}}
 .logo-inner{
   width:100%;height:100%;border-radius:50%;background:var(--bg);
   display:flex;align-items:center;justify-content:center;overflow:hidden}
 .logo-inner img{width:70px;height:70px;object-fit:cover;border-radius:50%}
 .devil-logo-text{
   font-family:'Orbitron';font-size:18px;font-weight:900;
-  color:var(--primary-light);text-shadow:0 0 20px rgba(16,185,129,0.6);
+  color:var(--primary-light);text-shadow:0 0 20px rgba(255,59,92,0.6);
   letter-spacing:2px}
 
 .app-title{
   font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;
-  background:linear-gradient(135deg,#fff,var(--primary-light),var(--cyan-light));
+  background:linear-gradient(135deg,#fff,#ff7a94,#8b5cf6,#fff);
+  background-size:300% 100%;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:titleFlow 6s linear infinite;
   letter-spacing:2px;margin-bottom:2px}
+@keyframes titleFlow{0%{background-position:0% 0}100%{background-position:300% 0}}
 .app-subtitle{font-size:11px;color:var(--text-dim);letter-spacing:3px;font-weight:600}
 
 .status-pill{
   display:inline-flex;align-items:center;gap:6px;
-  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);
+  background:rgba(255,59,92,0.1);border:1px solid rgba(255,59,92,0.3);
   padding:4px 12px;border-radius:16px;margin-top:10px;font-size:10px;
-  color:#10b981;font-weight:600;letter-spacing:1px}
-.status-dot{width:6px;height:6px;background:#10b981;border-radius:50%;animation:blink 1.5s infinite}
+  color:#ff3b5c;font-weight:600;letter-spacing:1px}
+.status-dot{width:6px;height:6px;background:#ff3b5c;border-radius:50%;animation:blink 1.5s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* STATS ROW */
@@ -113,9 +116,9 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 .section-title{font-family:'Orbitron';font-size:12px;font-weight:700;color:var(--text);letter-spacing:1px}
 .live-badge{
   display:flex;align-items:center;gap:6px;
-  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);
-  padding:5px 12px;border-radius:16px;font-size:10px;color:#10b981;font-weight:600}
-.live-dot{width:5px;height:5px;background:#10b981;border-radius:50%;animation:blink 1s infinite}
+  background:rgba(255,59,92,0.1);border:1px solid rgba(255,59,92,0.2);
+  padding:5px 12px;border-radius:16px;font-size:10px;color:#ff3b5c;font-weight:600}
+.live-dot{width:5px;height:5px;background:#ff3b5c;border-radius:50%;animation:blink 1s infinite}
 
 /* GAME CARDS */
 .games-grid{display:flex;flex-direction:column;gap:14px}
@@ -123,6 +126,9 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   background:var(--card);border:1px solid var(--card-border);
   border-radius:16px;overflow:hidden;position:relative;
   transition:all .3s ease}
+.game-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;z-index:3;
+  background:linear-gradient(90deg,var(--primary),var(--cyan));opacity:.85}
 
 .game-card:active{transform:scale(.98);border-color:var(--primary)}
 
@@ -139,7 +145,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   font-size:8px;font-weight:800;letter-spacing:.5px;z-index:2;
   backdrop-filter:blur(8px)}
 .badge-hot{background:rgba(239,68,68,0.9);color:#fff}
-.badge-live{background:rgba(16,185,129,0.9);color:#fff}
+.badge-live{background:rgba(34,197,94,0.9);color:#fff}
 .badge-new{background:rgba(59,130,246,0.9);color:#fff}
 .badge-vip{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff}
 
@@ -153,13 +159,19 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
   font-family:'Exo 2';font-size:10px;font-weight:700;cursor:pointer;
   transition:all .3s;letter-spacing:.5px}
 .btn-1m{
-  background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;
-  box-shadow:0 4px 15px rgba(16,185,129,0.3)}
-.btn-1m:active{transform:scale(.96);box-shadow:0 2px 8px rgba(16,185,129,0.4)}
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--primary),#ff2d78 55%,var(--cyan));color:#fff;
+  box-shadow:0 4px 15px rgba(255,59,92,0.35)}
+.btn-1m::after{
+  content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.4),transparent);
+  transform:skewX(-20deg);animation:btnShine 3s ease-in-out infinite}
+@keyframes btnShine{0%{left:-80%}55%,100%{left:130%}}
+.btn-1m:active{transform:scale(.96);box-shadow:0 2px 8px rgba(255,59,92,0.4)}
 .btn-30s{
   background:transparent;color:var(--cyan);
-  border:1px solid rgba(34,211,238,0.3)}
-.btn-30s:active{background:rgba(34,211,238,0.1);border-color:var(--cyan)}
+  border:1px solid rgba(139,92,246,0.3)}
+.btn-30s:active{background:rgba(139,92,246,0.1);border-color:var(--cyan)}
 
 /* BOTTOM NAV */
 .bottom-nav{
@@ -171,7 +183,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 .nav-item{
   display:flex;flex-direction:column;align-items:center;gap:3px;
   padding:6px 16px;border-radius:10px;cursor:pointer;transition:all .3s;text-decoration:none}
-.nav-item.active{background:rgba(16,185,129,0.1)}
+.nav-item.active{background:rgba(255,59,92,0.1)}
 .nav-item svg{width:20px;height:20px;stroke:var(--text-dim);fill:none;stroke-width:2;transition:all .3s}
 .nav-item.active svg{stroke:var(--primary-light)}
 .nav-item span{font-size:8px;color:var(--text-dim);font-weight:600;letter-spacing:.5px;transition:all .3s}
@@ -239,7 +251,7 @@ body{display:flex;justify-content:center;align-items:center;font-family:'Exo 2',
 
 .lg-spinner{
   width:60px;height:60px;border-radius:50%;
-  border:3px solid rgba(16,185,129,.15);
+  border:3px solid rgba(255,59,92,.15);
   border-top-color:var(--primary);
   animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -452,3 +464,4 @@ renderGames();
 </script>
 </body>
 </html>
+
