@@ -374,44 +374,53 @@ function renderHistory(){
 }
 renderHistory();
 
-// TIMER - Issue driven like Turbo predictor
-const DRAW_BASE='https://draw.ar-lottery06.com';
+// TIMER + SIGNAL - EXACT Turbo predictor logic (history driven, issue reset)
+const DRAW_BASE='https://draw.ar-lottery01.com';
 
-function getBase2(){return selectedTimer==='1min'?60:30}
+function fullRemain(){return selectedTimer==='1min'?59:29}
 function fmtT(s){s=Math.max(0,Math.floor(s));var m=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');return m+':'+ss}
 function paintT(){var t=fmtT(remainSec);document.getElementById('t-m1').innerText=t[0];document.getElementById('t-m2').innerText=t[1];document.getElementById('t-s1').innerText=t[3];document.getElementById('t-s2').innerText=t[4]}
+
+async function fetchSignal(){
+  const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
+  try{
+    const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'/GetHistoryIssuePage.json?pageSize=10&pageNo=1&t='+Date.now());
+    const data=await res.json();
+    const lst=(data&&data.data&&data.data.list)||[];
+    const parsed=[];
+    for(let i=0;i<Math.min(10,lst.length);i++){
+      const n=parseInt(lst[i].number,10);
+      if(isNaN(n))continue;
+      parsed.push({issue:String(lst[i].issueNumber||''),number:n,color:String(lst[i].color||''),size:n>=5?'Big':'Small'});
+    }
+    if(!parsed.length)return;
+    historyList=parsed;
+    recentNumbers=parsed.map(x=>x.number);
+    renderHistory();
+    const latest=parsed[0];
+    if(latest.issue!==lastSeenIssue2){
+      lastSeenIssue2=latest.issue;
+      lastPeriod=latest.issue; currentPeriod=latest.issue;
+      hasPredicted=false;
+      document.getElementById('periodDisplay').innerText=latest.issue;
+      checkSaved(latest.issue);
+      remainSec=fullRemain();
+      paintT();
+    }
+  }catch(e){}
+}
 
 async function runTimer(){
   if(clockInterval)clearInterval(clockInterval);
   if(timerIv)clearInterval(timerIv);
-  const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
-  remainSec=getBase2()-1;
+  remainSec=fullRemain();
   paintT();
-  async function sync(){
-    try{
-      const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'.json?t='+Date.now()+'&r='+Math.random());
-      const data=await res.json();
-      const cur=data.current||{};
-      if(cur&&cur.issueNumber){
-        const running=String(cur.issueNumber);
-        if(running!==lastPeriod){
-          lastPeriod=running; currentPeriod=running; hasPredicted=false;
-          document.getElementById('periodDisplay').innerText=running;
-          checkSaved(running); fetchRecentResults();
-        }
-        if(running!==lastSeenIssue2){
-          lastSeenIssue2=running;
-          remainSec=getBase2()-1;
-          paintT();
-        }
-      }
-    }catch(e){}
-  }
-  await sync(); setInterval(sync,2000);
+  await fetchSignal();
+  clockInterval=setInterval(()=>{fetchSignal()},2000);
   timerIv=setInterval(()=>{
     if(remainSec>0){remainSec--;paintT()}
     updateButtons(remainSec);
-    if(remainSec<=3){sync()}
+    if(remainSec<=3){fetchSignal()}
   },1000);
 }
 
@@ -428,23 +437,6 @@ function updateButtons(secs){
     btn.innerText='GET PREDICTION';
     statusText.innerText='READY';
   }
-}
-
-// Fetch real history from WinGo API
-async function fetchRecentResults(){
-  const apiPath=selectedTimer==='1min'?'WinGo_1M':'WinGo_30S';
-  try{
-    const res=await fetch(DRAW_BASE+'/WinGo/'+apiPath+'/GetHistoryIssuePage.json?pageSize=20&pageNo=1&t='+Date.now());
-    const data=await res.json();
-    if(data&&data.data&&data.data.list){
-      historyList = data.data.list.slice(0,20).map(i=>({issue:String(i.issueNumber||''),number:parseInt(i.number),color:String(i.color||''),size:(parseInt(i.number)>=5?'Big':'Small')}));
-      recentNumbers=historyList.map(x=>x.number);
-      renderHistory();
-      if(historyList[0] && document.getElementById('periodDisplay').innerText==='SYNCING...'){
-        document.getElementById('periodDisplay').innerText=historyList[0].issue;
-      }
-    }
-  }catch(e){}
 }
 
 function checkSaved(period){
@@ -543,7 +535,7 @@ async function handlePredict(){
 }
 
 runTimer();
-fetchRecentResults();
+fetchSignal();
 
 // Particles
 (function(){
